@@ -1,0 +1,544 @@
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+                                                Using Snepslog
+
+
+
+                                        A Mini-manual for Snepslog
+
+
+Lisbon, 02/21/89                                                by Pedro M. G. Amaro de Matos
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;
+;
+;     Classification of the snepslog expressions
+;
+;
+; 
+;   There are 4 legal types of snepslog expressions, that are
+;        the atomic expressions
+;        the relations
+;        the connected expressions
+;        the quantified expressions
+;
+;
+;   -  The atomic expressions represents the constants of the domain (corresponds to the sneps base nodes)
+;
+;   -  The relations represents relations between the snepslog expressions.
+;
+;           Examples:     man(socrates)
+;                        loves(mary, john)
+;                        thinks(mary, loves(john,jane))
+;
+;   -  The connected expressions are expressions that use connectives.
+;      Snepslog allows the use of 4 sneps connectives that are
+;              and-entailment
+;              or-entailment
+;              thresh
+;              andor
+;
+;           Examples
+;
+;              (a,b,...)&=>(c,d,...) meaning "a and b implies c and d"      
+;              (a,b,...)v=>(c,d,...) meaning "a or b implies c and d"      
+;              thresh (n) (a,b,c,...)
+;              andor(1,2) (a,b,...)
+;
+;   -  The quantified expressions are expressions with quantified variables. Two quantifiers can be used. They are
+;              all, the universal quantifier
+;              exists, the existencial quantifier
+;
+;           Examples
+;
+;              all (x) (man(x))&=>(mortal(x))
+;              the quantified variable is x, so we can read this expresssion as all men are mortal.
+;             
+;              all (x) exists(y) product(x,y,y)
+;              This expression means for all x there exists an y that makes x*y=y.
+;
+;
+;  
+;
+
+
+
+
+
+;
+;
+;  The snepslog Commands
+;
+;  You can take four actions in snepslog:
+;      You can add an expression to the net.
+;      You can make forward inference with an expression.
+;      You can make backward inference with an expression.
+;      You can search an expression in the net.
+;
+;  To add an expression to the net, just write it.
+;  To make forward inference, the expression should be followed by an exclamation mark "!".
+;  To make backward inference, a question mark should be written after the expression.
+;  To search an expression in the net, write the expression followed by two question marks "??".
+;
+;  When you are making backward inference or searching, you may use snepslog-variables to build a pattern.
+;  Snepslog-variables are atoms that the first character is a question mark.
+;
+;    The command
+;         loves(mary,?who)?
+;    will try to deduce (using backward inference) who is loved by mary.
+;
+;
+
+
+
+
+
+
+
+
+
+
+
+;
+;  Using Contexts
+;
+;  You may use contexts in Snepslog.
+;  To define a context, write the conntext name followed by = and a
+;  set of wffs (a set of wffs is a lisp list of wffs separated by commas), followed by a command you 
+;  want to execute in that context.
+;     For instance,
+;
+;          new-context = (wff1,wff2) man(socrates)!
+;     will make forward inference with the expression man(socrates) in the context defined by wff1 and wff2 (wff1
+;     and wff2 are short names of the expressions that have defined the sneps nodes m1 and m2. Only these short 
+;     names should be used when defining a context).
+;
+;  You don't have to define a context every time you want to use contexts. You may write the context name
+;  (of a previously defined context) followed by ":" and then the command you want to execute in that context.
+;     For instance,
+;
+;          new-context: mortal(?who)??
+;     will try to find who is mortal in new-context (the previously defined context).
+
+
+
+
+
+
+;
+; Using the lisp Interpretor
+;
+; Write "%" and the lisp expression to be evaluated
+;
+; For example:
+;
+; %(princ "Hello, World")
+;
+
+
+
+
+;
+; Calling Sneval
+;
+; Write "^" and the expression to be snevaled
+;
+; For example
+;
+; ^(resetnet)
+;
+
+
+
+
+
+;
+; Tracing the ATN grammar
+;
+;
+; You may trace this atn grammar setting the variable snepslog:trace? to t.
+;
+;
+;
+
+
+
+
+
+
+;
+;
+;   The Snepslog Syntax:
+;
+;   <snepslog.expression>::=<atomic.expression>|<relation>|<connected.expression>|<quantified.expression>
+;   
+;   <atomic.expression>::=<lisp.atom>
+;
+;   <relation>::=<atomic.expression>(<snepslog.expression>[,<snepslog.expression>]*)
+;
+;   <connected.expression>::=<and.entailment>|<or.entailment>|<andor>|<thresh>
+;
+;   <set.of.snepslog.expressions>::=(<snepslog.expression>[,<snepslog.expression>]*)
+;
+;   <and.entailment>::=<set.of.snepslog.expressions>&=><set.of.snepslog.expressions>
+;
+;   <or.entailment>::=<set.of.snepslog.expressions>v=><set.of.snepslog.expressions>
+;
+;   <thresh>::=thresh(<integer>)<set.of.snepslog.expressions>
+;
+;   <andor>::=andor (<integer>,<integer>) <set.of.snepslog.expressions>
+;
+
+
+
+
+
+;
+;  How to use the snepslog interface?
+;
+;
+
+;
+; First thing to do is to load the file Snepslog (.lisp or .xld if there exists one)
+; (I assume that sneps2 is already loaded).
+;
+
+
+> (load "snepslog")
+; Loading SHERLOCK: PEDRO; SNEPSLOG.XLD#> into package USER
+; Loading SHERLOCK: PEDRO; PARSER.XLD#> into package USER
+; Loading SHERLOCK: PEDRO; RECONHECEDOR.XLD#> into package USER
+; Loading SHERLOCK: PEDRO; GERADOR.XLD#> into package USER
+R is already defined.
+A1 is already defined.
+A2 is already defined.
+A3 is already defined.
+A4 is already defined.
+A5 is already defined.
+A6 is already defined.
+#FS::LISPM-PATHNAME "SHERLOCK: PEDRO; SNEPSLOG.XLD#21"
+
+
+;
+; Next thing, choose the snepslog configuration, evaluating (make.snepslog1)
+; or (make.snepslog2). The difference is in the construction of the relations.
+; Using the first configuration, the sneps node used to represent the relation
+;             PREDICATE(ARG1,...,ARGN)
+; with n lower than 6, will be the node constructed by the SNePSUL form
+;             (build r PREDICATE a1 ARG1 ... an ARGN)
+; Using the second configuration, the sneps node used to represent the same relation will be
+;             (build | Relation PREDICATE| PREDICATE
+;                    | Relation-Argument PREDICATE1| ARG1 ...
+;                    | Relation-Argument PREDICATEn| ARGN)
+; that is, the arcs leaving the node will be indexed by the predicate.
+
+> (make.snepslog1)
+USER::SNEPSLOG1
+
+
+;
+; Call the snepslog function
+;
+
+> (snepslog)
+
+   Welcome to SNePS-2.1
+   2/21/1989 19:47:42
+
+;
+; First example:
+;
+;         Using the And-entailment connective and the forall quantifier.
+;
+;   This snepslog expression means "For every x, y and z: If x loves y, and x thinks y loves z, then x hates z"
+;
+
+
+
+*  ALL(X,Y,Z) (LOVES(X,Y), THINKS(X,LOVES(Y,Z))) &=> (HATES(X,Z))
+M1:  ALL(X,Y,Z)(LOVES(X,Y),THINKS(X,LOVES(Y,Z)))&=>(HATES(X,Z))  {<HYP,{M1},{}>}
+
+
+ CPU time : 0.20     GC time : 0.00 
+
+
+;
+; This relation means that "Mary loves John"
+;
+
+
+*  LOVES(MARY,JOHN)
+M2:  LOVES(MARY,JOHN)  {<HYP,{M2},{}>}
+
+
+ CPU time : 0.03     GC time : 0.00 
+
+;
+; This relation states that "Mary thinks that John loves Jane"
+;
+
+*  THINKS(MARY,LOVES(JOHN,JANE))
+M4:  THINKS(MARY,LOVES(JOHN,JANE))  {<HYP,{M4},{}>}
+
+
+ CPU time : 0.07     GC time : 0.00 
+
+;
+; This example makes backward inference and uses snepslog variables (recall that a snepslog variable is a
+; atomic expression with an question mark as its first character).  
+;
+
+* HATES(?WHO-HATE,?WHO-IS-HATED)?
+
+I wonder if
+HATES(?WHO-HATE,?WHO-IS-HATED)
+
+
+holds within the BS defined by hypotheses (M1! M2! M4!) 
+
+I wonder if
+LOVES(X,Y)
+
+
+holds within the BS defined by hypotheses (M1! M2! M4!) 
+
+I wonder if
+THINKS(X,LOVES(Y,Z))
+
+
+holds within the BS defined by hypotheses (M1! M2! M4!) 
+
+I know
+M2:  LOVES(MARY,JOHN)  {<HYP,{M2},{}>}
+
+
+I know
+M4:  THINKS(MARY,LOVES(JOHN,JANE))  {<HYP,{M4},{}>}
+
+
+Since
+M1:  ALL(X,Y,Z)(LOVES(X,Y),THINKS(X,LOVES(Y,Z)))&=>(HATES(X,Z))  {<HYP,{M1},{}>}
+
+and
+M2:  LOVES(MARY,JOHN)  {<HYP,{M2},{}>}
+
+and
+M4:  THINKS(MARY,LOVES(JOHN,JANE))  {<HYP,{M4},{}>}
+
+
+I infer
+HATES(MARY,JANE)
+
+
+
+M5:  HATES(MARY,JANE)  {<DER,{M4,M2,M1},{}>}
+
+
+ CPU time : 1.80     GC time : 0.00 
+
+
+
+;
+; The next expression uses the andor connective.
+; 
+
+
+
+
+* ALL(X,Y) ANDOR(1,1) (LOVES(X,Y), HATES(X,Y))
+M6:  ALL(X,Y)ANDOR(1,1)(LOVES(X,Y),HATES(X,Y))  {<HYP,{M6},{}>}
+
+
+ CPU time : 0.17     GC time : 0.00 
+
+
+
+;
+; More backward inference...
+;
+
+
+
+* HATES(MARY,JOHN)?
+
+I wonder if
+HATES(MARY,JOHN)
+
+
+holds within the BS defined by hypotheses (M1! M2! M4! M6!) 
+
+I wonder if
+M2:  LOVES(MARY,JOHN)  {<HYP,{M2},{}>}
+
+
+holds within the BS defined by hypotheses (M1! M2! M4! M6!) 
+
+I wonder if
+LOVES(MARY,Y)
+
+
+holds within the BS defined by hypotheses (M1! M2! M4! M6!) 
+
+I wonder if
+THINKS(MARY,LOVES(Y,JOHN))
+
+
+holds within the BS defined by hypotheses (M1! M2! M4! M6!) 
+
+I know
+M2:  LOVES(MARY,JOHN)  {<HYP,{M2},{}>}
+
+
+Since
+M1:  ALL(X,Y,Z)(LOVES(X,Y),THINKS(X,LOVES(Y,Z)))&=>(HATES(X,Z))  {<HYP,{M1},{}>}
+
+and
+M2:  LOVES(MARY,JOHN)  {<HYP,{M2},{}>}
+
+and
+M4:  THINKS(MARY,LOVES(JOHN,JANE))  {<HYP,{M4},{}>}
+
+
+I infer
+M5:  HATES(MARY,JANE)  {<DER,{M4,M2,M1},{}>}
+
+
+Since
+M6:  ALL(X,Y)ANDOR(1,1)(LOVES(X,Y),HATES(X,Y))  {<HYP,{M6},{}>}
+
+
+and
+M2:  LOVES(MARY,JOHN)  {<HYP,{M2},{}>}
+
+
+I infer it is not the case that
+HATES(MARY,JOHN)
+
+
+
+M11:  ANDOR(0,0)(HATES(MARY,JOHN))  {<DER,{M6,M2},{}>}
+
+
+ CPU time : 4.58     GC time : 0.00 
+
+
+
+;
+; This example uses the thresh connective.
+; 
+;
+
+
+* ALL(X,Y)  THRESH (1) (HATES(X,Y), ANDOR(0,0) (LOVES(X,Y)))
+M12:  ALL(X,Y)THRESH(1)(HATES(X,Y),ANDOR(0,0)(LOVES(X,Y)))  {<HYP,{M12},{}>}
+
+
+ CPU time : 0.18     GC time : 0.00 
+
+
+
+
+;
+;  Let's see the difference between the complete description of a node
+;  and the simple description of a node.
+;
+;  Let's see the complete description of node m1.
+;  As you can see, it is the node name, m1 followed by the snepslog representation of that node,
+;  followed by a set of derivation histories. In this example there is only one derivation history.
+;  The derivation history. The first element is the origin-tag, the second element, the origin set,
+;  and the third, the set of nodes that are not compatible with m1. 
+;
+
+* wff1
+M1:  ALL(X,Y,Z)(LOVES(X,Y),THINKS(X,LOVES(Y,Z)))&=>(HATES(X,Z))  {<HYP,{M1},{}>}
+
+
+ CPU time : 0.00     GC time : 0.00 
+
+
+
+
+;
+; Using the lisp evaluator, we change the kind of description we want.
+;
+
+
+* %(setq snepslog:complete-description nil)
+NIL
+
+;
+;  The descrition given by the interpretor will now be the simple description. 
+;
+;
+
+* wff1
+ALL(X,Y,Z)(LOVES(X,Y),THINKS(X,LOVES(Y,Z)))&=>(HATES(X,Z))
+
+
+ CPU time : 0.07     GC time : 0.00 
+
+
+
+
+
+;
+;  Using contexts.
+;
+;
+
+
+
+;
+;  Defining a new context with one hyp.
+;
+;
+
+* new-context = () ALL(X)(MAN(X))&=>(MORTAL(X))
+ALL(X)(MAN(X))&=>(MORTAL(X))
+
+
+ CPU time : 0.08     GC time : 0.00 
+
+;
+;  Using a previously defined context and doing forward inference
+;
+;
+
+* new-context\: MAN(PLATO)!
+
+Since
+ALL(X)(MAN(X))&=>(MORTAL(X))
+
+and
+MAN(PLATO)
+
+
+I infer
+MORTAL(PLATO)
+
+
+
+MAN(PLATO)
+MORTAL(PLATO)
+
+
+ CPU time : 0.67     GC time : 0.00 
+
+;
+;  Ending the session
+;
+
+* end
+"End of SNePS"
+
+
+;
+;
+;  Soon, there will be a proper manual.
+;
+;
+

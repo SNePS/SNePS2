@@ -1,0 +1,99 @@
+expert
+set-mode-1
+
+;a1-
+clearkb
+(p or p) => p ?
+
+;a2-
+clearkb
+q => (p or q) ?
+
+;a3-
+clearkb
+(p or q) => (q or p) ?
+
+;a4-
+clearkb
+(q => r) => ((p or q) => (p or r)) ?
+
+;pc13   lei da identidade
+clearkb
+thresh(1) {p, p}?
+
+;pc14
+clearkb
+p => (p or q) ?
+
+;pc15
+clearkb
+(p and q) => p ?
+
+;pc16
+clearkb
+(p and q) => q ?
+
+;pc17
+clearkb
+p => (q => p) ?
+
+;pc18
+clearkb
+~p => (p => q) ?
+
+;pc19   lei da adjuncao
+clearkb
+p => (q => (p and q)) ?
+
+;pc20  lei da permutacao
+clearkb
+thresh(1) {p => (q => r), q => (p => r)} ?
+
+;pc21 lei do silogismo 1
+clearkb
+(p => q) =>((q => r) => (p => r))?
+
+;pc22 lei do silogismo 2
+clearkb
+(q => r) => ((p => q) => (p => r))?
+
+;pc23  lei da importacao
+clearkb
+(p => (q => r)) => ((p and q) => r)?
+
+;pc 24 lei da exportacao
+clearkb
+((p and q) => r) => (p => (q => r))?
+
+;pc25 lei da composicao
+clearkb
+(p => q) => ((p => r) => (p => (q and r)))?
+
+;pc26
+clearkb
+(p => q) => ((r => s) => ((p and r) => (q and s)))?
+
+;pc27 
+clearkb
+(p => r) => ((q => r) => ((p or q) => r))?
+
+
+;pc28                 Da' erro     
+;clearkb
+;thresh(1) {thresh(1) {~p, q}, thresh(1) {p, ~q}}?
+
+;pc29                 Da' erro     
+;clearkb 
+;thresh(1) {thresh(1){p,q},thresh(1){~p, ~q}}?
+
+;pc30
+clearkb
+thresh(1){~p => p, p}?
+
+;pc31
+clearkb
+thresh(1) {(q => p) and (~q => p), p}?
+
+;pc32
+clearkb
+thresh(1) {(p => q) and (p => ~q), ~p}?

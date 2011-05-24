@@ -1,0 +1,723 @@
+
+;;; Copyright (C) 1984--2004 Research Foundation of 
+;;;                          State University of New York
+
+;;; Version: $Id: generator.atn,v 1.1 2011/05/24 17:59:37 mwk3 Exp $
+
+;;; This file is part of SNePS.
+
+;;; SNePS is free software; you may redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2, or (at your option)
+;;; any later version.
+
+;;; SNePS is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;;; GNU General Public License for more details.
+
+;;; You should have received a copy of the GNU General Public License
+;;; along with SNePS; see the file COPYING.  If not, write to
+;;; the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA, or to
+;;; Dr. Stuart C. Shapiro, Department of Computer Science and Engineering,
+;;; University at Buffalo, The State University of New York, 
+;;; 201 Bell Hall, Buffalo, NY 14260, USA
+
+
+;;; SNePSLOG generation grammar
+;;;
+;;;             Written by Pedro Amaro de Matos (IST Lisbon - Portugal) 
+;;;
+;;;Modifications:
+;;;  Choi 2/13/92: Included handling of numerical quantifiers
+;;;  Choi 4/28/92: Included handling of set arguments
+;;;  Shapiro 8/12/99: Generate threshmax parameter
+;;;  Shapiro 3/30/04: In first group arc of state g-list-of-relation-arguments
+;;;        add check that (getr *) is a list before getting its length.
+;;;
+
+
+;;; Determines how a node should be printed
+;;; Modified 5/22/06 - mwk
+(generate-snepslog-description
+  (group
+     (jump generate-snepslog-complete-description
+          (and (eq complete-description 'expert)
+	       (sneps:node-p (getr *))
+	       (sneps:node-asupport (getr *))))
+    (jump generate-snepslog-partial-description 
+	(and (sneps:node-p (getr *))
+	     (eq  complete-description 'normal)))
+    (jump gen (and (sneps:node-p (getr *))
+                 (or (eq complete-description 'unlabeled)
+		     (not (sneps:node-asupport (getr *))))))
+    (pop * t)))
+
+
+(generate-snepslog-superficial-description
+ ;; the register * should be a node.
+ (pop (slight-surface *) t))
+
+
+;;; Adds the wff number to the node only (normal) mode
+;;; Added 5/22/06 - mwk
+(generate-snepslog-partial-description 
+(group
+  (pop (get-snepslog-complete-version *
+           'snepslog-partial-description)
+       (get-snepslog-complete-version *
+           'snepslog-partial-description))
+  (call gen *
+	(nullr snepslog-description)
+	snepslog-description
+	(setr result
+	      (set-snepslog-complete-version
+	       *
+	       `(,@(when (not (eq :base (sneps:node-type (getr *))))
+		     (list (slight-surface (getr *)) ":  "))
+		   ,@(flistify (getr snepslog-description))) 
+               'snepslog-partial-description))
+	(jump pop-result))))
+
+;;; The complete description for a node (expert-more) mode
+(generate-snepslog-complete-description
+ (group
+  (pop (get-snepslog-complete-version * 'snepslog-complete-description)
+       (get-snepslog-complete-version * 'snepslog-complete-description))
+  (call gen *
+	(nullr snepslog-description)
+	snepslog-description
+	(setr result
+	      (set-snepslog-complete-version
+	       *
+	       `(,@(when (not (eq :base (sneps:node-type (getr *))))
+		     (list (slight-surface (getr *)) ":  "))
+		   ,@(flistify (getr snepslog-description))
+		   "  "
+		   (parser (distribute-ots (sneps:node-asupport ',(getr *)))
+		   	   'generate-set-of-derivation-histories
+		   	   (the-empty-frame)
+		   	   0)) 
+               'snepslog-complete-description))
+	(jump pop-result))))
+
+
+(generate-set-of-derivation-histories
+  (group
+    (call generate-one-derivation-history (list (getr *))
+	  (not (endofsentence))
+	  derivation-history
+	  (addl accumulator (getr derivation-history))
+          (to generate-set-of-derivation-histories))
+    (pop (make-tuple (getr accumulator)
+		     "," "{" "}")
+	 (endofsentence))))
+
+
+(generate-one-derivation-history
+ (call generate-wff-set
+       ;; generates the origin set representation.
+       (sneps:context-hyps (context-pair.ot.ct (getr *)))
+       (nullr origin-set)
+       origin-set
+       (setr result (make-tuple `(,(symbol-name (ot-pair.ot.ct (getr *)))
+				  ,(getr origin-set))
+				"," "<" ">"))
+       (jump pop-result)))
+
+
+(generate-derivation-history-restriction-sets
+  (call generate-restriction-sets
+	(sneps:context-restriction (context-pair.ot.ct (getr *)))
+	(nullr tried-restriction-sets)
+	restriction-sets
+	(setr result (make-tuple `(,(symbol-name (ot-pair.ot.ct (getr *)))
+				   ,(getr origin-set)
+				   ,(getr restriction-sets))
+				 "," "<" ">"))
+	(jump pop-result)))
+
+
+(generate-restriction-sets
+  (group
+    (call generate-wff-set (sneps:context-hyps (getr *))
+	  (not (endofsentence))
+	  wff-set
+	  (addl accumulator (getr wff-set))
+	  (to generate-restriction-sets))
+    (pop (make-tuple (getr accumulator)
+		     "," "{" "}")
+	 (endofsentence))))
+
+(generate-wff-set
+  (group
+    (call generate-snepslog-superficial-description *
+          (not (endofsentence))
+          result
+          (addl accumulator (getr result))
+          (to generate-wff-set))
+    (pop (make-tuple (getr accumulator) "," "{" "}") (endofsentence))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; The generation of the snepslog version of the node
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(g-pop-result 
+  (pop (set-snepslog-version * (getr result)) t))
+
+;;;
+;;; Node: Gen
+;;; * contents: a node.
+;;; Returns: The snepslog description of a node.
+;;; All arcs are grouped, so no backtracking is allowed.
+;;;
+
+(gen
+  (group
+    (pop (get-snepslog-version (getr *))
+	 (get-snepslog-version (getr *))) ; a svar has always a snepslog-version
+    (jump g-atomic-node (sneps-atomic-node? (getr *)))
+    (jump g-relation (sneps-relation? (getr *)))
+    (jump g-connected-node (sneps-connected-node? (getr *)))
+    (jump g-quantified-node
+	 (sneps-quantified-node? (getr *)))))
+
+;;;
+;;; Node: g-list-of-expresssions
+;;; * contents: a node
+;;; Buffer contents: A list of nodes.
+;;; Returns the a list containing the description of the nodes in the buffer.
+;;;
+
+(g-list-of-expressions
+  (group
+    (call gen *
+	  (not (endofsentence))
+	  expression
+	  (addl result (getr expression))
+	  (to g-list-of-expressions))
+    (pop (make-tuple (reverse (getr result))
+		     (getr separator)
+		     (getr open-parentesis)
+		     (getr close-parentesis))
+	 (endofsentence))))
+
+
+;;;
+;;; Node: g-atomic-node
+;;; * contents: an atomic node
+;;; Buffer contents: *
+;;; Returns the snepslog version of the node.
+;;;
+
+(g-atomic-node
+  (pop (set-snepslog-version (getr *)
+			     (symbol-name (sneps:node-na (getr *))))
+       t))
+
+;;;
+;;; Node: g-relation
+;;; * contents: a molecular node or a pattern node
+;;;     that has a descending arc named "r" (we shall call it a relation).
+;;; Buffer contents: the * register.
+;;; Returns the snepslog version of the relation.
+;;; Auxiliar nodes: g-relation-arguments
+;;;
+
+(g-relation
+  (call gen (relation-predicate *)
+	t
+	relation
+	(jump g-relation-arguments)))
+
+
+;;; Node: g-relation-arguments
+;;; g-list-of-expressions is changed to g-list-of-relation-arguments to
+;;; handle both ordinary arguments and set arguments.  three sendr
+;;; commands in the original grammar are removed so that the set
+;;; arguments are generated with { and }, instead of ( and ).
+
+(g-relation-arguments
+ (call g-list-of-relation-arguments (relation-argument.list (getr *))
+       t
+       arguments
+       (setr result (set-snepslog-version (getr *)
+					  (cons (getr relation)
+						(getr arguments))))
+       (jump pop-result)))
+
+;;; Node: g-list-of-relation-arguments
+;;; * contents: relation arguments
+;;; Returns: The snepslog description of relation arguments.
+;;;
+;;; Comments:
+;;;  set arguments are recognized by checking the length of an argument.
+;;;  if it is greater than 1, set arguments are generated by g-set-argument,
+;;;  if it is equal to 1, ordinary arguments are generated by gen.
+
+(g-list-of-relation-arguments 
+ (group
+  (call g-set-argument (getr *)
+	(and (not (endofsentence))
+	     (listp (getr *))
+	     (> (length (getr *)) 1))
+	expression
+	(addl result (getr expression))
+	(to g-list-of-relation-arguments))
+  (call gen *
+	(not (endofsentence))
+	expression
+	(addl result (getr expression))
+	(to g-list-of-relation-arguments))
+  (pop (make-tuple (reverse (getr result))
+		   "," "(" ")")
+       (endofsentence))))
+
+
+;;; Node: g-set-argument
+;;; * contents: a set argument
+;;; Returns a snepslog set argument with { and }.
+
+(g-set-argument
+ (group
+  (call gen *
+	(not (endofsentence))
+	expression
+	(addl result (getr expression))
+	(to g-set-argument))
+  (pop (make-tuple (reverse (getr result))
+		   "," "{" "}")
+       (endofsentence))))
+
+
+;;; Node: g-connected-node
+;;; * contents: a molecular or pattern node that is a connective
+;;; Buffer contents: the node
+;;; Jump to the atn node that can find the snepslog representation of the connective.
+;;;
+
+(g-connected-node
+  (group
+    (jump g-entailment (sneps-entailment? (getr *)))
+    (jump g-thresh (sneps-thresh? (getr *)))
+    (jump g-andor (sneps-andor? (getr *)))))
+
+
+;;;
+;;; Node: g-entailment
+;;; * contents: a molecular or pattern node that is an entailment
+;;; Buffer contents: the node
+;;; Jumps to the atn node that can find apropriate snepslog
+;;;    representation of the entailment
+;;;
+
+(g-entailment
+  (group
+   (jump g-simple-entailment (sneps-simple-entailment? (getr *)))
+   (call g-list-of-expressions (geta ant)
+	 (sneps-or-entailment? (getr *))
+	 (sendr separator ",")
+	 (sendr open-parentesis "{")
+	 (sendr close-parentesis "}")
+	 antecedent-list
+	 (setr implication " v=> ")
+	 (jump g-entailment-consequent))
+   (call g-list-of-expressions (geta &ant)
+	 (and (sneps-and-entailment? (getr *))
+	      (get-nodes (getr *) 'thresh))
+	 (sendr separator ",")
+	 (sendr open-parentesis "{")
+	 (sendr close-parentesis "}")
+	 antecedent-list
+	 (setr implication
+	       (format nil " ~A=> "
+		       (sneps:choose.ns (get-nodes (getr *) 'thresh))))
+	 (jump g-entailment-consequent))
+   (call g-list-of-expressions (geta &ant)
+	 (sneps-and-entailment? (getr *))
+	 (sendr separator ",")
+	 (sendr open-parentesis "{")
+	 (sendr close-parentesis "}")
+	 antecedent-list
+	 (setr implication " &=> ")
+	 (jump g-entailment-consequent))))
+
+(g-entailment-consequent
+  (call g-list-of-expressions (geta cq)
+	(nullr consequent-list)
+	(sendr separator ",")
+	(sendr open-parentesis "{")
+	(sendr close-parentesis "}")
+	consequent-list
+	(setr result `(,@(getr antecedent-list)
+			 ,(getr implication)
+			 ,@(getr consequent-list)))
+	(jump g-pop-result)))
+ 
+;;;
+;;; Node: g-simple-entailment
+;;; * contents: an or-entailment node with one antecedent and one consequent.
+;;; Buffer contents: the node.
+;;; Returns the snepslog representation for the node.
+;;; Uses the auxiliar node g-consequent-of-simple-entailment.
+
+(g-simple-entailment
+  (call gen (geta ant)
+	t
+	antecedent
+	(setr antecedent-result
+	      (if (or (sneps-relation? (sneps:choose.ns (geta ant)))
+		      (sneps-atomic-node? (sneps:choose.ns (geta ant))))
+		  (flistify (getr antecedent))
+		`("(" ,@(flistify (getr antecedent)) ")")))
+	(jump g-consequent-of-simple-entailment)))
+
+(g-consequent-of-simple-entailment
+  (call gen (geta cq)
+	t
+	consequent
+	(setr consequent-result
+	      (if (or (sneps-relation? (sneps:choose.ns (geta cq)))
+		      (sneps-atomic-node? (sneps:choose.ns (geta cq))))
+		  (flistify (getr consequent))
+		`("(" ,@(flistify (getr consequent)) ")")))
+	(setr result
+	      `(,@(getr antecedent-result)" => " ,@(getr consequent-result)))
+	(jump g-pop-result)))
+
+(g-thresh
+  (group
+    (jump g-threshi (sneps-general-thresh? (getr *)))
+    (jump g-equivalence (sneps-equivalence? (getr *)))))
+
+
+;;;Node: g-threshi
+;;;The only change from the original state is to have
+;;;double quotes around 'thresh' so that it can be printed
+;;;in lower case (to be consistent with other connective printing).
+
+(g-threshi
+ (group
+  (call g-list-of-expressions (geta arg)
+	(nullr thresh-args)
+	(sendr separator ",")
+	(sendr open-parentesis "{")
+	(sendr close-parentesis "}")
+	thresh-args
+	(jump g-threshi))
+  (pop (set-snepslog-version (getr *)
+			     `("thresh"
+			       \( ,@(geta thresh) "," ,@(geta threshmax) \)
+			       ,@(getr thresh-args)))
+       (and (getr thresh-args) (geta threshmax)))
+  (pop (set-snepslog-version (getr *)
+			     `("thresh" \( ,@(geta thresh) \)
+					,@(getr thresh-args)))
+       (and (getr thresh-args) (not (geta threshmax))))))
+
+(g-equivalence
+  (call g-arguments (geta arg)
+	(nullr and-args)
+	(sendr operation #'sneps-thresh?)
+	(sendr separator " <=> ")
+	(sendr open-parentesis "")
+	(sendr close-parentesis "")
+	result
+	(jump g-pop-result)))
+
+(g-andor
+  (group
+    (jump g-not (sneps-not? (getr *)))
+    (jump g-and (sneps-and? (getr *)))
+    (jump g-or (sneps-or? (getr *)))
+    (jump g-nor (sneps-nor? (getr *)))
+    (jump g-xor (sneps-xor? (getr *)))
+    (jump g-nand (sneps-nand? (getr *)))
+    (jump g-general-andor t)))
+
+
+(g-not
+  (call gen (geta arg)
+        (nullr result)
+	result
+        (setr result  (if (or (sneps-relation? (sneps:choose.ns (geta arg)))
+			      (sneps-atomic-node? (sneps:choose.ns (geta arg))))
+			  `("~" ,@(flistify (getr result)))
+			  `("~(" ,@(flistify (getr result)) ")")))
+	(jump g-pop-result)))
+
+
+(g-and
+  (call g-and-arguments (geta arg)
+	(nullr and-args)
+	(sendr separator " and ")
+	(sendr open-parentesis "")
+	(sendr close-parentesis "")
+	result
+	(jump g-pop-result)))
+
+
+(g-and-arguments
+  (group
+    (call gen *
+	  (and (not (endofsentence))
+	       (or (sneps-entailment? (getr *))
+		   (sneps-thresh? (getr *))
+		   (sneps-or? (getr *))))
+	  expression
+	  (setr expression `("(" ,@(getr expression) ")"))
+	  (addl result (getr expression))
+	  (to g-and-arguments))
+    (call gen *
+	  (not (endofsentence))
+	  expression
+	  (addl result (getr expression))
+	  (to g-and-arguments))
+    (pop (make-tuple (reverse (getr result))
+		     (getr separator)
+		     (getr open-parentesis)
+		     (getr close-parentesis))
+	 (endofsentence))))
+
+(g-arguments
+;;; Needs the following registers present:
+;;;        operation
+;;;        separator
+;;;        open-parentesis
+;;;        close-parentesis
+  (group
+    (call gen *
+	  (and (not (endofsentence))
+	       (higher-priority? (getr *) (getr operation)))
+	  expression
+	  (setr expression `("(" ,@(getr expression) ")"))
+	  (addl result (getr expression))
+	  (to g-arguments))
+    (call gen *
+	  (not (endofsentence))
+	  expression
+	  (addl result (getr expression))
+	  (to g-arguments))
+    (pop (make-tuple (reverse (getr result))
+		     (getr separator)
+		     (getr open-parentesis)
+		     (getr close-parentesis))
+	 (endofsentence))))
+
+(g-or
+  (group
+    (call g-list-of-expressions (geta arg)
+	  (and (geta arg)
+	       (nullr or-args))
+	  (sendr separator " or ")
+	  (sendr open-parentesis "")
+	  (sendr close-parentesis "")
+	  or-args
+	  (jump g-or))
+    (pop (set-snepslog-version (getr *)
+			       (getr or-args))
+	 (getr or-args))))
+
+
+;;; Node: g-general-andor
+;;; 'andor' is double-quoted so that it can be printed
+;;; in lower case. 'nconc' is changed to 'append'.
+
+(g-general-andor
+  (group
+    (call g-list-of-expressions (geta arg)
+	  (and (geta arg)
+	       (nullr andor-args))
+	  (sendr separator ",")
+	  (sendr open-parentesis "{")
+	  (sendr close-parentesis "}")
+	  andor-args
+	  (jump g-general-andor))
+    (pop (set-snepslog-version (getr *)
+			       (cons "andor"
+				     (append (make-tuple (list (geta min)
+							      (geta max))
+							","
+							"("
+							")")
+					    (getr andor-args))))
+	     (getr andor-args))))
+
+;;; Nodes: g-nor, g-xor, g-nand
+;;; Copy-and-edit from g-general-andor
+(g-nor
+  (group
+    (call g-list-of-expressions (geta arg)
+	  (and (geta arg)
+	       (nullr andor-args))
+	  (sendr separator ",")
+	  (sendr open-parentesis "{")
+	  (sendr close-parentesis "}")
+	  andor-args
+	  (jump g-nor))
+    (pop (set-snepslog-version (getr *)
+			       (cons "nor" (getr andor-args)))
+	     (getr andor-args))))
+
+(g-xor
+  (group
+    (call g-list-of-expressions (geta arg)
+	  (and (geta arg)
+	       (nullr andor-args))
+	  (sendr separator ",")
+	  (sendr open-parentesis "{")
+	  (sendr close-parentesis "}")
+	  andor-args
+	  (jump g-xor))
+    (pop (set-snepslog-version (getr *)
+			       (cons "xor" (getr andor-args)))
+	     (getr andor-args))))
+
+(g-nand
+  (group
+    (call g-list-of-expressions (geta arg)
+	  (and (geta arg)
+	       (nullr andor-args))
+	  (sendr separator ",")
+	  (sendr open-parentesis "{")
+	  (sendr close-parentesis "}")
+	  andor-args
+	  (jump g-nand))
+    (pop (set-snepslog-version (getr *)
+			       (cons "nand" (getr andor-args)))
+	     (getr andor-args))))
+
+
+;;;  Node: g-num-quant
+;;;  * contents: a numerical quantifier node
+;;;  Returns a snepslog numerical quantifier expression
+;;;
+;;;  E.g.,
+;;;       from a snepsul expression:
+;;;         (build etot 4 emin 1 emax 1 pevb (v1 v2)
+;;;                &ant (r P a1 v1 a2 v2)
+;;;                cq (r Q a1 v1 a2 v2))
+;;;       to a snepslog expression:
+;;;         nexists (1,1,4) (x,y) [{P(x,y)}:{Q(x,y)}]
+
+(g-num-quant
+  (group
+    (call g-list-of-expressions (geta pevb) 
+	  (nullr variables)
+	  (sendr separator ",")
+	  (sendr open-parentesis "(")
+	  (sendr close-parentesis ")")
+	  variables
+	  (jump g-num-quant))
+    (call g-list-of-expressions (geta &ant) 
+	  (and (getr variables)
+	       (nullr antecedent-list))
+	  (sendr separator ",")
+	  (sendr open-parentesis "{")
+	  (sendr close-parentesis "}")
+	  antecedent-list
+	  (jump g-num-quant))
+    (call g-list-of-expressions (geta cq) 
+	  (and (getr antecedent-list)
+	       (nullr consequent-list))
+	  (sendr separator ",")
+	  (sendr open-parentesis "{")
+	  (sendr close-parentesis "}")
+	  consequent-list
+	  (jump g-num-quant))
+    (pop (set-snepslog-version 
+	  (getr *)
+	  (cons "nexists"
+		(append (make-tuple 
+			 (list (if (geta emin)
+				   (sneps:choose.ns (geta emin))
+				   '_)
+			       (if (geta emax)
+				   (sneps:choose.ns (geta emax))
+				   '_)	
+			       (if (geta etot)
+				   (sneps:choose.ns (geta etot))
+				   '_))
+			 "," "(" ")")
+			(getr variables)
+			'("[")
+			(getr antecedent-list)
+			'(":")
+			(getr consequent-list)
+			'("]"))))
+	 (and (getr antecedent-list)
+	      (getr consequent-list)
+	      (getr variables)))))
+
+(g-quantified-node
+  (group
+    (jump g-forall (sneps-forall? (getr *)))
+    (jump g-exists (sneps-exists? (getr *)))
+    ; additional branch to handle numerical quantifiers
+    (jump g-num-quant (sneps-num-quant? (getr *)))))
+
+(g-forall
+  (group
+    (call g-list-of-expressions (geta forall)
+	  (nullr variables)
+	  (sendr separator ",")
+	  (sendr open-parentesis "(")
+	  (sendr close-parentesis ")")
+	  variables
+	  (jump g-forall))
+    (call gen (geta arg)
+	  (and (getr variables)
+	       (nullr quantified-expression)
+	       (cl:= (length (geta arg)) 1)
+	       (eq (get-node-name (sneps:choose.ns (geta min))) 'snepsul:|1|)
+	       (eq (get-node-name (sneps:choose.ns (geta max))) 'snepsul:|1|))
+	  quantified-expression
+	  (jump g-forall))
+    (call gen *
+	  (nullr quantified-expression)
+	  (sendr quantified t)
+	  quantified-expression
+	  (jump g-forall))
+    (pop (set-snepslog-version (getr *)
+			       (cons "all"
+				     (append (getr variables)
+					    '("(")
+					    (getr quantified-expression)
+					    '(")"))))
+	 (and (getr quantified-expression)
+	      (getr variables)))))
+
+(g-exists
+  (group
+    (call g-list-of-expressions (geta exists)
+	  (nullr variables)
+	  (sendr separator ",")
+	  (sendr open-parentesis "(")
+	  (sendr close-parentesis ")")
+	  variables
+	  (jump g-exists))
+    (call gen (geta arg)
+	  (and (getr variables)
+	       (nullr quantified-expression)
+	       (cl:= (length (geta arg)) 1)
+	       (eq (get-node-name (sneps:choose.ns (geta min))) 'snepsul:|1|)
+	       (eq (get-node-name (sneps:choose.ns (geta max))) 'snepsul:|1|))
+	  quantified-expression
+	  (jump g-exists))
+    (call gen *
+	  (nullr quantified-expression)
+	  (sendr quantified t)
+	  quantified-expression
+	  (jump g-exists))
+    (pop (set-snepslog-version (getr *)
+			       (cons "exists"
+				     (append (getr variables)
+					     '("(")
+					     (getr quantified-expression)
+					     '(")"))))
+	 (and (getr quantified-expression)
+	      (getr variables)))))
+
+
+(pop-result
+  (pop result t))

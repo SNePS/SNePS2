@@ -1,0 +1,91 @@
+; Schubert's Steamroller:
+; =======================
+; This SNePSLOG formulation of this popular benchmark for automated
+; deduction systems is due to Carlos Pinto-Ferreira (currently at the
+; Technical University of Lisbon, Portugal). It was created in Fall 1989.
+;
+; Problem definition (taken from M.E. Stickel: Automated Deduction by 
+; Theory Resolution, Proc. of IJCAI 85, p.1184-85):
+;
+; + Wolves, foxes, birds, caterpillars and snails are animals.
+; + There are some of each of them.
+; + There are some grains.
+; + Grains are plants.
+; + Every animal either likes to eat all plants or all animals
+;   much smaller than itself that like to eat some plants.
+; + Caterpillars and snails are much smaller than birds, which
+;   are much smaller than foxes, which in turn are much smaller
+;   than wolves.
+; + Wolves do not like to eat foxes or grains.
+; + Birds like to eat caterpillars but not snails.
+; + Caterpillars and snails like to eat some plants.
+;
+; Therefore:
+;
+; + There is an animal that likes to eat a grain eating animal.
+;
+clearkb
+set-mode-1
+
+					;
+; Wolves, foxes, birds, caterpillars and snails are animals.
+all (x) (Wolf(x) => Animal(x)).
+all (x) (Fox(x) => Animal(x)).
+all (x) (Bird(x) => Animal(x)).
+all (x) (Caterpillar(x) => Animal(x)).
+all (x) (Snail(x) => Animal(x)).
+;
+; There are some of each of them.
+; Note: Because the existential quantifier is not yet implemented
+;       existence statements are represented via Skolemization.
+Wolf(w).
+Fox(f).
+Bird(b).
+Caterpillar(c).
+Snail(s).
+;
+; There are some grains.
+Grain(g).
+;
+; Grains are plants.
+all (x) (Grain(x) => Plant(x)).
+;
+; Every animal either likes to eat all plants or all animals
+; much smaller than itself that like to eat some plants.
+all (x,y) ({Animal(x), Plant(y), ~Eats(x,y)}
+	      &=> {all (z,v) ({Animal(z), Plant(v),Muchsmaller(z,x), Eats(z,v)}
+				       &=> {Eats(x,z)})}).
+all (x,v,z) ({Animal(x), Plant(v), Animal(z),
+	      Muchsmaller(z,x), Eats(z,v), ~Eats(x,z)}
+	        &=> {all (y) (Plant(y) => Eats(x,y))}).
+all (x,v,z) ({Animal(x), Plant(v), Animal(z),
+	      Muchsmaller(z,x), ~Eats(x,z), ~Eats(x,v)}
+	         &=> {all (y) (Plant(y) =>  ~Eats(z,y))}).
+;
+; Caterpillars and snails are much smaller than birds, which are much 
+; smaller than foxes, which in turn are much smaller than wolves.
+all (x,y) ({Caterpillar(x), Bird(y)} &=> {Muchsmaller(x,y)}).
+all (x,y) ({Snail(x), Bird(y)} &=> {Muchsmaller(x,y)}).
+all (x,y) ({Bird(x), Fox(y)} &=> {Muchsmaller(x,y)}).
+all (x,y) ({Fox(x), Wolf(y)} &=> {Muchsmaller(x,y)}).
+;
+; Wolves do not like to eat foxes or grains.
+all (x,y) ({Wolf(x), Fox(y)} &=> {~Eats(x,y)}).
+all (x,y) ({Wolf(x), Grain(y)} &=> {~Eats(x,y)}).
+;
+; Birds like to eat caterpillars but not snails.
+all (x,y) ({Bird(x), Caterpillar(y)} &=> {Eats(x,y)}).
+all (x,y) ({Bird(x), Snail(y)} &=> {~Eats(x,y)}).
+;
+; Caterpillars and snails like to eat some plants.
+all (x) (Caterpillar(x) => Plant(caterpillarfood(x))).
+all (x) (Caterpillar(x) => Eats(x,caterpillarfood(x))).
+all (x) (Snail(x) => Plant(snailfood(x))).
+all (x) (Snail(x) => Eats(x,snailfood(x))).
+;
+; Definition of an animal that likes to eat a grain eating animal.
+all (x,y,z) ({Animal(x), Animal(y), Grain(z), Eats(y,z), Eats(x,y)} 
+		    &=> {graineatingeater(x,y)}).
+;
+; Find all animals that like to eat grain eating animals:
+graineatingeater(?x,?y)?

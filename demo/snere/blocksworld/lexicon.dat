@@ -1,0 +1,123 @@
+;;; -*- Mode:Common-Lisp; Package:Englex; Base:10 -*-
+
+;; Copyright (C) 1984--2004
+;; Research Foundation of State University of New York
+
+;; Version: $Id: lexicon.dat,v 1.1 2011/05/24 17:59:37 mwk3 Exp $
+
+;; This file is part of SNePS.
+
+;; SNePS is free software; you may redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 2, or (at your option)
+;; any later version.
+
+;; SNePS is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with SNePS; see the file COPYING.  If not, write to
+;; the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA, or to
+;; Dr. Stuart C. Shapiro, Department of Computer Science and Engineering,
+;; University at Buffalo, The State University of New York, 
+;; 201 Bell Hall, Buffalo, NY 14260, USA
+
+
+("Tom" ((ctgy . n)))
+("are" ((ctgy . v) (root . "be") (num . plur) (tense . pres)))
+("holding" ((ctgy . v) (root . "hold") (vform . progressive)))
+("hold" ((ctgy . v) (root . "hold") (vform . infinitive)))
+("held" ((ctgy . adj) (root . "held")))
+("clearing" ((ctgy . v) (root . "clear") (vform . progressive)))
+("clear" ((ctgy . v) (root . "clear") (vform . infinitive))
+	((ctgy . adj) (root . "clear")))
+("empty" ((ctgy . adj) (root . "empty")))
+("pick" ((ctgy . multi-start) (multi-rest . ("up")))
+	((ctgy . v) (root . "pick")))
+("pickup" ((ctgy . v) (root . "pickup") (vform . infinitive)))
+("picking" ((ctgy . multi-start) (multi-rest . ("up"))))
+	;((ctgy . v) (root . "pick")))
+("picked" ((ctgy . multi-start) (multi-rest . ("up")) (tense . past)))
+	;((ctgy . v) (root . "pick")))
+("up" ((ctgy . prep)))
+("picked up" ((ctgy . v) (root . "pickup")))
+("picking up" ((ctgy . v) (root . "pickup") (vform . progressive)))
+("pick up" ((ctgy . v) (root . "pickup") (vform . infinitive)))
+("put down" ((ctgy . v) (root . "putdown")))
+("putdown" ((ctgy . v) (root . "putdown")))
+("put" ((ctgy . multi-start) (multi-rest . ("down"))) 
+	((ctgy . v) (root . "put") (vform . infinitive) (tense present past)))
+("putting"  
+	((ctgy . v) (root . "put") (vform . progressive))
+	((ctgy . multi-start) (multi-rest . ("down"))))
+("down" ((ctgy . prep)))
+("primitive" ((ctgy . multi-start) (multi-rest . ("action")))
+	   ((ctgy . adj)))
+("primitive action" ((ctgy . n) (root . "primitive")))
+("primact" ((ctgy . n) (root . "primitive")))
+("putting down" ((ctgy . v) (root . "putdown")))
+("stacking" ((ctgy . v) (root . "stack") (vform . progressive)))
+("stack" ((ctgy . v) (root . "stack") (vform . infinitive)))
+("pile" ((ctgy . v) (root . "pile") (vform . infinitive)))
+("from" ((ctgy . prep)))
+("unstacking" ((ctgy . v) (root . "unstack") (vform . progressive)))
+("unstack" ((ctgy . v) (root . "unstack") (vform . infinitive)))
+("believing" ((ctgy . v) (root . "believe") (vform . progressive)))
+("believe" ((ctgy . v) (root . "believe")))
+("forgetting" ((ctgy . v) (root . "forget") (vform . progressive)))
+("forget" ((ctgy . v) (root . "forget")))
+("do" ((ctgy . multi-start) (multi-rest . ("nothing")) (vform . infinitive)) 
+	((ctgy . v) (root . "do") (vform . infinitive)))
+("doing" ((ctgy . multi-start) (multi-rest . ("nothing")) (vform . progressive)) 
+	((ctgy . v) (root . "do") (vform . progressive)))
+("do nothing" ((ctgy . v) (root . "noop")))
+("doing nothing" ((ctgy . v) (root . "noop")))
+("nothing" ((ctgy . n)))
+("noop" ((ctgy . v)))
+
+("action" ((ctgy . n)))
+
+("a" ((ctgy . det)))
+("an" ((ctgy . det)))
+("another" ((ctgy . det)))
+
+("must" ((ctgy . modal) (root . "must")))
+
+("is" ((ctgy . v)(root . "be")(num . sing)(tense . pres)))
+("be" ((ctgy . v)(root . "be")))
+("the" ((ctgy . det)))
+
+("not" ((ctgy . mod)))
+
+("ontable" ((ctgy . adj)))
+
+("A" ((ctgy . n)))
+("B" ((ctgy . n)))
+("C" ((ctgy . n)))
+("D" ((ctgy . n)))
+("thetable" ((ctgy . n)))
+
+("latter" ((ctgy . adj)))
+("former" ((ctgy . adj)))
+("first" ((ctgy . adj)))
+("second" ((ctgy . adj)))
+("third" ((ctgy . adj)))
+("fourth" ((ctgy . adj)))
+
+("block" ((ctgy . n)))
+("support" ((ctgy . n)))
+("table" ((ctgy . n)))
+("hand" ((ctgy . n)))
+
+("on" ((ctgy . prep)))
+
+
+
+    
+    
+
+
+
+

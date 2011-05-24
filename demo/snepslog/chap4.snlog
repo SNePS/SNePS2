@@ -1,0 +1,158 @@
+;;; Demo of the Material in Chapter 4 of the SNePS 2.4 User's Manual
+;;; using SNePSLOG Mode 3 and the SNePSLOG perform command
+;;; Stuart C. Shapiro
+;;; May 21, 1998
+set-mode-3
+;;; Setting Mode 3 clears the knowledge base, undefines frames except
+;;; for the default frames, and unattaches primitive actions from nodes.
+define-frame say (action object1 object2)
+define-frame Is (state agent location)
+^^
+(setf *infertrace* nil
+      *plantrace* nil)
+(define-primaction say (object1 object2)
+  "Print the argument nodes in order."
+  (format t "~&~A ~A~%"
+	  (sneps:choose.ns object1)
+	  (sneps:choose.ns object2)))
+(attach-primaction say say disbelieve disbelieve)
+^^
+;;;
+;;; Section 4.1, Acting
+;;;
+perform say("Hello", "there")
+wheneverdo(Is(Stu, here), say("Hello", "Stu")).
+whendo(Is(Stu, here), say("I see", "you're here")).
+Is(Stu, here)!
+perform disbelieve(Is(Stu, here))
+Is(Stu, here)!
+ifdo(Is(who, here), say("Who's", "here?")).
+Is(who, here)?
+;;;
+;;; Section 4.2, Primitive Acts
+;;;
+clearkb
+;;; Clearing the knowledge base unattaches primitive actions, but
+;;; leaves defined frames alone
+^^
+(attach-primaction believe believe disbelieve disbelieve)
+^^
+;;;
+;;; Functions for Mental acts
+;;;
+~Is(Stu, here).
+Is(?who, here)?
+perform believe(Is(Stu, here))
+Is(?who, here)?
+perform disbelieve(Is(Stu, here))
+Is(?who, here)?
+;;;
+;;; Functions for Control acts
+;;;
+^^
+(attach-primaction do-all do-all do-one do-one snsequence snsequence
+		   snif snif sniterate sniterate
+		   withall withall withsome withsome
+		   say say)
+^^
+perform do-all({say("Hello", "Bill"), say("Hello", "Stu")})
+perform do-one({say("Hello", "Bill"), say("Hello", "Stu")})
+;;; In SNePSLOG Mode 3, snsequence always takes two acts as arguments.
+perform snsequence(say("Hello", "Bill"),
+		      snsequence(say("Hello","Stu"), 
+				    say("Hello","Oscar")))
+Is("Stu", here).
+Is(?who, here)?
+perform snif({if(Is("Bill", here), say("Hello", "Bill")),
+		if(Is("Stu", here), say("Hello", "Stu")),
+		else(say("No one's", "here!"))})
+perform disbelieve(Is("Stu", here))
+perform snif({if(Is("Bill", here), say("Hello", "Bill")),
+		if(Is("Stu", here), say("Hello", "Stu")),
+		else(say("No one's", "here!"))})
+Is("Bill", here).
+Is("Stu", here).
+Is(?who, here)?
+perform sniterate({if(Is("Bill", here),
+			snsequence(say("Hello", "Bill"), 
+				      disbelieve(Is("Bill", here)))),
+		     if(Is("Stu", here),
+			  snsequence(say("Hello", "Stu"), 
+					disbelieve(Is("Stu", here)))),
+		     else(say("That's", "all"))})
+Is(?who, here)?
+perform withall(?x, Is(?x, here), say("hello", ?x), say("No one's", "here"))
+Is("Stu", here).
+Is("Bill", here).
+perform withall(?x, Is(?x, here), say("hello", ?x), say("No one's", "here"))
+Is(?who, here)?
+perform withsome(?x, Is(?x, here), say("hello", ?x), say("No one's", "here"))
+perform disbelieve(Is("Stu", here))
+perform disbelieve(Is("Bill", here))
+perform withsome(?x, Is(?x, here), say("hello", ?x), say("No one's", "here"))
+define-frame Person (class member)
+Person({"Stu", "Bill"}).
+Is("Stu", here).
+all(p)(Person(p) => whendo(Is(p, here), say("Hello new", p))).
+perform withall(?x, (Person(?x) and Is(?x, here)),
+		    say("Hello old", ?x), say("No one's", "here"))
+clear-infer
+Is("Bill", here)!
+;;;
+;;; Section 4.3, Associating Primitive Action Nodes with Their Functions
+;;;
+;;; This Section shows three different representation schemes for
+;;; primitive actions.  Two of these are particularly useful when
+;;; using a Natural Language interface, and cannot be created using
+;;; the SNePSLOG interface.
+;;;
+;;; Section 4.4, Complex Acts
+;;;
+;;; Start again.
+;;; With a non-NIL optional argument, no feedback is given.
+set-mode-3 t
+define-frame say (action object1)
+define-frame greet (action object1)
+define-frame Person (class member)
+^^
+(define-primaction say (object1)
+  "Print the object."
+  (format t "~&~A" (sneps:choose.ns object1)))
+(attach-primaction
+ say say
+ snsequence snsequence)
+^^
+all(p)(Person(p)
+	     => ActPlan(greet(p),
+			  snsequence(sayHi, say(p)))).
+Person({Stu, Bill}).
+ActPlan(sayHi, say("Hello")).
+ActPlan(sayHi, say("Hi")).
+ActPlan(sayHi, say("Hiya")).
+perform greet(Stu)
+perform greet(Bill)
+ActPlan(ask, say("Who's there?")).
+perform ask
+;;;
+;;; Section 4.5, Goals
+;;;
+define-frame Is (state agent location)
+define-frame call (action object1)
+^^
+(attach-primaction achieve achieve)
+^^
+all(p)(Person(p) => GoalPlan(Is(p, here), call(p))).
+all(p)(Person(p) => ActPlan(call(p), snsequence(say("Come here"), say(p)))).
+perform achieve(Is(Bill, here))
+;;;
+;;; Section 4.6, The Execution Cycle:  Preconditions and Effects
+;;;
+^^
+(setf *plantrace* 'surface)
+^^
+all(p)(Person(p) => Precondition(greet(p), Is(p, here))).
+Is(Stu, here).
+perform greet(Stu)
+all(p)(Person(p) => Effect(call(p), Is(p, here))).
+perform call(Bill)
+Is(?who, here)?

@@ -1,0 +1,92 @@
+;;; Various examples of rule introduction:
+;;;
+;;; And introduction:
+clearkb
+set-mode-1
+
+adult().
+robin().
+adult() and robin()?
+list-wffs
+;;; Simple entailment introduction:
+clearkb
+robin() => bird().
+bird() => animal().
+robin() => animal()?
+list-asserted-wffs
+;;; Introduction of an or-entailment with two antecedents
+;;;    of which only one of which leads to the consequent.:
+;;; This should not work.
+clearkb
+robin() => bird().
+bird() => animal().
+{robin(),sparrow()} v=> {animal()}?
+list-asserted-wffs
+;;; Introduction of an or-entailment with two antecedents
+;;;    both of which lead to the consequent.
+;;; This should work, but the code doesn't support it.
+clearkb
+robin() => bird().
+sparrow() => bird().
+bird() => animal().
+{robin(),sparrow()} v=> {animal()}?
+list-asserted-wffs
+;;; Introduction of an and-entailment:
+clearkb
+robin() => bird().
+nestling() or adult().
+{bird(), adult()} &=> laysEggs().
+{robin(), ~nestling()} &=> laysEggs()?
+list-asserted-wffs
+;;; Introduction of an and-entailment with two consequents:
+clearkb
+robin() => bird().
+nestling() or adult().
+{adult(),bird()} &=> {animal(), laysEggs()}.
+{robin(), ~nestling()} &=> {animal(), laysEggs()}?
+list-asserted-wffs
+;;; Introduction of an or-entailment which is an instance of the
+;;; antecedent of a quantified rule. This case used to assert pattern
+;;; nodes in early versions of SNePS-2.1 (asserted pattern nodes are
+;;; very dangerous objects). Now the antecedents are properly substituted
+;;; and only if they do not contain any free variables they will get
+;;; asserted in the introduction context:
+clearkb
+robin(Betty) => bird(Betty).
+sparrow(Betty) => bird(Betty).
+bird(Betty) => animal(Betty).
+all(x)(({robin(x),sparrow(x)} v=> {animal(x)})
+       => entails(or{robin(x),sparrow(x)},animal(x))).
+;;; This question shows that if we cannot get proper instantiations of the
+;;; variables of the antecedent entailment no introduction will get attempted:
+entails(or{robin(?who),sparrow(?who)},animal(?who))?
+clear-infer
+;;; Now we can bind x to a and hence we are in a position to start
+;;;   entailment introduction.
+;;; This should not work because v=>I is not implemented for multiple antecedents.
+entails(or{robin(Betty),sparrow(Betty)},animal(Betty))?
+list-asserted-wffs
+;;; Introduction of an and-entailment which is an instance of the
+;;; antecedent of a quantified rule (similar to previous example):
+clearkb
+robin(Betty) => bird(Betty).
+nestling(Betty) or adult(Betty).
+{bird(Betty),adult(Betty)} &=> {laysEggs(Betty)}.
+all(x)(({robin(x),adult(x)} &=> {laysEggs(x)})
+       => entails(and{robin(x),adult(x)},laysEggs(x))).
+;;; This should not work.
+entails(and{robin(?who),adult(?who)},laysEggs(?who))?
+clear-infer
+;;; But this should.
+entails(and{robin(Betty),adult(Betty)},laysEggs(Betty))?
+list-asserted-wffs
+;;; Universal introduction (not yet implemented), however, in early
+;;; versions of SNePS-2.1 a query such as the one below would start
+;;; implication introduction with the usual assertion of a pattern node:
+clearkb
+robin(Betty) => animal(Betty).
+all(x)(robin(x) => bird(x)).
+all(x)(bird(x) => animal(x)).
+;;; Currently this does not derive anything (not even by accident):
+all(x)(robin(x) => animal(x))?
+list-asserted-wffs

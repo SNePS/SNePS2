@@ -1,0 +1,50 @@
+set-mode-1
+
+woman (ada)
+woman (bea)
+woman (cyd)
+woman (deb)
+woman (eve)
+andor (3,3)(age(ada, u30),
+	       age(bea, u30),
+	       age(cyd, u30),
+	       age(deb, u30),
+	       age(eve, u30))
+andor (2,2)(age(ada, o30),
+	       age(bea, o30),
+	       age(cyd, o30),
+	       age(deb, o30),
+	       age(eve, o30)),
+all (x) (woman(x) => andor(1,1)(age(x, u30), age(x, o30)))
+andor(2,2) (worker(ada,teacher),
+		  worker(bea,teacher),
+		  worker(cyd,teacher),
+		  worker(deb,teacher),
+		  worker(eve,teacher))
+andor(3,3) (worker(ada,secretary),
+		  worker(bea,secretary),
+		  worker(cyd,secretary),
+		  worker(deb,secretary),
+		  worker(eve,secretary))
+all (x) (woman(x) => andor(1,1) (worker(x,secretary),
+				       worker(x,teacher)))
+all (x) (thresh (1) (age(ada,x), age(cyd,x)))
+all (x) (andor (1,1) (age(deb,x), age(eve,x)))
+all (x) (thresh (1) (worker(bea,x), worker(eve,x)))
+all (x) (andor(1,1) (worker(cyd,x), worker(deb,x)))
+andor(1,1) (andor(2,2)(age(ada,o30), worker(ada,teacher)),
+		 andor(2,2)(age(bea,o30), worker(bea,teacher)),
+		 andor(2,2)(age(cyd,o30), worker(cyd,teacher)),
+		 andor(2,2)(age(deb,o30), worker(deb,teacher)),
+		 andor(2,2)(age(eve,o30), worker(eve,teacher)))
+all (x) (thresh (1) (marry(Freeman,x),
+			  age(x, o30) and worker(x, teacher)))
+
+
+age(ada,o30)
+
+age(cyd, o30)
+
+worker(ada, teacher)
+
+worker(deb, teacher)

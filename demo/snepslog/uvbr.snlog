@@ -1,0 +1,54 @@
+;;; -*- Mode:Common-Lisp; Base:10 -*-
+;;;
+;;; Demonstration of UBVR in action in SNePS-2
+;;; from Appendix of
+;;; S. C. Shapiro,
+;;;         Symmetric Relations, Intensional Individuals, and Variable Binding
+;;;         Proc. IEEE 74, 10(Oct. 1986), 1354-1363
+;;;
+;;; Start with an empty network
+clearkb
+set-mode-1
+
+;;;
+;;; Example 1: If x and y are brothers, then x likes y.
+;;;
+Brothers({Bob, Joe, Harry}).
+all(b1,b2)(Brothers({b1,b2}) => Likes(b1,b2)).
+Likes(?b1,?b2)?
+;;;
+;;; Example 2: If a tract of the CNS is malfunctioning, adjacent
+;;; tracts should be examined. 
+;;;
+all(tract1)({Tract(tract1), Malfunctioning(tract1)}
+	   &=> (all(tract2)({Tract(tract2), Adjacent({tract1,tract2})}
+			    &=> {Should-Examine(tract2)}))).
+Tract(16R).
+Tract(13RC8-C2).
+Adjacent({16R,13RC8-C2}).
+Malfunctioning(16R).
+Should-Examine(?tract)?
+;;;
+;;; Example 3: If an AND gate has high inputs and a low output, it is faulty.
+;;; 
+all(ag,i,i2,o)({And-Gate(ag),Gate(ag,{i,i2},o)}
+	       &=> ({High(i),High(i2),Low(o)}
+	           &=> {Faulty(ag)})).
+And-Gate(A1).
+Gate(A1,{A1inp1,A1inp2},A1outp).
+High(A1inp1).
+Low(A1inp2).
+Low(A1outp).
+And-Gate(A2).
+Gate(A2,{A2inp1,A2inp2},A2outp).
+High(A2inp1).
+High(A2inp2).
+Low(A2outp).
+Faulty(?g)?
+;;;
+;;; Example 4: Elephants hate each other.
+;;; 
+Elephant(Clyde).
+Elephant(Jumbo).
+all(e1,e2)({Elephant(e1), Elephant(e2)} &=> {Hates(e1,e2)}).
+Hates(?e1,?e2)?

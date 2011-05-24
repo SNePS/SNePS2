@@ -1,0 +1,20 @@
+;
+;  Every person has at most one mother
+;
+(resetnet t)
+(define member class agent object rela)
+;
+(describe (assert forall $x
+		  ant (build member *x class person)
+		  cq (build emax 1 pevb $y
+			    &ant (build member *y class person)
+			    cq (build agent *y rela mother object *x))))
+;
+(describe (assert member jane class person))
+(describe (assert member john class person))
+(describe (assert member mary class person))
+;
+(describe (assert agent jane rela mother object john))
+;
+(describe (deduce agent mary rela mother object john))
+

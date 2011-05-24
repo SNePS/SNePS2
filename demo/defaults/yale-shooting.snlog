@@ -1,0 +1,18 @@
+; This demo only works with Maria Cravo's implementation of default rules:
+; (see the corresponding snepsul demo for more detailled explanations):
+;
+; 4.3 THE YALE SHOOTING PROBLEM USING SNePSLOG
+;
+default (f,e,s) ((t(f,s)) => (t(f,result(e,s))))
+all (s)  (t(loaded,result(load,s)))
+all (s) ((t(loaded,s)) => (~applicable(wff1,alive,shoot,s)))
+all (s) ((t(loaded,s)) => (t(dead,result(shoot,s))))
+t(alive,situation0)
+t(?f,result(shoot,result(wait,result(load,situation0))))?
+belief-spaces 
+wff9 
+wff10 
+wff12
+wff14 
+wff16 
+wff18 

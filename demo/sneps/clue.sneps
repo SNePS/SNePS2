@@ -1,0 +1,166 @@
+;;; -*- Mode:Common-Lisp; Base:10 -*-
+;
+;;; CLUE Reasoning Example from Shapiro, 1979
+;
+(resetnet t)
+(define member class holder held)
+;
+^^
+(shadow 'room)
+(defsnepscom suspect ((p))
+  #!((describe (assert member ~p class suspect)
+	       (assert member ~p class card))))
+;
+(defsnepscom weapon ((p))
+  #!((describe (assert member ~p class weapon)
+	       (assert member ~p class card))))
+;
+(defsnepscom room ((p))
+  #!((describe (assert member ~p class room)
+	       (assert member ~p class card))))
+;
+(defvar Players)
+(defvar Table)
+(defsnepscom clue ((&rest people))
+  (setq Players people Table (append people people))
+  (mapc #'(lambda (player)
+	    (declare (special player))
+	    (describe (assert member (^ player) class player)
+		      (assert member (^ player) class hand))
+	    (mapc #'(lambda (card)
+		      (declare (special card))
+		      (build holder (^ player) held (^ card)))
+		  (find (member- class) card))
+	    (describe (assert min (^ (numdealt player))
+			      max (^ (numdealt player)) 
+			      arg (find holder (^ player)))))
+	people)
+  (mapc #'(lambda (card)
+	    (declare (special card))
+	    (describe (assert min 1 max 1 
+			      arg (find held (^ card))
+			      arg (build holder Envelope held (^ card)))))
+	(find (member- class) card))
+  '(values))
+;
+(defsnepscom suggest ((player suspect weapon room responder card))
+  (declare (special responder card suspect weapon room))
+  (mapc #'(lambda (passed)
+	    (has-none passed suspect weapon room))
+	(between player responder))
+  (when responder
+    (if card
+	(describe (add holder (^ responder) held (^ card)))
+	(describe (add min 1 max 3
+		       arg ((build holder (^ responder)
+				   held (^ suspect))
+			    (build holder (^ responder)
+				   held (^ weapon))
+			    (build holder (^ responder)
+				   held (^ room)))))))
+  '(values))
+;
+(defun numdealt (player)
+  (lisp:+ (floor (/ (numHeldCards) (length Players)))
+	   (if (lisp:> (lisp:- (length Players) (1- (length (member player Players))))
+		  (mod (numHeldCards) (length Players)))
+	       0
+	       1)))
+(defun numHeldCards () (lisp:- (numCards) 3))
+(defun numCards () (length (find (member- class) card)))
+(defun between (player1 player2)
+  (if player2
+      ((lambda (listFromP1) (ldiff listFromP1 (member player2 listFromP1)))
+       (rest (member player1 Table)))
+      (remove player1 Players)))
+(defun has-none (player suspect weapon room)
+  (declare (special player suspect weapon room))
+  (describe (add min 0 max 0
+		 arg ((build holder (^ player) held (^ suspect))
+		      (build holder (^ player) held (^ weapon))
+		      (build holder (^ player) held (^ room))))))
+^^
+;
+(suspect Col.\ Mustard)
+;
+(suspect Prof.\ Plum)
+;
+;(suspect Miss\ Scarlet)
+;
+;(suspect Miss\ Peacock)
+;
+;(suspect Mrs.\ White)
+;
+;(suspect Mr.\ Green)
+;
+(weapon knife)
+;
+(weapon candlestick)
+;
+;(weapon rope)
+;
+;(weapon revolver)
+;
+;(weapon lead\ pipe)
+;
+;(weapon wrench)
+;
+(room hall)
+;
+(room lounge)
+;
+(room dining\ room)
+;
+(room kitchen)
+;
+;(room study)
+;
+;(room billiard\ room)
+;
+;(room library)
+;
+;(room conservatory)
+;
+;(room ballroom)
+;
+(describe (assert member Envelope class hand))
+;
+(describe (assert min 1 max 1 
+		  arg (^ (mapcan (function (lambda (suspect)
+					     (declare (special suspect))
+					     (build holder Envelope held (^ suspect))))
+				 (find (member- class) suspect)))))
+;
+(describe (assert min 1 max 1 
+		  arg (^ (mapcan (function (lambda (weapon)
+					     (declare (special weapon))
+					     (build holder Envelope held (^ weapon))))
+				 (find (member- class) weapon)))))
+;
+(describe (assert min 1 max 1 
+		  arg (^ (mapcan (function (lambda (room)
+					     (declare (special room))
+					     (build holder Envelope held (^ room))))
+				 (find (member- class) room)))))
+;
+(clue Don Chuck Bill Stu)
+;
+(describe (assert holder Don held Col.\ Mustard))
+;
+(describe (assert holder Don held knife))
+;
+(describe (deduce (3 0) holder Envelope held $x))
+;
+(suggest Stu Col.\ Mustard knife kitchen Don knife)
+;
+(suggest Don Col.\ Mustard knife dining\ room Stu dining\ room)
+;
+(suggest Chuck Prof.\ Plum candlestick lounge Bill nil)
+;
+(suggest Bill Prof.\ Plum knife hall Don knife)
+;
+(suggest Stu Prof.\ Plum candlestick dining\ room nil nil)
+;
+(suggest Don Col.\ Mustard knife hall Chuck hall)
+;
+(describe (deduce 0 holder Envelope held *x))

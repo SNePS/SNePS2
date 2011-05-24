@@ -1,0 +1,230 @@
+;;; -*- Mode:Common-Lisp; Package:Englex; Base:10 -*-
+
+;; Copyright (C) 1984--2004
+;; Research Foundation of State University of New York
+
+;; Version: $Id: arclex.dat,v 1.1 2011/05/24 17:59:36 mwk3 Exp $
+
+;; This file is part of SNePS.
+
+;; SNePS is free software; you may redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 2, or (at your option)
+;; any later version.
+
+;; SNePS is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with SNePS; see the file COPYING.  If not, write to
+;; the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA, or to
+;; Dr. Stuart C. Shapiro, Department of Computer Science and Engineering,
+;; University at Buffalo, The State University of New York, 
+;; 201 Bell Hall, Buffalo, NY 14260, USA
+
+
+;; ARC/INFO specific names:
+;;
+("arc" ((ctgy . n)))
+("arcplot" ((ctgy . n)))
+("arcedit" ((ctgy . n)))
+
+
+;; Domain specific individuals:
+;;
+("Landuse" ((ctgy . n)))
+("Roads" ((ctgy . n)))
+("Sewers" ((ctgy . n)))
+("Streams" ((ctgy . n)))
+("Forests" ((ctgy . n)))
+("this" ((ctgy . multi-start) (multi-rest . ("area")))
+	((ctgy . multi-start) (multi-rest . ("region")))
+	((ctgy . multi-start) (multi-rest . ("point"))))
+("this area" ((ctgy . n)))
+("this region" ((ctgy . n)))
+("this point" ((ctgy . n)))
+
+;; Domain specific classes:
+;;
+("coverage" ((ctgy . n)))
+
+("point" ((ctgy . multi-start) (multi-rest . ("coverage")))
+	 ((ctgy . multi-start) (multi-rest . ("coverages")))
+	 )
+("point coverage" ((ctgy . n)))
+("point coverages" ((ctgy . n) (num . plur) (root . "point coverage")))
+
+("line" ((ctgy . multi-start) (multi-rest . ("coverage")))
+	((ctgy . multi-start) (multi-rest . ("coverages")))
+	)
+("line coverage" ((ctgy . n)))
+("line coverages" ((ctgy . n) (num . plur) (root . "line coverage")))
+
+("polygon" ((ctgy . multi-start) (multi-rest . ("coverage")))
+	   ((ctgy . multi-start) (multi-rest . ("coverages")))
+	   )
+("polygon coverage" ((ctgy . n)))
+("polygon coverages" ((ctgy . n) (num . plur) (root . "polygon coverage")))
+
+("attribute" ((ctgy . n)))
+("feature" ((ctgy . n)))
+("map" ((ctgy . n)))
+("area" ((ctgy . n)))
+("region" ((ctgy . n)))
+("map" ((ctgy . n)))
+("display" ((ctgy . n)))
+("screen" ((ctgy . n)))
+("program" ((ctgy . n)))
+("result" ((ctgy . n)))
+
+("embedded" ((ctgy . multi-start) (multi-rest . ("program")))
+	    ((ctgy . multi-start) (multi-rest . ("programs"))))
+("embedded program" ((ctgy . n)))
+("embedded programs" ((ctgy . n) (num . plur) (root . "embedded program")))
+
+;; Domain specific actions:
+;;
+("clear" ((ctgy . v) (vform . infinitive))
+	 ((ctgy . adj)))
+;; Do I need an explicit progressive entry?
+;;("clearing" ((ctgy . v) (root . "clear") (vform . progressive)))
+("type" ((ctgy . v) (vform . infinitive)))
+("plot" ((ctgy . v) (vform . infinitive)))
+("list" ((ctgy . v) (vform . infinitive)))
+("edit" ((ctgy . v) (vform . infinitive)))
+("identify" ((ctgy . v) (vform . infinitive)))
+("interpret" ((ctgy . v) (vform . infinitive)))
+("activate" ((ctgy . v) (vform . infinitive)))
+("execute" ((ctgy . v) (vform . infinitive)))
+("start" ((ctgy . v) (vform . infinitive)))
+("stop" ((ctgy . v) (vform . infinitive)))
+("say" ((ctgy . v) (vform . infinitive) (past . "said") (pastp . "said")))
+("issue" ((ctgy . v) (vform . infinitive)))
+("send" ((ctgy . v) (vform . infinitive) (past . "sent") (pastp . "sent")))
+("tell" ((ctgy . v) (vform . infinitive) (past . "told") (pastp . "told")))
+;; Pseudo verbs:
+("arcdo" ((ctgy . v) (vform . infinitive)))
+("arcdoline" ((ctgy . v) (vform . infinitive)))
+("arcdosend" ((ctgy . v) (vform . infinitive)))
+;; Test verbs:
+("verba" ((ctgy . v) (vform . infinitive)))
+("verbb" ((ctgy . v) (vform . infinitive)))
+("verbc" ((ctgy . v) (vform . infinitive)))
+("verbd" ((ctgy . v) (vform . infinitive)))
+("verbe" ((ctgy . v) (vform . infinitive)))
+("verbf" ((ctgy . v) (vform . infinitive)))
+("verbg" ((ctgy . v) (vform . infinitive)))
+	
+
+;; Domain specific attributes:
+;;
+("active" ((ctgy . adj)))
+("inactive" ((ctgy . adj)))
+("plotted" ((ctgy . adj)))
+("displayed" ((ctgy . adj)))
+
+;; Snactor specific terms:
+;;
+("primitive" ((ctgy . multi-start) (multi-rest . ("action")))
+	     ((ctgy . adj)))
+("primitive action" ((ctgy . n))); (root . "primitive")))
+("primact" ((ctgy . n) (root . "primitive")))
+("action" ((ctgy . n)))
+("act" ((ctgy . n)))
+("nothing" ((ctgy . n)))
+
+("believe" ((ctgy . v) (vform . infinitive)))
+("forget" ((ctgy . v) (vform . infinitive)))
+("do" ((ctgy . multi-start) (multi-rest . ("nothing")))
+      ((ctgy . v) (vform . infinitive)))
+("doing" ((ctgy . multi-start) (multi-rest . ("nothing"))
+	  (vform . progressive)) 
+	 ((ctgy . v) (root . "do") (vform . progressive)))
+("do nothing" ((ctgy . v) (root . "noop")))
+("doing nothing" ((ctgy . v) (root . "noop")))
+("noop" ((ctgy . v)))
+
+
+;; General terms
+;;
+("a" ((ctgy . det)))
+("an" ((ctgy . det)))
+("another" ((ctgy . det)))
+("the" ((ctgy . det)))
+
+("not" ((ctgy . mod)))
+("must" ((ctgy . modal) (root . "must")))
+
+("is" ((ctgy . v)(root . "be")(num . sing)(tense . pres)))
+("be" ((ctgy . v)(root . "be")))
+("are" ((ctgy . v) (root . "be") (num . plur) (tense . pres)))
+
+("down" ((ctgy . prep)))
+("up" ((ctgy . prep)))
+("from" ((ctgy . prep)))
+("on" ((ctgy . prep)))
+
+("latter" ((ctgy . adj)))
+("former" ((ctgy . adj)))
+("first" ((ctgy . adj)))
+("second" ((ctgy . adj)))
+("third" ((ctgy . adj)))
+("fourth" ((ctgy . adj)))
+
+("empty" ((ctgy . adj)))
+
+("white" ((ctgy . adj)))
+("yellow" ((ctgy . adj)))
+("orange" ((ctgy . adj)))
+("red" ((ctgy . adj)))
+("green" ((ctgy . adj)))
+("purple" ((ctgy . adj)))
+("blue" ((ctgy . adj)))
+("grey" ((ctgy . adj)))
+("brown" ((ctgy . adj)))
+("black" ((ctgy . adj)))
+
+;; Various junk:
+("Hans" ((ctgy . n)))
+("hello" ((ctgy . n)))
+("Hi" ((ctgy . multi-start) (multi-rest . ("Hans")))
+      ((ctgy . n)))
+("Hi Hans" ((ctgy . n)))
+
+;; Blocksworld specific stuff:
+;;
+("pick" ((ctgy . multi-start) (multi-rest . ("up")))
+	((ctgy . v) (root . "pick")))
+("pickup" ((ctgy . v) (root . "pickup") (vform . infinitive)))
+("picking" ((ctgy . multi-start) (multi-rest . ("up"))))
+	;((ctgy . v) (root . "pick")))
+("picked" ((ctgy . multi-start) (multi-rest . ("up")) (tense . past)))
+	;((ctgy . v) (root . "pick")))
+("picked up" ((ctgy . v) (root . "pickup")))
+("picking up" ((ctgy . v) (root . "pickup") (vform . progressive)))
+("pick up" ((ctgy . v) (root . "pickup") (vform . infinitive)))
+("put down" ((ctgy . v) (root . "putdown")))
+("putdown" ((ctgy . v) (root . "putdown")))
+("putting down" ((ctgy . v) (root . "putdown")))
+("put" ((ctgy . multi-start) (multi-rest . ("down"))) 
+	((ctgy . v) (root . "put") (vform . infinitive) (tense present past)))
+("putting"  
+	((ctgy . v) (root . "put") (vform . progressive))
+	((ctgy . multi-start) (multi-rest . ("down"))))
+("ontable" ((ctgy . adj)))
+("block" ((ctgy . n)))
+("support" ((ctgy . n)))
+("table" ((ctgy . n)))
+("hand" ((ctgy . n)))
+
+
+
+
+    
+    
+
+
+
+

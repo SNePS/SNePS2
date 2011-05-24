@@ -1,0 +1,145 @@
+;;; -*- Mode:Common-Lisp; Base:10 -*-
+;
+; Connecting ARC/INFO and SNACTor
+; ===============================
+; This demonstration is fully described and discussed in the following
+; publication:
+;
+; S.C. Shapiro, H. Chalupsky, H. Chou, and D.M. Mark "Intelligent User
+; Interfaces: Connecting ARC/INFO and SNACTor, a Semantic Network Based
+; System for Planning Actions", in Proc. of the Twelfth Annual ESRI User
+; Conference, Environmental Systems Research Institute, Inc., Redlands,
+; California, 1992 (also available as Technical Report 91-13 from the
+; Dept. of Computer Science, State University of New York at Buffalo, 1991)
+;
+; The demo has been adapted to now use SNeRE instead of SNACTor.
+;
+(resetnet t)
+;
+(^ (unless (user:simple-system-created-p "Arc-Snactor")
+     (user:sneps-load "sneps:demo;snere;arcinfo;load-arc-snactor.LISP")))
+;
+;;; Arc labels for predicates and relations
+;
+(= (define member class object property rel arg1 arg2
+	   sub sup agent component presumably
+	   relation attribute translations value translated-value
+	   lex object3) NEW-RELATIONS)
+;
+; Define a useful path.
+;
+(define-path class (compose class (kstar (compose sub- sup))))
+;
+; Read in the lexicon and GATN grammar and setup tracing:
+;
+(^ (lexin "sneps:demo;snere;arcinfo;arclex.dat"))
+(^ (atnin "sneps:demo;snere;grammar.dat"))
+(^ (setq \*terminating-punctuation-flag\* '("." "!" "?")
+	 \*infertrace\* nil
+	 parser::\*debug\* nil))
+(^ (setf \*plantrace\* (if (y-or-n-p "Plantrace? ")
+                           (if (y-or-n-p "Surface? ")
+                               'surface
+                             t))))
+(^ (setf \*just-fake-it\*
+	 (y-or-n-p "Fake actions (answer y unless you are connected~%~
+                                  to a running ARC/INFO system)? ")))
+;
+;;; Attach functions to their associated primitive action nodes:
+;
+(^ (attach-primaction
+    ;; built-in actions:
+    (build lex "snsequence") snsequence
+    (build lex "sniterate") sniterate
+    (build lex "achieve") achieve
+    (build lex "believe") believe
+    ;; domain-specific actions:
+    (build lex "clear") clear
+    (build lex "start") start
+    (build lex "stop") stop
+    (build lex "tell") tell-fun
+    (build lex "interpret") interpret
+    (build lex "say") say
+    (build lex "issue") issue
+    (build lex "send") send))
+;
+;;; Domain-specific information:
+;
+; Define value translations for certain attributes:
+;
+(describe
+ (assert relation landuse
+	 attribute lu-code
+	 translations ((build value 100 translated-value Urban)
+		       (build value 200 translated-value Agriculture)
+		       (build value 300 translated-value Brushland)
+		       (build value 400 translated-value Forest)
+		       (build value 500 translated-value Water)
+		       (build value 700 translated-value Barren)
+		       )))
+;
+; Reset internal nlib variables and start parsing:
+(^ (reset-all))
+(^ (parse -1))
+;
+; Tell Snactor about the domain:
+;.
+Landuse is a polygon coverage.
+Streams is a line coverage.
+Polygon coverages are coverages.
+Line coverages are coverages.
+;
+; Deal with program state:
+;.
+Arc is a program.
+Arcplot is an embedded program.
+Embedded programs are programs.
+After starting a program the program is active.
+After stopping a program the program is not active.
+After starting an embedded program arc is not active.
+After stopping an embedded program arc is active.
+If arc is active then
+   a plan to achieve that an embedded program is active is to start
+   the embedded program.
+;
+; Various plans for actions:
+;.
+A plan to plot a polygon coverage is to issue "clear"
+  and then say "mapextent" and then issue the coverage
+  and then say "polygonshades" and then say the coverage
+  and then send "lu-code landuse.lut".
+Before plotting a coverage arcplot must be active.
+After plotting a coverage the coverage is displayed.
+If a coverage is displayed then after clearing the display
+   the coverage is not displayed.
+A plan to achieve that a coverage is displayed is to plot the coverage.
+;
+; Deal with identifications:
+;.
+This region is a region.
+This point is a region.
+This area is a region.
+If a polygon coverage is displayed then
+  a plan to identify a region is to say "identify"
+  and then say the coverage and then tell
+  "Move the mouse over the coverage until cross hairs appear ~%    and then choose an area by clicking on it"
+  and then send "polys *"
+  and then interpret the region on the coverage.
+;
+; Initial state:
+;.
+Send "&workspace /u0/grads/hans/getstart/data".
+Send "&station 9999".
+Arc is active.
+;
+; Do stuff:
+;.
+Plot Landuse.
+Identify this region.
+Clear the display.
+; Second time nothing happens
+;   because the condition of the conditional plan is not satisfied.
+; Respond to the errror message
+;   by entering ":cont 0" (without the quotation marks).
+Identify this region.
+^end.

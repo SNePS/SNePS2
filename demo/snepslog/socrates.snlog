@@ -1,0 +1,7 @@
+;; Simple backward chaining through a rule:
+clearkb
+set-mode-1
+
+man(socrates).
+all(x)(man(x) => mortal(x)).
+mortal(socrates)?

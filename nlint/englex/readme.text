@@ -1,0 +1,49 @@
+-------------------------------------------------------------------------------
+  New features created for englex: exporting created word information; all 
+  suffixes are experts; de-prefixation (and beginning word removal) works;
+  and tracing works.
+-------------------------------------------------------------------------------
+
+        1)englex.lisp: This file represents all the changes I have made to
+          the englex package to date.
+
+	2)englex.s3bin is the compile version of (1).
+
+	3)homographs : is a file that describes how all the homographs work as
+	  experts. i.e., all homographs of a suffix are well represented (I 
+	  modified 20 of the homograph suffixes [and word endings]), and
+          feature-lists can have more than one ctgy feature.
+
+	4)endofwords : now contains example words for the 5 new suffix endings;
+          example words for the new pattern of word for the suffix es; also the
+          suffix en has more example words.
+
+	5)startofwords : Now has a small note that briefly describes how 
+          prefixes, and word beginnings are currently handled by englex.
+
+
+     < Below are descriptions of the 5 log files of changes to the original 
+       (or latest) englex package to get (1) above. >
+
+	6)1_log-file : is a file describing the changes made to Hans's old 
+	  lenglex package. i.e, it describes adding new suffixes and minor 
+          patches (such as working on suffix ing, making sure [lookup "axes"] 
+          works, "ability" is a suffix and really not used as a word).
+
+	7)2_Export_New_Word-Log : is a file to be appended to (5) above. This 
+  	  file explains how I implemented exportation for new word information
+	  (like macro lexin). i.e., It uses a call to routine definewords.
+
+	8)3_Expert-Log : is a file to be appended to (5) above also. The 
+	  changes described here make englex a expert. (i.e., descriptions of
+	  modification of about 15 suffixes and 5 word endings.) To see which
+	  have changed just compare the old homograph file with the one in
+	  this directory.
+
+	9)4_Prefix-Log : is a small file describing how I finally improved
+          de-prefixation, and beginning word removal. 
+          (Also, using geth call instead of lexic call in 2 places.)
+
+       10)5_Trace-Log : describes implementing tracing. eg: (lookup "word" t).
+
+       1)readme is this file.

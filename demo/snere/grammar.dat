@@ -1,0 +1,1433 @@
+;;; -*- Mode: Common-Lisp; Package: SNEPSUL; Base: 10; Syntax: COMMON-LISP -*-
+
+;; Copyright (C) 1984--2004
+;; Research Foundation of State University of New York
+
+;; Version: $Id: grammar.dat,v 1.1 2011/05/24 17:59:36 mwk3 Exp $
+
+;; This file is part of SNePS.
+
+;; SNePS is free software; you may redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 2, or (at your option)
+;; any later version.
+
+;; SNePS is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with SNePS; see the file COPYING.  If not, write to
+;; the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA, or to
+;; Dr. Stuart C. Shapiro, Department of Computer Science and Engineering,
+;; University at Buffalo, The State University of New York, 
+;; 201 Bell Hall, Buffalo, NY 14260, USA
+
+;; Altered for ACL 6 by FLJ
+
+(^^ . (defvar |*DEBUG*| nil))
+
+(s ; parse sentence.
+   (push sp t
+	(setr nde *)
+	(if (and (nullr action) (not (overlap (getr clause_type) '(how-question question))))
+	    (setr prop (flatten (eval `(! ,(getr *)))))
+	    (setr prop (flatten (getr *))))
+	(clear-variables)
+        (to respond1)))
+
+(respond1
+  (group
+    (jump respond2 (and (getr prop) (listp (getr prop))))
+    (wrd \. (endofsentence) (to respond prop))
+    (wrd \? (endofsentence) (to respond prop))
+    (to (respond prop) (endofsentence))
+  )
+)
+
+(respond2
+  (call respond (first-atom (getr prop)) (getr prop)
+	(reset-references)
+	res
+	;(format t "~% prop = ~S ~%" (getr prop))
+	(setr prop (if (atom (getr prop))
+		       nil
+		       (cdr (getr prop))))
+	(addr response "~%~%" res)
+	(jump respond2))
+  (to (response) (nullr prop))
+)
+
+
+(respond ; generate the response represented by the semantic node in *.
+    (push g (and (getr *) (not (overlap (getr clause_type) '(how-question question))))
+	  ; the input was a statement represented by *.
+	  (sendr string '("I" "understand" "that"))
+	  (setr response *)
+	  (when (overlap clause_type 'reported-act)
+	    ;(clear-infer)
+	      (let ((sneps::crntct 'sneps::default-defaultct))
+		(declare (special sneps::crntct))
+		(add* (eval `(sneps::make.ns ,(getr prop))))))
+	  (to response))
+    (push g (and (getr *) (overlap (getr clause_type) 'question)) ;(and (getr *) (eq (getr typ) 'd))
+	  ; the input was a statement represented by *.
+	  (sendr string 
+	      (if (overlap clause_type 'question)
+		  (progn
+		    (clear-infer)
+		    (setr deduced_result
+			    (let ((sneps::crntct 'sneps::default-defaultct))
+			      (declare (special sneps::crntct))
+			      (deduce* '(1 1) (eval `(sneps::make.ns ,(getr nde))))))
+		    (setr neg
+			  (eval `(findassert max 0 min 0 arg ,(getr nde))))
+		    (if (and (nullr deduced_result) (nullr neg))
+			'("I" "really" "don't" "know" "if")
+			(if (nullr neg)
+			    '("Yes" ",")
+			    '("No" ","))))))
+	  (sendr neg)
+	  (setr response *)
+	  (to response))
+    (jump response1
+          (and (getr *) (overlap (getr clause_type) 'how-question))
+	  (setr prop (eval `(deduce act ,(sneps::pathfrom '(act) (getr *)) 
+                                    plan ,(new-sneps-var)))))
+)
+
+(response1
+  ;(to (respond2) (and (getr prop) (listp (getr prop))))
+  (jump respond2 (and (getr prop) (listp (getr prop))))
+  (call g prop t (sendr string '("I" "understand" "that")) response (to response))
+)
+
+(response
+  (jump end999 t
+	(when (getr response)
+	  (pretty-print-response (getr response) 60)
+	  (when (and (boundp '|*DEBUG*|) |*DEBUG*|)
+	    (format t "~% Sneps structure: ~%")
+	    (eval `(describe ,(getr nde))))
+	  (if (not (nullr action))
+	      (perform (^ (SNEPS::pathfrom '(act) `,(getr nde)))))
+	  
+	  )
+  )
+)
+
+(end999 (pop nde t))
+
+(sp ; looks for different forms of rules, or just calls 'clause'.
+   (push clause t
+	(sendr clause_type 'declarative)
+	(setr nde *)
+	(liftr action)
+	(liftr clause_type)
+	(to end999))
+
+; Check for rule type sentence, e. g., "after <clause> <predicate>"
+   (jump rp1 t (clear-variables))
+
+   (wrd if t (clear-variables) (setr ants nil) (to if-then))
+
+; Check for plan defination or precondition act-effect rule sentence.
+   (jump plandef * (clear-variables))
+
+; Check for "how" question.
+   (wrd how t (to planq1))
+
+; Check for "what" question.
+   (wrd what t (to wh-q1))
+)
+
+(clause ; parse an atomic clause
+   (push npp t
+	(sendr type (getr clause_type))
+	(sendr gender)
+	(sendr number)
+	(setr subj *)
+	(setr type (getr clause_type)) ;slight change
+	(to v))
+
+; Assume elided NP, e. g., imperative requests.
+   (jump v * (setr type (getr clause_type)))
+)
+
+(npp ; parse a noun phrase
+   (wrd a t
+	(setr indef t)
+	(liftr indef t)
+	(to npdet))
+   (wrd an t
+	(setr indef t)
+	(liftr indef t)
+	(to npdet))
+   (wrd another t
+	(setr indef t)
+	(liftr indef t)
+	(to npdet))
+   (wrd the t 
+	(setr def t)
+	(to npdet))
+   (wrd |"| t
+	(setr def t)
+	(to np-quoted-string))
+   (wrd there t
+	(setr there-ref t)
+	(liftr there-ref)
+	(to npa))
+   (jump npdet *
+	 (if (overlap (getr type) 'question)
+	     (setr def t)))
+)
+
+(np-quoted-string
+ ;; read a string and the closing quote and make the string
+ ;; into a big single base node. New convertline function allows
+ ;; to read arbitrary strings in NL input.
+ (wrd |"| t
+      (setr nh (eval `(build lex ,(getr string))))
+      (liftr nh)
+      (to npa))
+ (to (np-quoted-string) t
+     (setr string (getr *))))
+
+;(np-quoted-string
+; ;; collect items of a quoted string and make them
+; ;; into a big single base node.
+; (wrd |"| t
+;      (setr nh (eval `(build lex ,(merge-quoted-items (getr string-items)))))
+;      (liftr nh)
+;      (to npa))
+; (to (np-quoted-string) t
+;     (addr string-items (getr *))))
+
+(npdet ; parse for post-determiner np.
+
+   (cat adj t ; hold adjectives for later.
+	(hold 'adj (eval `(build lex ,(getr *))))
+	(addr adjlist (getr *))
+	(to npdet))
+
+; Check for verb subject, e. g., "Picking up is an act".
+   (cat v (overlap (getf vform) 'progressive)
+	(setr nh
+	   (eval `(build lex ,(getr *))))
+	(liftr nh)
+	(to npa))
+
+; Indef noun in declarative sentence.
+   (cat n (and (getr indef) (overlap (getr type) 'declarative))
+ 	(setr nh
+	   (eval `(build member-
+			 (build class (build lex ,(getr *))))))
+	(liftr nh)
+	(liftr gender (getf gen))
+	(liftr number (getf num))
+	(to npa))
+
+; Definite noun in declarative sentence.
+   (cat n (and (getr def) (overlap (getr type) 'declarative))
+	(setr nh
+	      (first
+		(eval `(find member-
+			     (deduce member ,(new-sneps-var)
+				     class (build lex ,(getr *)))))))
+	(cond
+	   ((null (getr nh))
+		(setr nh (eval `(build lex ,(getr *))))
+		(setr noref t)
+		(liftr noref)))
+	(liftr nh)
+	(liftr gender (getf gen))
+	(liftr number (getf num))
+	(to npa))
+
+; Definite noun in a rule.
+   (cat n (and (getr def) (overlap (getr type) '(rule question)))
+	(setr nh (car (find-variables (getr *) (getr adjlist))))
+	(when (nullr nh)
+	    (setr nh
+		  (first
+		    (eval `(find member-
+				 (deduce member ,(new-sneps-var)
+					 class (build lex ,(getr *)))))))
+	    (cond
+	      ((null (getr nh))
+	       (setr nh (eval `(build lex ,(getr *))))
+	       (setr noref t)
+	       (liftr noref))))
+	(liftr nh)
+	(to npa))
+
+; Indef noun in a rule.
+   (cat n (and (getr indef) (overlap (getr type) 'rule))
+	(setr nh (new-variable (getr *)))
+	(liftr nh)
+	(to npa))
+
+; Bare noun. ****** Changed in this grammar.
+   (cat n (overlap (getr type) '(declarative question rule))
+	(setr nh (eval `(build lex ,(getr *))))
+	(to npa))
+
+)
+
+(npa ; Remove all held adjectives and build object-property propositions.
+   (vir adj (not (overlap (getr type) '(rule question)))
+	(eval `(build object ,(getr nh) property ,(getr *)))
+	(liftr nh2)
+	(liftr stype)
+	(to npa))
+   (vir adj (overlap (getr type) '(rule question))
+	(to npa))
+   (pop nh t))
+
+(v ; Verb phrase.
+
+  (cat modal t (to v)) ; Ignore modals for the moment.
+
+; Check for "is" question. "Is blocka on blockb"
+   (wrd is (and (nullr subj) (nullr there-ref))
+	(setr clause_type 'question)
+	(hold 'v (eval `(build lex "be")))
+	(liftr clause_type)
+	(to clause))
+
+; Check for imperative request. "Pick up BlockA"
+   (cat v (and (overlap (getf vform) 'infinitive) (null (getr subj)))
+	(setr action
+	   (eval `(build lex ,(getr *))))
+	(liftr action)
+	(to actreq))
+
+; Check for a description of an agent doing acts.
+   (cat v (and (overlap (getf tense) 'past) (getr subj))
+	(setr agent (getr subj))
+	(setr reported-acts nil)
+	(setr action
+	   (eval `(build lex ,(getr *))))
+	(to agent-act))
+
+; Check for antecedent of a rule, e. g., "after picking up a block the block is clear.
+   (cat v (and (overlap (getf vform) 'progressive) 
+		(overlap (getr type) 'rule))
+	(setr action
+	   (eval `(build lex ,(getr *))))
+	(to actreq))
+
+; Get (possibly) main verb.
+   (cat v t
+	(setr vb (eval `(build lex ,(getr *))))
+	(setr tns (getf tense))
+	(setr nmbr (getf num))
+	(liftr nh2)
+	(to compl))
+
+; Get main verb in "is" question.
+   (vir v (overlap (getr clause_type) 'question)
+	(setr vb *)
+	(to compl))
+
+; In cases such as "Pick up blocka" where there is an elided NP.
+   (jump actreq (getr action) (setr action (getr subj)))
+)
+
+(compl					; Verb complement.
+ ;; altered for acl6 compatibility
+ ;; (wrd ("a" "an") (overlap (getr vb) (find LEX "be"))
+ (wrd ("a" "an") (overlap (getr vb) (find lex "be"))
+      (to memclass))
+ (cat n (and (overlap vb (geta lex- "be"))
+	     (overlap (getf num) 'plur))
+      (setr sup (build lex (^ (getr *))))
+      (setr subsup t)
+      (to svc))
+ (jump sv *)
+)
+
+(memclass ; Member of a class.
+   (cat n t
+	(setr cl (eval `(build lex ,(getr *))))
+	(to memclpop)))
+
+(memclpop
+  (pop
+    (eval `(build
+	     member ,(if (nullr there-ref)
+				(getr subj)
+				(|#| 'x))
+	     class ,(getr cl)))
+	  t))
+
+(sv ; normally for temporal structure.
+   (jump o t (setr negated nil)))
+
+(o ; parse what follows the verb group.
+
+; Deal with negation (albiet simplisticly).
+
+   (wrd not t (setr negated (not (getr negated))) (to o))
+
+; Handles simple copula: <NP> is <ADJ>, e. g.,  "blocka is clear"
+
+   (cat adj (overlap (getr vb) (find lex "be"))
+   	(setr type 'predication)
+	(setr property (eval `(build lex ,(getr *))))
+	(to svo))
+
+; Handles simple copula: <NP> is <PP>, e. g.,  "blocka is on blockb"
+
+   (push pp t
+	(sendr preps)
+	(sendr objects)
+	(sendr type (getr type))
+	(setr type 'relational)
+	(setr relation (first-atom (getr preps)))
+	(setr subj2 (first-atom (getr objects)))
+	(to svo))
+)
+
+(svc
+  (pop (eval (buildq (build sub + sup +) subj sup)) (getr subsup))
+)
+
+(svo ; builds sentence structure.
+
+; Next two states pop simple copula with adjectives. E. g.,
+; "Blocka is clear", "Blocka is ontable".
+; First one handles negated case.
+;
+   (pop (eval 
+	   (buildq (build min 0 max 0
+			arg (build property + object +)) property subj))
+	(and (getr negated) (overlap (getr type) 'predication)))
+
+   (pop (eval (buildq (build property + object +) property subj))
+	(and (not (getr negated)) (overlap (getr type) 'predication)))
+
+; Next two states pop simple copula with PP. E. g.,
+; "Blocka is on blockb"
+; First one handles negated case.
+;
+   (pop (eval 
+	   (buildq (build min 0 max 0
+			arg (build rel + arg1 + arg2 +))
+				relation subj subj2))
+	(and (getr negated) (overlap (getr type) 'relational)))
+
+   (pop (eval (buildq (build rel + arg1 + arg2 +) relation subj subj2))
+	(overlap (getr type) 'relational))
+)
+
+(wh-q1
+  (wrd was t (to wh-q2))
+)
+
+(wh-q2
+  (cat n t (setr subj *) (to wh-q3))
+)
+
+(wh-q3
+  (wrd doing t (to wh-q-pop))
+)
+
+(wh-q-pop
+  (pop
+    (eval `(sneps::deduce presumably
+			  (build agent (build lex ,(getr subj))
+				 act ,(new-sneps-var))))
+    t)
+)
+
+;
+; Build action request structure "Pick up blocka"
+(actreq
+   (push npp t
+	(sendr type (getr type))
+        (setr objects *)
+	(to actpp))
+)
+
+; Pop action request structure (with optional PP object).
+;
+; Currently, I'm assuming at most two objects associated with action
+; requests, e. g., "Stack blocka on blockb" vs "Stack blocka on blockb
+; on blockc", although theres no real reason the latter can't be accomodated.
+;
+; Note that the ACTUAL preposition used is currently ignored... Probably,
+; not correct in light of sentences such as "Stack blocka under blockb".
+;
+(actpp
+  (push pp (overlap (getf ctgy (getr *)) 'prep)
+	    (sendr type (getr type)) ;changed 07/06/88 SSA, need to pass type?
+	    (sendr preps (getr preps))
+	    (sendr objects (getr objects))
+	    (setr actobj2 (first-atom (getr objects)))
+	    (to actpp))
+
+  (jump actpp1 (not (overlap (getf ctgy) 'prep)))
+)
+
+(actpp1
+   (pop (build-action-structure (getr action) (getr objects)) (or (overlap (getr type) 'rule) (endofsentence)))
+)
+
+; PP subnetwork
+; SENDR: preps, objects (may be initially nil).
+; LIFTR:
+;	preps - list of prepositions encountered (in order)
+;	objects - list of NPs encountered (in order)
+; PUSHs: NPP
+;
+(pp
+   (cat prep t
+	(addr preps (eval `(build lex ,(getr *))))
+	(to pp-comp))
+)
+
+(pp-comp	; takes care of NP complement.
+   (push npp t 
+	(sendr type (getr type))  ; Change
+	(setr pp-obj *)
+	(addr objects (getr pp-obj))
+	(liftr preps)
+	(liftr objects)
+	(to pp-pop))
+)
+
+(pp-pop
+   (pop t t)
+)
+
+;
+;
+; Proposition clause handler: handles ("achieve" | "believe") "that", etc.
+;
+
+(prepclause
+  (wrd that t (to prepclause1))
+)
+
+(prepclause1
+  (push clause t
+	(sendr clause_type (getr clause_type))
+	(setr goal *)
+	(to prepclause-pop)))
+
+(prepclause-pop
+  (pop goal t))
+
+
+;
+; Rule parsing subnetwork.
+;
+
+; Initialize rule clause type, and push to rulep.
+(rp1
+   (push rulep t
+	(sendr clause_type 'rule)
+	(setr rule *)
+	(to rulepop)
+   )
+)
+
+; Pop the final structure for the rule.
+
+(rulepop (pop (getr rule) t))
+
+; Check for the various types of rules.
+; Currently only: After <progressive-action> <simple-copula>.
+
+(rulep
+   (wrd after t
+	(to afterrule))
+   (wrd before t ; For act-precondition caseframe.
+	(to afterrule3))
+)
+
+; Handles rules of the form: After <progressive-action> <simple-copula>.
+
+(afterrule ; get <progressive-action> clause.
+  (push clause t 
+	(sendr clause_type 'rule)
+	(setr action-rule *)
+	(to afterrule1))
+
+)
+
+(afterrule1 ; get <simple-copula> clause.
+   (push clause t
+	(sendr clause_type 'rule)
+	(setr effect *)
+	(setr tmp (eval `(first-atom (find act- ,(getr action-rule)))))
+	(addr rule (build-rule-structure (getr tmp) (getr effect) (flistify (getr other-ants))))
+	(to afterrule2))
+)
+
+(afterrule2 ; check for more <simple-copula> clause.
+  (jump rulepop (endofsentence))
+  (wrd and t (to afterrule1))
+)
+
+(afterrule3 ; get <progressive-action> clause.
+  (push clause t 
+	(sendr clause_type 'rule)
+	(setr action-rule *)
+	(to afterrule4))
+
+)
+
+(afterrule4 ; get <modal-copula> clause.
+   (push clause t
+	(sendr clause_type 'rule)
+	(setr effect *)
+	(setr tmp (eval `(first-atom (find act- ,(getr action-rule)))))
+	(addr rule (build-act-precondition-structure (getr tmp) (getr effect) (flistify (getr other-ants))))
+	(to afterrule5))
+)
+
+(afterrule5 ; check for more <simple-copula> clause.
+  (jump rulepop (endofsentence))
+  (wrd and t (to afterrule4))
+)
+
+;;;
+;;; Agent does act* subnetwork.
+;;; 
+
+(agent-act
+  (push actreq t
+	(sendr type 'rule)
+	(sendr action (getr action))
+	(setr thisact (eval `(find act- ,(getr *))))
+	(if (nullr reported-act)
+	    (setr reported-act thisact)
+	    (setr reported-act (eval `(build action ,(build lex "snsequence")
+					     object1 ,(getr reported-act)
+					     object2 ,(getr thisact)))))
+	(to agent-act1)))
+
+(agent-act1
+  (pop
+    (eval `(build agent ,(getr agent) act ,(getr reported-act)))
+    (endofsentence)
+    (liftr clause_type 'reported-act))
+
+  (wrd and t (to agent-act2))
+
+  (wrd and * (to agent-act3))
+)
+
+(agent-act2
+  (wrd then t (to agent-act3))
+)
+
+(agent-act3
+  (cat v t
+	(setr action
+	   (eval `(build lex ,(getr *))))
+	(to agent-act))
+)
+;;;
+;;; Rule parser
+;;; 
+
+(if-then
+  (push clause t
+	(sendr clause_type 'rule)
+	(addr ants *)
+	(to if-then1))
+)
+
+(if-then1
+  (wrd and t (to if-then))
+  (wrd then t (setr cqs nil) (to if-then2))
+)
+
+(if-then2
+  (push clause t
+	(sendr clause_type 'rule)
+	(addr cqs *)
+	(to if-then3))
+)
+
+(if-then3
+  (wrd and t (to if-then2))
+  (pop (build-and-ent-rule (flistify (getr ants)) (flistify (getr cqs))) (endofsentence))
+)
+
+;;;
+;;; Plan parsing subnetwork.
+;;; 
+
+(plandef
+
+  (wrd if t (setr ants nil) (to plandef1))
+
+  (wrd a t (to plandef4))
+)
+
+(plandef1
+  (push clause t
+	(sendr clause_type 'rule)
+	(addr ants *)
+	(to plandef2)))
+
+(plandef2
+  (wrd and t (to plandef1))
+  (wrd then t (to plandef3))
+)
+
+(plandef3
+; Changed 02/08/89, added possible antecedent.
+  (push rulep t
+	(sendr clause_type 'rule)
+	(sendr other-ants (getr ants))
+	(setr rule *)
+	(to rulepop))
+; End of addition.
+  (wrd a t (to plandef4)))
+
+(plandef4
+  (wrd plan t (to plandef5)))
+
+(plandef5
+  (wrd to t (to plandef6)))
+
+(plandef6
+;  (group
+    (wrd achieve t (setr actionwrd nil) (to plandef6a))
+    (jump plandef7 t (setr actionwrd (getr *)))
+;  )
+)
+
+(plandef6a
+  (push prepclause t
+	(sendr clause_type 'rule)
+	(setr goal *)
+	(to plandef8)))
+
+(plandef7
+  (push clause t
+	(sendr clause_type 'rule)
+	(setr goal (eval `(first-atom (find act- ,(getr *)))))
+	(to plandef8)))
+
+(plandef8
+  (wrd is t (to plandef8a)))
+
+(plandef8a
+  (wrd to t (setr acts nil) (to plandef9)))
+
+(plandef9
+  (wrd achieve t (to plandef12))
+  (push clause t
+	(sendr clause_type 'rule)
+	(setr result *)
+	(addr acts (eval `(first-atom (find act- ,(getr result)))))
+	(to plandef10))
+)
+
+(plandef10
+  (pop
+    (build-plan-structure (getr ants) (getr goal) (getr acts) (getr actionwrd)) (endofsentence)
+  )
+  ;(jump plandefpop (endofsentence))
+  (wrd and t (to plandef11))
+)
+
+(plandef11
+  (wrd then t (to plandef9))
+)
+
+(plandef12
+  (push prepclause t
+	(sendr clause_type 'rule)
+	(addr acts (first-atom (eval `(build action (build lex "achieve")
+					     object1 ,(getr *)))))
+	(to plandef10))
+)
+
+(planq1
+  (jump planq2 t) 
+;  (wrd how t (to planq2))
+)
+
+(planq2
+  (wrd would t (to planq3))
+)
+
+(planq3
+  (wrd you t (to planq4))
+)
+
+(planq4
+  (push clause t (sendr clause_type 'rule)
+	(setr howq *)
+	(setr clause_type 'how-question)
+	(liftr clause_type)
+	(to planqpop))
+)
+
+(planqpop
+  (pop howq t))
+
+(gs ; generate a sentence to express the semantic node in *.
+  (group
+   (jump gs1 (and (geta object) (overlap (getr vc) 'pass))
+            ; a passive sentence is "object verb by agent".
+            (setr subj (geta object)) (setr obj (geta agent)) (setr prep 'by))
+   (jump gs1 (and (geta agent) (disjoint (getr vc) 'pass))
+            ; an active sentence is "agent verb object".
+            (setr subj (geta agent))
+	    (setr obj (geta object1 (geta act (first (flistify (getr *))))))
+	    (addr obj (geta object2 (geta act (first (flistify (getr *))))))
+	    (addr obj (geta object3 (geta act (first (flistify (getr *))))))
+            (setr vc 'act))
+   (jump gs1 (and (geta which)) (setr subj (geta which))
+            ; a which-adj sentence is "which be adj".
+            (setr obj (geta adj)) (setr vc 'act))
+   (jump gs1 (and (geta property) (geta object))
+	 ; object-property sentence
+	 (setr subj (geta object))
+	 (setr obj (geta property))
+	 (setr vc 'act))
+   (jump actgs (and (geta act) (geta effect))	; Act-Effect caseframe.
+	 (setr actnode (geta act)) ; act node
+	 (setr effectnode (geta effect)))
+   (jump actiongs (and (geta act)
+		       (and (null (geta precondition))
+			    (null (geta plan))))
+		;Act caseframe (action requests)
+	 (addr string "you" "want" "me" "to")
+	 (setr actreq t)
+	 (setr actnode (geta act))
+         (setr action (geta action actnode))
+	 (setr actobj1 (geta object1 actnode))
+	 (setr actobj2 (geta object2 actnode))
+	 (setr actobj3 (geta object3 actnode)))
+   (jump act-precondition (and (geta act) (geta precondition))
+	 (setr actnode (geta act))
+	 (setr precond (geta precondition)))
+   (jump actiongs (geta action)		; Action-objects caseframe.
+	 (setr actreq nil)
+	 (setr action (geta action))
+	 (setr actobj1 (geta object1))
+	 (setr actobj2 (geta object2))
+	 (setr actobj3 (geta object3)))
+   (jump plangoalgs (and (geta plan) (geta goal))
+	 (setr plangoal-flag t)
+	 (setr plan (geta plan))
+	 (setr goal (geta goal)))
+   (jump plangoalgs (and (geta plan) (geta act))
+	 (setr plangoal-flag nil)
+	 (setr plan (geta plan))
+	 (setr goal (geta act)))
+   (jump relgs (geta rel)
+	 (setr relation (geta rel))
+	 (setr relarg1 (geta arg1))
+	 (setr relarg2 (geta arg2)))
+   (jump sub-sup (and (geta sub) (geta sup))
+	 (setr subclass (geta sub))
+	 (setr supclass (geta sup)))
+   (call g * (and (geta max) (geta min))	; max-min-arg caseframe
+	 reg
+	 (addr string (getr reg))
+	 (to end))
+   (call np (geta member) (geta member) (addr done *) (sendr done)
+	 (sendr numbr 'sing)
+	 reg
+	 ; a member-class sentence is "member be a class"
+         (addr string reg) (jump gmemcl))
+   )
+  
+  )
+
+(sub-sup	; Generate subclass-superclass sentence.
+  (call np subclass t sub (addr string sub) (jump sub-sup1)))
+
+(sub-sup1
+  (call np supclass t sup (addr string (verbize 'pl "be") sup) (to end)))
+
+(relgs ; Generates the rel-arg1-arg2 sentences.
+  (call np relarg1 t
+	(sendr numbr 'sing)
+	(sendr indef)
+	arg1
+	(addr string arg1)
+	(jump relgs1))
+)
+
+(relgs1
+  (call pred * t
+	(sendr numbr 'sing)
+	(sendr vc 'act)
+	(sendr vb "be")
+	(sendr neg (getr neg))
+	verb
+	(addr string verb (geta lex (getr relation)))
+	(jump relgs2))
+)
+
+(relgs2 ; Generates the rel-arg1-arg2 sentences.
+  (call np relarg2 t
+	(sendr numbr 'sing)
+	(sendr indef)
+	arg2
+	(addr string arg2)
+	(to end))
+)
+
+(actgs
+  (call gs actnode t actreg (addr string "after" actreg) (jump actgs1))
+)
+
+(actgs1
+  (call gs effectnode t effectreg (addr string "," effectreg) (to end))
+)
+
+(actiongs
+  (push plglsns1 (eval `(overlap (build lex "snsequence")
+				 (find action- ,(getr *))))
+	(sendr act1 actobj1)
+	(sendr act2 actobj2)
+	(addr string *)
+	(to end)
+	)
+
+  (jump actiongs1 t
+       (addr string (cond
+		       ((getr actreq) "perform")
+		       (t "performing"))
+	     (geta lex (getr action)) "on"))
+)
+;
+;(actiongs
+;  (call pred * t
+;	(sendr numbr 'sing)
+;	(sendr vc 'act)
+;	(sendr vb (geta LEX (getr action)))
+;	verb
+;	(addr string (cond
+;		       ((getr actreq) '("perform" "the" "action" "of"))
+;		       (t "performing"))
+;	      verb "on")
+;	(jump actiongs1))
+;)
+
+(actiongs1
+  (call np actobj1 t
+	(sendr numbr 'sing)
+	(sendr indef)
+	obj1
+	(addr string obj1)
+	(jump actiongs2))
+)
+
+(actiongs2
+  (group
+    (call np actobj2 (getr actobj2)
+	  (sendr numbr 'sing)
+	  (sendr indef)
+	  obj2
+	  (addr string "and" obj2)
+	  (jump actiongs3))
+    (to (end) t)
+  )
+)
+
+(actiongs3
+  (group
+    (call np actobj3 (getr actobj3)
+	  (sendr numbr 'sing)
+	  (sendr indef)
+	  obj3
+	  (addr string "and" obj3)
+	  (to end))
+    (to (end) t)
+  )
+)
+
+(act-precondition
+  (call actiongs * t
+	;Act-precondition caseframe.
+	(sendr actreq nil)
+	(sendr action (geta action actnode))
+	(sendr actobj1 (geta object1 actnode))
+	(sendr actobj2 (geta object2 actnode))
+	(sendr actobj3 (geta object3 actnode))
+	res
+	(addr string "before" res)
+	(jump act-precondition2)))
+
+(act-precondition2
+  (call gs precond t
+	(sendr auxs "must")
+	preres
+;	(format t "~% In act-precondition (pre): ~A~%" (getr preres))
+;	(format t "~% In act-precondition (precond): ~A~%" (getr precond))
+	(addr string "," preres)
+	(to end)))
+
+(plangoalgs
+  (call gs goal t gl
+	(if (getr plangoal-flag)
+	    (addr string "a" "plan" "to" "achieve" "that" gl "is" "by")
+	    (addr string "a" "plan" "for" gl "is" "by"))
+	(setr snsflg (eval `(overlap (build lex "snsequence") (find action- ,(getr plan)))))
+	;(to plangoalgs1))
+	(jump plangoalgs1))
+)
+
+(plangoalgs1
+  (call plglsns plan t pln
+	(addr string pln)
+	(to plangoalpop)))
+
+(plglsns
+  (group
+    (jump plglsns1
+	  (eval `(overlap (build lex "snsequence")
+			  (find action- ,(getr *))))
+	  (setr act1 (geta object1))
+	  (setr act2 (geta object2)))
+    (jump plglsns4
+	  (eval `(overlap (build lex "achieve")
+			  (find action- ,(getr *))))
+	  (setr act1 (geta object1)))
+    (jump plglsns3 t (setr act1 (getr *)))
+  )
+)
+
+(plglsns1
+  ;(call gs act1 t
+  (call plglsns act1 t
+	str
+	(addr string str)
+	(jump plglsns2)))
+
+(plglsns2
+  (call plglsns act2 t
+	str
+	(addr string "and" "then" str)
+	(to plglpop)))
+
+(plglsns3
+  (call gs act1 t
+	str
+	(addr string str)
+	(to plglpop)))
+
+(plglsns4
+  (call gs act1 t str
+	(addr string "achieving" "that" str)
+	(to plglpop)))
+
+(plglpop (pop string t))
+
+(plangoalpop (pop string t))
+
+(gmemcl (call pred * t ; generate a verb group using "be"
+                   (sendr numbr 'sing) (sendr vc 'act) (sendr vb 'be)
+; *** New stuff
+		   (sendr neg (getr neg))
+;
+                   reg (addr string reg) (jump gmemcl-cl)))
+
+(gmemcl-cl (call np (geta class) t ; generate a np for the class
+                 (sendr done) (sendr indef t) (sendr numbr 'sing) *
+                 (addr string  *) (to end)))
+
+(gs1 (call np subj t ; generate a np to express the subject.
+              (addr done *) (sendr done) (sendr numbr)
+	      reg
+              (addr string reg) (jump svb)))
+
+(svb (call pred * t ; generate a verb group.  use "be" if no other verb.
+                (sendr numbr) (sendr vc) (sendr auxs (getr auxs))
+                (sendr vb (or (geta lex (geta action (geta act (first (flistify (getr *)))))) "be"))
+; *** New stuff
+		   (sendr neg (getr neg))
+;
+           reg (addr string reg) (jump surobj)))
+
+(surobj (call np obj (and (getr obj)
+			  (atom (getr obj))) ; generate a np to express the obj if there is one.
+                 (sendr done) * (addr string prep *) (to end))
+	(call np (first (getr obj))
+	         (and (getr obj)
+		      (not (atom (getr obj)))) ; generate a np to express the objs if there are any.
+                 (sendr done)
+		 reg
+		 (addr string prep reg)
+		 (setr obj (flatten (rest (getr obj))))
+		 (if (getr obj) (addr string "on"))
+		 (jump surobj))
+        (to (end) t))
+
+(pred ; figure out the proper tense.
+      (call past (geta etime) t tense (to genvb))
+                 ; past tense depends on ending time.
+      (call futr (geta stime) t tense (to genvb))	
+  			; future tense depends on starting time.
+      (to (genvb) t (setr tense 'pres))) ; present tense is the default.
+
+(genvb ; return the verb group.
+       (pop (verbize (getr numbr) (getr tense) (getr vc) 
+; *** New stuff
+		     (if (getr neg) 'neg)
+		     (getr auxs)
+;
+		     (princ-to-string (getr vb))) t))
+
+(past ; if we can get to *now by before arcs, it is past tense.
+      (to (pastend) (overlap * *now))
+      (to (past (geta before)) (geta before)))
+
+(pastend (pop 'past t))
+
+(futr ; if we can get to *now by after arcs, it is future tense.
+      (to (futrend) (overlap * *now))
+      (to (futr (geta after)) (geta after)))
+(futrend (pop 'futr t))
+
+(np ; the proper number is pl for a class, sing for an individual
+    (group
+       (jump np1 numbr)
+       (jump np1
+	     (let ((sneps::crntct 'sneps::default-defaultct))
+	       (declare (special sneps::crntct))
+	       (some 'sneps::isassert.n
+                     `(,@(geta sub-) ,@(geta sup-) ,@(geta class-))))
+	     (setr numbr 'pl))
+       (jump np1
+	     (let ((sneps::crntct 'sneps::default-defaultct))
+	       (declare (special sneps::crntct))
+	       (notany 'sneps::isassert.n
+                     `(,@(geta sub-) ,@(geta sup-) ,@(geta class-))))
+                    (setr numbr 'sing))
+    )
+)
+
+(np1 
+     (call adjs (pconcat (geta which-) '<>) (geta which-) 
+                (sendr done) string (jump npadj))
+     (jump npadj *))
+
+(npadj  ; generate a np to express *.
+;    (to (nppop) (and (geta SNEPS:::var) (geta SNEPS:::val))
+;                 ; use the value of a variable
+;                 (addr string (wrdize (getr numbr) (geta SNEPS:::val))))
+;    (to (nppop) (geta SNEPS::var)
+;                 ; use "something" for a free variable 
+;                 (addr string 'something))
+
+; Allow for typed free variable.
+   (to (nppop) (SNEPS::var (getr *))
+       (add-temporary-properties (getr *))
+       (addr string
+	     (choose-prenoun (getr *))
+;	     (choose-det (getr *))
+;	     (choose-properties (getr *))
+	     (choose-class (getr *))))
+
+;  (call classes (pconcat (geta member-) '<>) (and (geta member-) (SNEPS::var (getr *)))
+;	(sendr done) (sendr numbr) reg (setr indef nil)
+;	(addr string "the" reg) (to nppop))
+	
+    (to (nppop) (geta lex)
+              ; just use the word at the end of the lex arc if present.
+	      ; CHANGE:  after wrdize fixed
+              (addr string
+		    (wordize
+		      (if (getr numbr)
+			  (getr numbr)
+			  'sing)
+		      (geta lex))))
+    (call names (pconcat (geta named-) '<>) (geta named-) 
+               ; use its name if it has one
+               (sendr done) reg
+               (addr string reg) (to nppop))
+; ***** Mod.
+    ;(call classes (pconcat (geta member-) '<>) (geta member-)...)
+    (call classes
+	  ;; Use findassert so we'll only find asserted classes:
+	  (pconcat (findassert member (^ (getr *))) '<>)
+	  (findassert member (^ (getr *)))
+	  ;; use its class if it has one
+	  (sendr done) (sendr numbr) reg (setr indef t)
+	  (addr string reg) (to nppop))
+
+    (call gs  * (or (geta rel)
+			(geta max)
+			(geta min)
+			(geta action)
+			(geta property)
+			(geta object))
+	res
+	(addr string res)
+	(to nppop))
+
+    (to (nppop) t ; use its identifier if nothing else
+                  (addr string *)))
+
+(nppop (pop (add-indef (getr string)) indef)
+       (pop string (nullr indef)))
+
+(adjs ; generate a string of adjectives, one for each which-adj node in *.
+      (wrd <> t (to end))			; was (to endpop)
+      (call np (geta adj) (disjoint * done) (sendr done) *
+	       (addr string *) (to adjs))
+      (to (adjs) t)
+      (pop string t))
+
+(names ; use the first usable name
+       (call np (geta name) (and (disjoint * '<>)
+                                 (disjoint * done))
+                string (to flush))
+       (to (names) (and (disjoint * '<>) (overlap * done))))
+
+(flush (wrd <> t (to end))			; was (to endpop)
+       (to (flush) (disjoint * '<>)))
+
+(classes ; use the first usable class
+         (call np (geta class) (and (disjoint * '<>) (disjoint * done))
+                  (sendr numbr) string (to flush))
+         (to (classes) (and (disjoint * '<>) (overlap * done))))
+;
+;=============== rulegrm 2/5/81 ======================
+;========== written by stuart c. shapiro ==============
+;
+;       this is a grammar for generating english from sneps deduction
+;  rules.  to use it do the following --
+;
+;     1.  add a generation grammar for atomic assertions.
+;         this grammar must start at the state 'gs', must build a
+;         sentence in the register 'string', and must transfer to
+;         the state 'end', having consumed its node.
+;         the register 'neg' will be set to 't', if the sentence
+;         is to be negated.
+;
+;     2.  only the top level of your network should terminate at
+;         the state 'end'.  Levels you call or push to should
+;         terminate at some other state, such as 'endpop'.
+;
+;     3.  start the parser at state 'g', or use the sneps function,
+;         'surface'.
+;
+;     4.  to trace inferences in english, (setq infertrace 'surface).
+;
+
+(g (jump grule * (setr conj "and") (setr tab 0)))
+
+(g1 (group (jump grule (and (getr *) (getr count))
+                ;(addr string (getr count) '\))
+                (setr count (lisp::1+ (getr count))))
+           (jump grule (and (getr *) (nullr count)))))
+
+(grule (group
+	      (jump grulec (or
+			     (has-path 'effect (getr *))
+			     (has-path 'plan (getr *))
+			     (has-path '(cq plan) (getr *))
+			     (has-path 'forall (getr *))))
+			     
+	      (jump grulec (and (getr *) (not (or (geta forall) (geta exists)))))
+              (jump grulec (and (geta forall) (atom (flatten (geta forall))))
+                (addr string "for every" (geta forall) ","))
+              (jump grulec (and (geta exists) (atom (flatten (geta exists))))
+                    (addr string (list "there exists a" (geta exists) "such that")))
+              (jump grulec (and (getr *) (eq (mylength (geta forall)) 2))
+                    (addr string "for every" (car(geta forall)) "and" (cadr (geta forall)) ","))
+              (jump grulec (and (getr *) (eq (mylength (geta exists)) 2))
+                    (addr string "there exists a" (car (geta exists)) "and a"
+                                 (cadr (geta exists)) "such that"))
+;              (jump grulec (and (getr *) (lisp::> (mylength (geta forall)) 2))
+;                (addr string "for every"
+;                ((lambda (vbls)
+;                   (append (mapcar
+;                            (function
+;                             (lambda(v) (pack (snoc (unpack v) '\,))))
+;                            (cddr vbls))
+;                           (list (cadr vbls) "and"
+;                                 (pack(snoc(unpack(car vbls))'\,)))))
+;                 (geta forall))))
+
+	      (jump grulec (and (getr *) (lisp::> (mylength (geta forall)) 2))
+                (addr string
+		      "for every"
+		      (reverse (cdr (reverse (geta forall))))
+		      "and"
+		      (last (geta forall))
+		      ","))
+
+              (jump grulec (and (getr *) (lisp::> (mylength(geta exists)) 2))
+                (addr string "there exists"
+                 ((lambda (vbls)
+                    (append
+                     (mapconc
+                      (function
+                        (lambda(v)(list 'a(pack (append (unpack v) '(\,))))))
+                      (cddr vbls))
+                     (list 'a (cadr vbls) "and a"(car vbls))))
+                 (geta exists)) "such that"))
+             ))
+
+(grulec(group
+	 (jump gorent (and (geta ant) (lisp::> (mylength (geta ant)) 1)))
+	 (jump g&ent (geta ant)
+	       (setr ent-nodes (add-types-to-context (geta ant))))
+	 
+       (jump gnumquant (geta pevb) (setr emax (geta emax))
+                                   (setr emin (geta emin)))
+
+       (jump g&ent (or (geta cq) (geta dcq))
+	     (setr ent-nodes (add-types-to-context (geta &ant))))
+       (jump gthresh (geta thresh) (setr tot (mylength (geta arg)))
+                     (setr thresh (geta thresh)))
+       (jump gandor (geta max) (setr tot (mylength (geta arg)))
+                    (setr min (geta min)) (setr max (geta max)))
+       (jump gs *))
+      (to (end) t (addr string (list "*ERROR* no generation grammar for:" (getr *))))) 
+	  ;(format t "~%======error -- no generation grammar for:~%")
+	  ;(describe (^ (getr *)))))
+
+(gandor (group (jump gandorn neg)
+        (jump gandorp (nullr neg))))
+
+(gandorn(group(jump gandorp-n1n (overlap min tot) (setr min 1))
+         (jump gandorp-nnn (and (overlap min 1) (overlap max tot))
+                       (setr min tot))
+         (call gandorp (pconcat (geta arg) '<>) t
+               (sendr conj "and")
+                (sendr tab (lisp::+ (getr tab) 3)) str
+                 (addr string "it is not the case that" '<>
+                       '% (lisp::+ 3 (getr tab)) str) (to end))))
+
+(gandorp(group(call grule (pconcat (geta arg) '<>) (overlap max 0)
+           (sendr conj "and")(sendr neg (nullr neg))
+           (sendr tab) * (addr string *) (to end))
+       (jump gandorp-nnn (overlap min tot))
+       (jump gandorp-n1n (and (overlap min 1) (overlap max tot)))
+         (call grule (pconcat (geta arg) '<>)
+                     (and (overlap min 1) (overlap max 1))
+                     (sendr conj 'or) (sendr tab (lisp::+ 7 (getr tab)))
+                     (sendr neg) str
+                     (addr string "either" str) (to end))
+   (call g1 (pconcat (geta arg) '<>) (overlap max tot) (sendr neg)
+           (sendr count 1) (sendr tab (lisp::+ 3 (getr tab))) str
+        (addr string "at least" min "of the following:" '<>
+         '% (lisp::+ 3 (getr tab)) str) (to end))
+   (call g1 (pconcat (geta arg) '<>) (overlap min 0) (sendr count 1)
+          (sendr tab (lisp::+ 3 (getr tab))) (sendr neg) str
+          (addr string "at most" max
+		"of the following:" '<>
+             '% (lisp::+ 3 (getr tab)) str) (to end))
+
+;   (call g1 (pconcat (geta arg) '<>) (overlap min max) (sendr count 1)
+;         (sendr tab (lisp::+ 3 (getr tab))) (sendr neg) str
+;         (addr string "exactly" min "of the following:" '<>
+;               '% (lisp::+ 3 (getr tab)) str) (to end))
+
+   (call g1 (geta arg) (and (overlap min max) (not (overlap (getr min) 0)))
+	 (sendr count 1)
+         (sendr tab (lisp::+ 3 (getr tab)))
+	 (sendr neg)
+	 str
+         (addr string "exactly" min "of" "the" "following" "are" "true:" (getr str))
+	 (to end))
+
+; added for negation.
+   (call g1 (geta arg) (and (overlap min max) (overlap (getr min) 0))
+	 (sendr count 1)
+	 (sendr neg t)
+         (sendr tab (lisp::+ 3 (getr tab)))
+	 (sendr neg)
+	 str
+	 (addr string str)
+         ;(addr string "exactly" min "of" "the" "following" "are" "true:" (getr str))
+	 (to end))
+
+   (call g1 (pconcat (geta arg) '<>) t(sendr count 1)
+       (sendr tab (lisp::+ 3 (getr tab))) (sendr neg) str
+       (addr string 'between min "and" max
+                      "of the following:" '<>
+                     '% (lisp::+ 3 (getr tab)) str) (to end))))
+
+(gandorp-nnn (call grule (pconcat (geta arg) '<>) t
+          (sendr conj "and") (sendr neg)
+          (sendr tab) * (addr string *) (to end)))
+(gandorp-n1n (call grule (pconcat (geta arg) '<>)t
+                  (sendr conj 'or) (sendr tab (lisp::+ 7 (getr tab)))
+                  (sendr neg) str
+                  (addr string "either" str "(or"
+                                         (cond ((overlap max 2) "both)")
+                                               (t (list 'all (getr max) '\)))))
+                 (to end)))
+
+(gnumquant (call grule (pconcat(geta &ant)(geta cq) '<>) (nullr neg)
+                  (sendr conj "and")
+                 (sendr tab (lisp::+ 3 (getr tab))) str
+                 (addr string "there is at most" (getr emax)
+                 (geta pevb) "such that" '<> '% (lisp::+ 3(getr tab)) str)
+                 (to end)))
+(g&ent
+  (group
+    (call grule (getr ent-nodes) (getr ent-nodes)
+	  (sendr conj "and")
+	  (sendr tab (lisp::+ 3 (getr tab)))(sendr string "if")str
+	  (addr string (if (getr neg)  "it is not the case that" nil) str)
+	  (jump gcq))
+    (call grule (geta cq) t (sendr tab) (sendr conj "and")
+	  * (addr string *) (to end))))
+(gorent (call grule (pconcat (geta ant) '<>) t (sendr conj 'or)
+              (sendr tab (lisp::+ 3 (getr tab))) (sendr string 'if) str
+              (addr string (if (getr neg) "it is not the case that" '<>) str
+                   '<> '% (lisp::+ 3 (getr tab))) (jump gcq)))
+
+(gcq (call grule (geta cq) (geta cq);
+           (sendr conj "and")(sendr string "then")(sendr tab(lisp::+ 8(getr tab)))
+           * (addr string *) (to end)))
+
+(gthresh
+   (group(jump gandorp neg (setr min thresh) (setr max (sub1 (getr tot))))
+         (call grule (pconcat (geta arg) '<>)
+               (and (overlap tot 2) (overlap thresh 1))
+             (sendr tab (lisp::+ 3 (getr tab))) (sendr conj "if and only if")
+               str (addr string str) (to end))
+         (call g1 (pconcat (geta arg) '<>) (overlap thresh 1)
+               (sendr count 1) (sendr tab (lisp::+ 3 (getr tab)))
+               (sendr conj "and")
+            str(addr string "the following are equivalent:" '<> str) (to end))
+         (call g1 (pconcat (geta arg) '<>) t (sendr count 1)
+          (sendr conj "and")
+               (sendr tab (lisp::+ 3 (getr tab)))
+               str (addr string "if any of the following are true,"
+                                "they all are:" '<> str) (to end))))
+
+;(end (group (wrd <> t (to endpop))
+;            (jump g1 * (addr string conj '<> '% (getr tab)))
+;            (pop string t)))		      
+
+;(endpop (pop string t))
+
+(end
+  (group
+    (wrd <> t (to end))
+    (jump g1 * (addr string conj))
+    (pop string t)
+  )
+)
+
+
+
+
+    
+    
+
+
+
+

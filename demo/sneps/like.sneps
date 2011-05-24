@@ -1,0 +1,77 @@
+;  Demonstration of use of rules as data and use of default reasoning.
+;
+;  "Planes are like ships, except that they have a altitude, a pilot,
+;   a squadron, and a home-ship.  Planes do not have draft, displacement
+;   or name.  Planes also have types and classes, and have tail-numbers
+;   in place of hull-numbers."
+;		-- Naval Ocean Systems Center, Elements of Naval Domain
+;		   Knowledge, NOSC Working Paper, San Diego, CA, April, 1981,
+;		   p. 7.
+;
+;(snepslog echo)
+;
+(define member class rel a1 a2)
+;
+;all(S)[Ship(S) V=> {Has-a(S, Cruise-speed), Has-a(S, Draft)}].
+(describe (assert forall $s
+		  ant (build member *s class ship)
+		   cq ((build rel has-a a1 *s a2 cruise-speed)
+		       (build rel has-a a1 *s a2 draft))))
+;
+;Like(Plane, Ship).
+(describe (assert rel like a1 plane a2 ship))
+;
+;all(Class1, Class2)  
+;	[Like(Class2, Class1)  
+;         V=> all(Rel, Obj) [ {all(x)[Class1(x) V=> Rel(x, Obj)]} 
+;			     V=> 
+;			     {all(x)[Class2(x) V=> delta(Rel(x, Obj))]}]].
+; TEMPORARILY, THIS RULE IS UNIVERSAL, NOT GENERIC
+(describe (assert forall ($class1 $class2)
+		  ant (build rel like a1 *class2 a2 *class1)
+		   cq (build forall ($rel $obj)
+			     ant (build forall $x
+					ant (build member *x class *class1)
+					 cq (build rel *rel a1 *x a2 *obj))
+			      cq (build forall $x
+					ant (build member *x class *class2)
+					 cq (build rel *rel a1 *x a2 *obj)))))
+;
+;all(p) [thresh(1) {Plane(p), Has-a(p, Altitude), Has-a(p, Pilot), 
+;		   Has-a(p, Squadron), Has-a(p, Home-ship)}].
+(describe (assert forall $p
+		  ant (build member *p class plane)
+		   cq ((build member *p class plane)
+		       (build rel has-a a1 *p a2 altitude)
+		       (build rel has-a a1 *p a2 pilot)
+		       (build rel has-a a1 *p a2 squadron)
+		       (build rel has-a a1 *p a2 home-ship))))
+;
+;all(p) [Plane(p) V=> andor(0,0) {Has-a(p, Draft), Has-a(p, Displacement), 
+;				 Has-a(p, Name)}].
+(describe (assert forall *p
+		  ant (build member *p class plane)
+		   cq (build min 0 max 0
+			     arg ((build rel has-a a1 *p a2 draft)
+				  (build rel has-a a1 *p a2 displacement)
+				  (build rel has-a a1 *p a2 name)))))
+;
+;all(x) [andor(0,1) {Has-a(x, Tail-number), Has-a(x, Hull-number)}].
+;all(p) [Plane(p) V=> Has-a(p, Tail-number)].
+(describe (assert forall *p
+		  ant (build member *p class plane)
+		   cq ((build rel has-a a1 *p a2 tail-number)
+		       (build min 0 max 0
+			      arg (build rel has-a a1 *p a2 hull-number)))))
+;
+;Plane(Flying-Dutchman).
+(describe (assert member flying-dutchman class plane))
+;
+;Has-a(Flying-Dutchman, Cruise-speed)?
+(describe (deduce rel has-a a1 flying-dutchman a2 cruise-speed))
+;
+;Has-a(Flying-Dutchman, Hull-number)?
+(describe (deduce rel has-a a1 flying-dutchman a2 hull-number))
+;
+;Has-a(Flying-Dutchman, Draft)?
+(describe (deduce rel has-a a1 flying-dutchman a2 draft))

@@ -1,0 +1,24 @@
+;;; Demonstration of Using SNaLPS to implement a Cognitive Agent
+;;; as documented in Section 7.5.2 of the SNePS 2.1 User's Manual
+;;; by Stuart C. Shapiro
+;;;    June 2, 1994
+(resetnet t)
+^^
+(atnin "sneps:demo;nlint;qa-grammar.atn")
+(lexin "sneps:demo;nlint;qa-lexicon.lisp")
+(setf *infertrace* nil)
+(parse)
+A dog bit John.
+The dog slept.
+Mary believes that John likes the dog.
+Mary studies Computer Science.
+Mary used a computer.
+John saw a saw.
+What bit John?
+Who sleeps?
+Who studied?
+Who uses the computer?
+Who likes a dog?
+Who sees a saw?
+^end.
+^^

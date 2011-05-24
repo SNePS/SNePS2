@@ -1,0 +1,1186 @@
+|SNePS network 2.0|
+
+;; Node/Context-ID indices:
+1 49 11 301 0 0 0 54
+
+47 ;; Relation definitions:
+object3
+lex
+presumably
+component
+agent
+sup
+sub
+arg2
+arg1
+rel
+property
+object
+class
+member
+object2
+object1
+effect
+precondition
+action
+goal
+plan
+act
+else
+then
+condition
+suchthat
+vars
+if
+do
+whenever
+when
+threshmax
+thresh
+pevb
+min
+max
+exists
+etot
+emin
+emax
+default
+dcq
+cq
+forall
+arg
+ant
+&ant
+
+1 ;; Path definitions:
+class
+(:pathdef (compose class (kstar (compose sub- sup)))
+:fwd-paths ((class nil (compose class (kstar (compose sub- sup))))))
+(:pathdef (compose (kstar (compose sup- sub)) class-)
+:fwd-paths ((class- (kstar (compose sub- sup)) (compose (kstar (compose sup- sub)) class-))))
+
+54 ;; Context definitions:
+C54
+(default-defaultct)
+(#.(n^ 'm49) #.(n^ 'm48) #.(n^ 'm47) #.(n^ 'm46) #.(n^ 'm45) #.(n^ 'm44) #.(n^ 'm43) #.(n^ 'm41) #.(n^ 'm39) #.(n^ 'm38) #.(n^ 'm33) #.(n^ 'm32) #.(n^ 'm31) #.(n^ 'm29) #.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C53
+nil
+(#.(n^ 'm49))
+nil
+nil
+C52
+nil
+(#.(n^ 'm48) #.(n^ 'm47) #.(n^ 'm46) #.(n^ 'm45) #.(n^ 'm44) #.(n^ 'm43) #.(n^ 'm41) #.(n^ 'm39) #.(n^ 'm38) #.(n^ 'm33) #.(n^ 'm32) #.(n^ 'm31) #.(n^ 'm29) #.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C51
+nil
+(#.(n^ 'm48))
+nil
+nil
+C50
+nil
+(#.(n^ 'm47) #.(n^ 'm46) #.(n^ 'm45) #.(n^ 'm44) #.(n^ 'm43) #.(n^ 'm41) #.(n^ 'm39) #.(n^ 'm38) #.(n^ 'm33) #.(n^ 'm32) #.(n^ 'm31) #.(n^ 'm29) #.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C49
+nil
+(#.(n^ 'm47))
+nil
+nil
+C48
+nil
+(#.(n^ 'm46) #.(n^ 'm45) #.(n^ 'm44) #.(n^ 'm43) #.(n^ 'm41) #.(n^ 'm39) #.(n^ 'm38) #.(n^ 'm33) #.(n^ 'm32) #.(n^ 'm31) #.(n^ 'm29) #.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C47
+nil
+(#.(n^ 'm46))
+nil
+nil
+C46
+nil
+(#.(n^ 'm45) #.(n^ 'm44) #.(n^ 'm43) #.(n^ 'm41) #.(n^ 'm39) #.(n^ 'm38) #.(n^ 'm33) #.(n^ 'm32) #.(n^ 'm31) #.(n^ 'm29) #.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C45
+nil
+(#.(n^ 'm45))
+nil
+nil
+C44
+nil
+(#.(n^ 'm44) #.(n^ 'm43) #.(n^ 'm41) #.(n^ 'm39) #.(n^ 'm38) #.(n^ 'm33) #.(n^ 'm32) #.(n^ 'm31) #.(n^ 'm29) #.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C43
+nil
+(#.(n^ 'm44))
+nil
+nil
+C42
+nil
+(#.(n^ 'm43) #.(n^ 'm41) #.(n^ 'm39) #.(n^ 'm38) #.(n^ 'm33) #.(n^ 'm32) #.(n^ 'm31) #.(n^ 'm29) #.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C41
+nil
+(#.(n^ 'm43))
+nil
+nil
+C40
+nil
+(#.(n^ 'm41) #.(n^ 'm39) #.(n^ 'm38) #.(n^ 'm33) #.(n^ 'm32) #.(n^ 'm31) #.(n^ 'm29) #.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C39
+nil
+(#.(n^ 'm41))
+nil
+nil
+C38
+nil
+(#.(n^ 'm39) #.(n^ 'm38) #.(n^ 'm33) #.(n^ 'm32) #.(n^ 'm31) #.(n^ 'm29) #.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C37
+nil
+(#.(n^ 'm39))
+nil
+nil
+C36
+nil
+(#.(n^ 'm38) #.(n^ 'm33) #.(n^ 'm32) #.(n^ 'm31) #.(n^ 'm29) #.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C35
+nil
+(#.(n^ 'm38))
+nil
+nil
+C34
+nil
+(#.(n^ 'm33) #.(n^ 'm32) #.(n^ 'm31) #.(n^ 'm29) #.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C33
+nil
+(#.(n^ 'm33))
+nil
+nil
+C32
+nil
+(#.(n^ 'm32) #.(n^ 'm31) #.(n^ 'm29) #.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C31
+nil
+(#.(n^ 'm32))
+nil
+nil
+C30
+nil
+(#.(n^ 'm31) #.(n^ 'm29) #.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C29
+nil
+(#.(n^ 'm31))
+nil
+nil
+C28
+nil
+(#.(n^ 'm29) #.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C27
+nil
+(#.(n^ 'm29))
+nil
+nil
+C26
+nil
+(#.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C25
+nil
+(#.(n^ 'm27))
+nil
+nil
+C24
+nil
+(#.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C23
+nil
+(#.(n^ 'm26))
+nil
+nil
+C22
+nil
+(#.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C21
+nil
+(#.(n^ 'm25))
+nil
+nil
+C20
+nil
+(#.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C19
+nil
+(#.(n^ 'm24))
+nil
+nil
+C18
+nil
+(#.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C17
+nil
+(#.(n^ 'm23))
+nil
+nil
+C16
+nil
+(#.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C15
+nil
+(#.(n^ 'm22))
+nil
+nil
+C14
+nil
+(#.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C13
+nil
+(#.(n^ 'm20))
+nil
+nil
+C12
+nil
+(#.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C11
+nil
+(#.(n^ 'm19))
+nil
+nil
+C10
+nil
+(#.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C9
+nil
+(#.(n^ 'm16))
+nil
+nil
+C8
+nil
+(#.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C7
+nil
+(#.(n^ 'm15))
+nil
+nil
+C6
+nil
+(#.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C5
+nil
+(#.(n^ 'm13))
+nil
+nil
+C4
+nil
+(#.(n^ 'm11) #.(n^ 'm9))
+nil
+nil
+C3
+nil
+(#.(n^ 'm11))
+nil
+nil
+C2
+nil
+(#.(n^ 'm9))
+nil
+nil
+C1
+nil
+nil
+nil
+nil
+
+136 ;; Node definitions:
+snsequence
+:base t nil
+(lex- (#.(n^ 'm1)))
+nil
+nil
+nil
+m1
+:mol t nil
+(action- (#.(n^ 'p285) #.(n^ 'p284) #.(n^ 'p255)) lex (#.(n^ 'snsequence)))
+nil
+nil
+nil
+sniterate
+:base t nil
+(lex- (#.(n^ 'm2)))
+nil
+nil
+nil
+m2
+:mol t nil
+(lex (#.(n^ 'sniterate)))
+nil
+nil
+nil
+achieve
+:base t nil
+(lex- (#.(n^ 'm3)))
+nil
+nil
+nil
+m3
+:mol t nil
+(lex (#.(n^ 'achieve)))
+nil
+nil
+nil
+believe
+:base t nil
+(lex- (#.(n^ 'm4)))
+nil
+nil
+nil
+m4
+:mol t nil
+(lex (#.(n^ 'believe)))
+nil
+nil
+nil
+pickup
+:base t nil
+(lex- (#.(n^ 'm5)))
+nil
+nil
+nil
+m5
+:mol t nil
+(action- (#.(n^ 'p6)) lex (#.(n^ 'pickup)))
+nil
+nil
+nil
+put
+:base t nil
+(lex- (#.(n^ 'm6)))
+nil
+nil
+nil
+m6
+:mol t nil
+(action- (#.(n^ 'p282) #.(n^ 'p280) #.(n^ 'p253) #.(n^ 'p194) #.(n^ 'p106)) lex (#.(n^ 'put)))
+nil
+nil
+nil
+be
+:base t nil
+(lex- (#.(n^ 'm7)))
+nil
+nil
+nil
+m7
+:mol t nil
+(lex (#.(n^ 'be)))
+nil
+nil
+nil
+table
+:base t nil
+(lex- (#.(n^ 'm8)))
+nil
+nil
+nil
+m8
+:mol t nil
+(class- (#.(n^ 'p301) #.(n^ 'p300) #.(n^ 'p299) #.(n^ 'p279) #.(n^ 'p252) #.(n^ 'p1) #.(n^ 'm9)) lex (#.(n^ 'table)))
+nil
+nil
+nil
+b1
+:base t nil
+(arg2- (#.(n^ 'm49) #.(n^ 'm47) #.(n^ 'm45)) member- (#.(n^ 'm11) #.(n^ 'm9)) object2- (#.(n^ 'p280) #.(n^ 'p253)))
+nil
+nil
+nil
+m9
+:mol t nil
+(class (#.(n^ 'm8)) member (#.(n^ 'b1)))
+(der (#.(c^ 'C2)) hyp (#.(c^ 'C2)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C38) #.(c^ 'C36) #.(c^ 'C34) #.(c^ 'C32) #.(c^ 'C30) #.(c^ 'C28) #.(c^ 'C26) #.(c^ 'C24) #.(c^ 'C22) #.(c^ 'C20) #.(c^ 'C18) #.(c^ 'C16) #.(c^ 'C14) #.(c^ 'C12) #.(c^ 'C10) #.(c^ 'C8) #.(c^ 'C6) #.(c^ 'C4) #.(c^ 'C2))
+v1
+:var t nil
+(member- (#.(n^ 'p1)))
+nil
+nil
+nil
+p1
+:pat t (#.(n^ 'v1))
+(class (#.(n^ 'm8)) member (#.(n^ 'v1)))
+nil
+nil
+nil
+support
+:base t nil
+(lex- (#.(n^ 'm10)))
+nil
+nil
+nil
+m10
+:mol t nil
+(arg2- (#.(n^ 'm18) #.(n^ 'p35)) class- (#.(n^ 'p47) #.(n^ 'm11)) sup- (#.(n^ 'm13)) lex (#.(n^ 'support)))
+nil
+nil
+nil
+m11
+:mol t nil
+(class (#.(n^ 'm10)) member (#.(n^ 'b1)))
+(hyp (#.(c^ 'C3)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C38) #.(c^ 'C36) #.(c^ 'C34) #.(c^ 'C32) #.(c^ 'C30) #.(c^ 'C28) #.(c^ 'C26) #.(c^ 'C24) #.(c^ 'C22) #.(c^ 'C20) #.(c^ 'C18) #.(c^ 'C16) #.(c^ 'C14) #.(c^ 'C12) #.(c^ 'C10) #.(c^ 'C8) #.(c^ 'C6) #.(c^ 'C4) #.(c^ 'C3))
+block
+:base t nil
+(lex- (#.(n^ 'm12)))
+nil
+nil
+nil
+m12
+:mol t nil
+(arg1- (#.(n^ 'm18) #.(n^ 'p38)) class- (#.(n^ 'm43) #.(n^ 'm41) #.(n^ 'm39) #.(n^ 'p287) #.(n^ 'p198) #.(n^ 'p9)) sub- (#.(n^ 'm13)) lex (#.(n^ 'block)))
+nil
+nil
+nil
+m13
+:mol t nil
+(sub (#.(n^ 'm12)) sup (#.(n^ 'm10)))
+(hyp (#.(c^ 'C5)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C38) #.(c^ 'C36) #.(c^ 'C34) #.(c^ 'C32) #.(c^ 'C30) #.(c^ 'C28) #.(c^ 'C26) #.(c^ 'C24) #.(c^ 'C22) #.(c^ 'C20) #.(c^ 'C18) #.(c^ 'C16) #.(c^ 'C14) #.(c^ 'C12) #.(c^ 'C10) #.(c^ 'C8) #.(c^ 'C6) #.(c^ 'C5))
+v2
+:var t nil
+(forall- (#.(n^ 'm38) #.(n^ 'm33) #.(n^ 'm32) #.(n^ 'm31) #.(n^ 'm29) #.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15)) arg1- (#.(n^ 'p35) #.(n^ 'p34)) member- (#.(n^ 'p9)) object- (#.(n^ 'p92) #.(n^ 'p8)) object1- (#.(n^ 'p277) #.(n^ 'p253) #.(n^ 'p194) #.(n^ 'p106) #.(n^ 'p6)))
+nil
+nil
+nil
+p6
+:pat t (#.(n^ 'v2))
+(act- (#.(n^ 'p93) #.(n^ 'p77) #.(n^ 'p48) #.(n^ 'p21) #.(n^ 'p10) #.(n^ 'p7)) object1- (#.(n^ 'p255)) plan- (#.(n^ 'p212)) action (#.(n^ 'm5)) object1 (#.(n^ 'v2)))
+nil
+nil
+nil
+p7
+:pat t (#.(n^ 'v2))
+(act (#.(n^ 'p6)))
+nil
+nil
+nil
+clear
+:base t nil
+(lex- (#.(n^ 'm14)))
+nil
+nil
+nil
+m14
+:mol t nil
+(property- (#.(n^ 'm48) #.(n^ 'm46) #.(n^ 'm44) #.(n^ 'p196) #.(n^ 'p76) #.(n^ 'p8)) lex (#.(n^ 'clear)))
+nil
+nil
+nil
+p8
+:pat t (#.(n^ 'v2))
+(arg- (#.(n^ 'p20)) effect- (#.(n^ 'p159)) precondition- (#.(n^ 'p10)) object (#.(n^ 'v2)) property (#.(n^ 'm14)))
+nil
+nil
+nil
+p9
+:pat t (#.(n^ 'v2))
+(ant- (#.(n^ 'm31) #.(n^ 'm22) #.(n^ 'm16) #.(n^ 'm15)) &ant- (#.(n^ 'm38) #.(n^ 'm33) #.(n^ 'm32) #.(n^ 'm29) #.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm20) #.(n^ 'm19)) class (#.(n^ 'm12)) member (#.(n^ 'v2)))
+nil
+nil
+nil
+p10
+:pat t (#.(n^ 'v2))
+(cq- (#.(n^ 'm15)) act (#.(n^ 'p6)) precondition (#.(n^ 'p8)))
+nil
+nil
+nil
+m15
+:mol t nil
+(forall (#.(n^ 'v2)) ant (#.(n^ 'p9)) cq (#.(n^ 'p10)))
+(hyp (#.(c^ 'C7)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C38) #.(c^ 'C36) #.(c^ 'C34) #.(c^ 'C32) #.(c^ 'C30) #.(c^ 'C28) #.(c^ 'C26) #.(c^ 'C24) #.(c^ 'C22) #.(c^ 'C20) #.(c^ 'C18) #.(c^ 'C16) #.(c^ 'C14) #.(c^ 'C12) #.(c^ 'C10) #.(c^ 'C8) #.(c^ 'C7))
+|0|
+:base t nil
+(min- (#.(n^ 'p197) #.(n^ 'p141) #.(n^ 'p46) #.(n^ 'p20)) max- (#.(n^ 'p197) #.(n^ 'p141) #.(n^ 'p46) #.(n^ 'p20)))
+nil
+nil
+nil
+p20
+:pat t (#.(n^ 'v2))
+(effect- (#.(n^ 'p21)) min (#.(n^ '|0|)) max (#.(n^ '|0|)) arg (#.(n^ 'p8)))
+nil
+nil
+nil
+p21
+:pat t (#.(n^ 'v2))
+(cq- (#.(n^ 'm16)) act (#.(n^ 'p6)) effect (#.(n^ 'p20)))
+nil
+nil
+nil
+m16
+:mol t nil
+(forall (#.(n^ 'v2)) ant (#.(n^ 'p9)) cq (#.(n^ 'p21)))
+(hyp (#.(c^ 'C9)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C38) #.(c^ 'C36) #.(c^ 'C34) #.(c^ 'C32) #.(c^ 'C30) #.(c^ 'C28) #.(c^ 'C26) #.(c^ 'C24) #.(c^ 'C22) #.(c^ 'C20) #.(c^ 'C18) #.(c^ 'C16) #.(c^ 'C14) #.(c^ 'C12) #.(c^ 'C10) #.(c^ 'C9))
+on
+:base t nil
+(lex- (#.(n^ 'm17)))
+nil
+nil
+nil
+m17
+:mol t nil
+(rel- (#.(n^ 'm49) #.(n^ 'm47) #.(n^ 'm45) #.(n^ 'm18) #.(n^ 'p38) #.(n^ 'p35) #.(n^ 'p34)) lex (#.(n^ 'on)))
+nil
+nil
+nil
+v3
+:var t nil
+(forall- (#.(n^ 'm33) #.(n^ 'm32) #.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm20) #.(n^ 'm19)) arg2- (#.(n^ 'p34)) member- (#.(n^ 'p47)) object- (#.(n^ 'p76)) object2- (#.(n^ 'p106)))
+nil
+nil
+nil
+p34
+:pat t (#.(n^ 'v3) #.(n^ 'v2))
+(&ant- (#.(n^ 'm33) #.(n^ 'm20) #.(n^ 'm19)) arg- (#.(n^ 'p46)) effect- (#.(n^ 'p176)) goal- (#.(n^ 'p225)) arg1 (#.(n^ 'v2)) arg2 (#.(n^ 'v3)) rel (#.(n^ 'm17)))
+nil
+nil
+nil
+p35
+:pat t (#.(n^ 'v2))
+(arg1 (#.(n^ 'v2)) arg2 (#.(n^ 'm10)) rel (#.(n^ 'm17)))
+nil
+nil
+nil
+v4
+:var t nil
+(arg2- (#.(n^ 'p38)))
+nil
+nil
+nil
+p38
+:pat t (#.(n^ 'v4))
+(arg1 (#.(n^ 'm12)) arg2 (#.(n^ 'v4)) rel (#.(n^ 'm17)))
+nil
+nil
+nil
+m18
+:mol t nil
+(arg1 (#.(n^ 'm12)) arg2 (#.(n^ 'm10)) rel (#.(n^ 'm17)))
+nil
+nil
+nil
+p46
+:pat t (#.(n^ 'v3) #.(n^ 'v2))
+(effect- (#.(n^ 'p48)) min (#.(n^ '|0|)) max (#.(n^ '|0|)) arg (#.(n^ 'p34)))
+nil
+nil
+nil
+p47
+:pat t (#.(n^ 'v3))
+(&ant- (#.(n^ 'm33) #.(n^ 'm32) #.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm20) #.(n^ 'm19)) class (#.(n^ 'm10)) member (#.(n^ 'v3)))
+nil
+nil
+nil
+p48
+:pat t (#.(n^ 'v3) #.(n^ 'v2))
+(cq- (#.(n^ 'm19)) act (#.(n^ 'p6)) effect (#.(n^ 'p46)))
+nil
+nil
+nil
+m19
+:mol t nil
+(forall (#.(n^ 'v3) #.(n^ 'v2)) &ant (#.(n^ 'p47) #.(n^ 'p34) #.(n^ 'p9)) cq (#.(n^ 'p48)))
+(hyp (#.(c^ 'C11)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C38) #.(c^ 'C36) #.(c^ 'C34) #.(c^ 'C32) #.(c^ 'C30) #.(c^ 'C28) #.(c^ 'C26) #.(c^ 'C24) #.(c^ 'C22) #.(c^ 'C20) #.(c^ 'C18) #.(c^ 'C16) #.(c^ 'C14) #.(c^ 'C12) #.(c^ 'C11))
+p76
+:pat t (#.(n^ 'v3))
+(effect- (#.(n^ 'p77)) goal- (#.(n^ 'p256)) precondition- (#.(n^ 'p108)) object (#.(n^ 'v3)) property (#.(n^ 'm14)))
+nil
+nil
+nil
+p77
+:pat t (#.(n^ 'v3) #.(n^ 'v2))
+(cq- (#.(n^ 'm20)) act (#.(n^ 'p6)) effect (#.(n^ 'p76)))
+nil
+nil
+nil
+m20
+:mol t nil
+(forall (#.(n^ 'v3) #.(n^ 'v2)) &ant (#.(n^ 'p47) #.(n^ 'p34) #.(n^ 'p9)) cq (#.(n^ 'p77)))
+(hyp (#.(c^ 'C13)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C38) #.(c^ 'C36) #.(c^ 'C34) #.(c^ 'C32) #.(c^ 'C30) #.(c^ 'C28) #.(c^ 'C26) #.(c^ 'C24) #.(c^ 'C22) #.(c^ 'C20) #.(c^ 'C18) #.(c^ 'C16) #.(c^ 'C14) #.(c^ 'C13))
+held
+:base t nil
+(lex- (#.(n^ 'm21)))
+nil
+nil
+nil
+m21
+:mol t nil
+(property- (#.(n^ 'p92)) lex (#.(n^ 'held)))
+nil
+nil
+nil
+p92
+:pat t (#.(n^ 'v2))
+(arg- (#.(n^ 'p141)) effect- (#.(n^ 'p93)) goal- (#.(n^ 'p212)) precondition- (#.(n^ 'p124)) object (#.(n^ 'v2)) property (#.(n^ 'm21)))
+nil
+nil
+nil
+p93
+:pat t (#.(n^ 'v2))
+(cq- (#.(n^ 'm22)) act (#.(n^ 'p6)) effect (#.(n^ 'p92)))
+nil
+nil
+nil
+m22
+:mol t nil
+(forall (#.(n^ 'v2)) ant (#.(n^ 'p9)) cq (#.(n^ 'p93)))
+(hyp (#.(c^ 'C15)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C38) #.(c^ 'C36) #.(c^ 'C34) #.(c^ 'C32) #.(c^ 'C30) #.(c^ 'C28) #.(c^ 'C26) #.(c^ 'C24) #.(c^ 'C22) #.(c^ 'C20) #.(c^ 'C18) #.(c^ 'C16) #.(c^ 'C15))
+p106
+:pat t (#.(n^ 'v3) #.(n^ 'v2))
+(act- (#.(n^ 'p176) #.(n^ 'p159) #.(n^ 'p142) #.(n^ 'p124) #.(n^ 'p108) #.(n^ 'p107)) plan- (#.(n^ 'p225)) action (#.(n^ 'm6)) object1 (#.(n^ 'v2)) object2 (#.(n^ 'v3)))
+nil
+nil
+nil
+p107
+:pat t (#.(n^ 'v3) #.(n^ 'v2))
+(act (#.(n^ 'p106)))
+nil
+nil
+nil
+p108
+:pat t (#.(n^ 'v3) #.(n^ 'v2))
+(cq- (#.(n^ 'm23)) act (#.(n^ 'p106)) precondition (#.(n^ 'p76)))
+nil
+nil
+nil
+m23
+:mol t nil
+(forall (#.(n^ 'v3) #.(n^ 'v2)) &ant (#.(n^ 'p47) #.(n^ 'p9)) cq (#.(n^ 'p108)))
+(hyp (#.(c^ 'C17)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C38) #.(c^ 'C36) #.(c^ 'C34) #.(c^ 'C32) #.(c^ 'C30) #.(c^ 'C28) #.(c^ 'C26) #.(c^ 'C24) #.(c^ 'C22) #.(c^ 'C20) #.(c^ 'C18) #.(c^ 'C17))
+p124
+:pat t (#.(n^ 'v3) #.(n^ 'v2))
+(cq- (#.(n^ 'm24)) act (#.(n^ 'p106)) precondition (#.(n^ 'p92)))
+nil
+nil
+nil
+m24
+:mol t nil
+(forall (#.(n^ 'v3) #.(n^ 'v2)) &ant (#.(n^ 'p47) #.(n^ 'p9)) cq (#.(n^ 'p124)))
+(hyp (#.(c^ 'C19)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C38) #.(c^ 'C36) #.(c^ 'C34) #.(c^ 'C32) #.(c^ 'C30) #.(c^ 'C28) #.(c^ 'C26) #.(c^ 'C24) #.(c^ 'C22) #.(c^ 'C20) #.(c^ 'C19))
+p141
+:pat t (#.(n^ 'v2))
+(effect- (#.(n^ 'p142)) min (#.(n^ '|0|)) max (#.(n^ '|0|)) arg (#.(n^ 'p92)))
+nil
+nil
+nil
+p142
+:pat t (#.(n^ 'v3) #.(n^ 'v2))
+(cq- (#.(n^ 'm25)) act (#.(n^ 'p106)) effect (#.(n^ 'p141)))
+nil
+nil
+nil
+m25
+:mol t nil
+(forall (#.(n^ 'v3) #.(n^ 'v2)) &ant (#.(n^ 'p47) #.(n^ 'p9)) cq (#.(n^ 'p142)))
+(hyp (#.(c^ 'C21)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C38) #.(c^ 'C36) #.(c^ 'C34) #.(c^ 'C32) #.(c^ 'C30) #.(c^ 'C28) #.(c^ 'C26) #.(c^ 'C24) #.(c^ 'C22) #.(c^ 'C21))
+p159
+:pat t (#.(n^ 'v3) #.(n^ 'v2))
+(cq- (#.(n^ 'm26)) act (#.(n^ 'p106)) effect (#.(n^ 'p8)))
+nil
+nil
+nil
+m26
+:mol t nil
+(forall (#.(n^ 'v3) #.(n^ 'v2)) &ant (#.(n^ 'p47) #.(n^ 'p9)) cq (#.(n^ 'p159)))
+(hyp (#.(c^ 'C23)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C38) #.(c^ 'C36) #.(c^ 'C34) #.(c^ 'C32) #.(c^ 'C30) #.(c^ 'C28) #.(c^ 'C26) #.(c^ 'C24) #.(c^ 'C23))
+p176
+:pat t (#.(n^ 'v3) #.(n^ 'v2))
+(cq- (#.(n^ 'm27)) act (#.(n^ 'p106)) effect (#.(n^ 'p34)))
+nil
+nil
+nil
+m27
+:mol t nil
+(forall (#.(n^ 'v3) #.(n^ 'v2)) &ant (#.(n^ 'p47) #.(n^ 'p9)) cq (#.(n^ 'p176)))
+(hyp (#.(c^ 'C25)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C38) #.(c^ 'C36) #.(c^ 'C34) #.(c^ 'C32) #.(c^ 'C30) #.(c^ 'C28) #.(c^ 'C26) #.(c^ 'C25))
+v5
+:var t nil
+(forall- (#.(n^ 'm38) #.(n^ 'm29)) member- (#.(n^ 'p198)) object- (#.(n^ 'p196)) object1- (#.(n^ 'p282)) object2- (#.(n^ 'p277) #.(n^ 'p194)))
+nil
+nil
+nil
+latter
+:base t nil
+(lex- (#.(n^ 'm28)))
+nil
+nil
+nil
+p194
+:pat t (#.(n^ 'v5) #.(n^ 'v2))
+(act- (#.(n^ 'p199) #.(n^ 'p195)) object2- (#.(n^ 'p285)) action (#.(n^ 'm6)) object1 (#.(n^ 'v2)) object2 (#.(n^ 'v5)))
+nil
+nil
+nil
+p195
+:pat t (#.(n^ 'v5) #.(n^ 'v2))
+(act (#.(n^ 'p194)))
+nil
+nil
+nil
+m28
+:mol t nil
+(lex (#.(n^ 'latter)))
+nil
+nil
+nil
+p196
+:pat t (#.(n^ 'v5))
+(arg- (#.(n^ 'p197)) object (#.(n^ 'v5)) property (#.(n^ 'm14)))
+nil
+nil
+nil
+p197
+:pat t (#.(n^ 'v5))
+(effect- (#.(n^ 'p199)) min (#.(n^ '|0|)) max (#.(n^ '|0|)) arg (#.(n^ 'p196)))
+nil
+nil
+nil
+p198
+:pat t (#.(n^ 'v5))
+(&ant- (#.(n^ 'm38) #.(n^ 'm29)) class (#.(n^ 'm12)) member (#.(n^ 'v5)))
+nil
+nil
+nil
+p199
+:pat t (#.(n^ 'v5) #.(n^ 'v2))
+(cq- (#.(n^ 'm29)) act (#.(n^ 'p194)) effect (#.(n^ 'p197)))
+nil
+nil
+nil
+m29
+:mol t nil
+(forall (#.(n^ 'v5) #.(n^ 'v2)) &ant (#.(n^ 'p198) #.(n^ 'p9)) cq (#.(n^ 'p199)))
+(hyp (#.(c^ 'C27)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C38) #.(c^ 'C36) #.(c^ 'C34) #.(c^ 'C32) #.(c^ 'C30) #.(c^ 'C28) #.(c^ 'C27))
+A
+:base t nil
+(lex- (#.(n^ 'm30)))
+nil
+nil
+nil
+m30
+:mol t nil
+(arg1- (#.(n^ 'm49)) member- (#.(n^ 'm39)) object- (#.(n^ 'm48)) lex (#.(n^ 'A)))
+nil
+nil
+nil
+p212
+:pat t (#.(n^ 'v2))
+(cq- (#.(n^ 'm31)) goal (#.(n^ 'p92)) plan (#.(n^ 'p6)))
+nil
+nil
+nil
+m31
+:mol t nil
+(forall (#.(n^ 'v2)) ant (#.(n^ 'p9)) cq (#.(n^ 'p212)))
+(hyp (#.(c^ 'C29)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C38) #.(c^ 'C36) #.(c^ 'C34) #.(c^ 'C32) #.(c^ 'C30) #.(c^ 'C29))
+p225
+:pat t (#.(n^ 'v3) #.(n^ 'v2))
+(cq- (#.(n^ 'm32)) goal (#.(n^ 'p34)) plan (#.(n^ 'p106)))
+nil
+nil
+nil
+m32
+:mol t nil
+(forall (#.(n^ 'v3) #.(n^ 'v2)) &ant (#.(n^ 'p47) #.(n^ 'p9)) cq (#.(n^ 'p225)))
+(hyp (#.(c^ 'C31)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C38) #.(c^ 'C36) #.(c^ 'C34) #.(c^ 'C32) #.(c^ 'C31))
+v6
+:var t nil
+(member- (#.(n^ 'p252)))
+nil
+nil
+nil
+p252
+:pat t (#.(n^ 'v6))
+(class (#.(n^ 'm8)) member (#.(n^ 'v6)))
+nil
+nil
+nil
+p253
+:pat t (#.(n^ 'v2))
+(act- (#.(n^ 'p254)) object2- (#.(n^ 'p255)) action (#.(n^ 'm6)) object1 (#.(n^ 'v2)) object2 (#.(n^ 'b1)))
+nil
+nil
+nil
+p254
+:pat t (#.(n^ 'v2))
+(act (#.(n^ 'p253)))
+nil
+nil
+nil
+p255
+:pat t (#.(n^ 'v2))
+(plan- (#.(n^ 'p256)) action (#.(n^ 'm1)) object1 (#.(n^ 'p6)) object2 (#.(n^ 'p253)))
+nil
+nil
+nil
+p256
+:pat t (#.(n^ 'v3) #.(n^ 'v2))
+(cq- (#.(n^ 'm33)) goal (#.(n^ 'p76)) plan (#.(n^ 'p255)))
+nil
+nil
+nil
+m33
+:mol t nil
+(forall (#.(n^ 'v3) #.(n^ 'v2)) &ant (#.(n^ 'p47) #.(n^ 'p34) #.(n^ 'p9)) cq (#.(n^ 'p256)))
+(hyp (#.(c^ 'C33)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C38) #.(c^ 'C36) #.(c^ 'C34) #.(c^ 'C33))
+pile
+:base t nil
+(lex- (#.(n^ 'm34)))
+nil
+nil
+nil
+m34
+:mol t nil
+(action- (#.(n^ 'p277)) lex (#.(n^ 'pile)))
+nil
+nil
+nil
+first
+:base t nil
+(lex- (#.(n^ 'm37)))
+nil
+nil
+nil
+second
+:base t nil
+(lex- (#.(n^ 'm36)))
+nil
+nil
+nil
+third
+:base t nil
+(lex- (#.(n^ 'm35)))
+nil
+nil
+nil
+m35
+:mol t nil
+(lex (#.(n^ 'third)))
+nil
+nil
+nil
+v7
+:var t nil
+(forall- (#.(n^ 'm38)) member- (#.(n^ 'p287)) object1- (#.(n^ 'p280)) object2- (#.(n^ 'p282)) object3- (#.(n^ 'p277)))
+nil
+nil
+nil
+p277
+:pat t (#.(n^ 'v7) #.(n^ 'v5) #.(n^ 'v2))
+(act- (#.(n^ 'p286) #.(n^ 'p278)) action (#.(n^ 'm34)) object1 (#.(n^ 'v2)) object2 (#.(n^ 'v5)) object3 (#.(n^ 'v7)))
+nil
+nil
+nil
+p278
+:pat t (#.(n^ 'v7) #.(n^ 'v5) #.(n^ 'v2))
+(act (#.(n^ 'p277)))
+nil
+nil
+nil
+v8
+:var t nil
+(member- (#.(n^ 'p279)))
+nil
+nil
+nil
+p279
+:pat t (#.(n^ 'v8))
+(class (#.(n^ 'm8)) member (#.(n^ 'v8)))
+nil
+nil
+nil
+p280
+:pat t (#.(n^ 'v7))
+(act- (#.(n^ 'p281)) object1- (#.(n^ 'p284)) action (#.(n^ 'm6)) object1 (#.(n^ 'v7)) object2 (#.(n^ 'b1)))
+nil
+nil
+nil
+p281
+:pat t (#.(n^ 'v7))
+(act (#.(n^ 'p280)))
+nil
+nil
+nil
+m36
+:mol t nil
+(lex (#.(n^ 'second)))
+nil
+nil
+nil
+p282
+:pat t (#.(n^ 'v7) #.(n^ 'v5))
+(act- (#.(n^ 'p283)) object2- (#.(n^ 'p284)) action (#.(n^ 'm6)) object1 (#.(n^ 'v5)) object2 (#.(n^ 'v7)))
+nil
+nil
+nil
+p283
+:pat t (#.(n^ 'v7) #.(n^ 'v5))
+(act (#.(n^ 'p282)))
+nil
+nil
+nil
+m37
+:mol t nil
+(lex (#.(n^ 'first)))
+nil
+nil
+nil
+p284
+:pat t (#.(n^ 'v7) #.(n^ 'v5))
+(object1- (#.(n^ 'p285)) action (#.(n^ 'm1)) object1 (#.(n^ 'p280)) object2 (#.(n^ 'p282)))
+nil
+nil
+nil
+p285
+:pat t (#.(n^ 'v7) #.(n^ 'v5) #.(n^ 'v2))
+(plan- (#.(n^ 'p286)) action (#.(n^ 'm1)) object1 (#.(n^ 'p284)) object2 (#.(n^ 'p194)))
+nil
+nil
+nil
+p286
+:pat t (#.(n^ 'v7) #.(n^ 'v5) #.(n^ 'v2))
+(cq- (#.(n^ 'm38)) act (#.(n^ 'p277)) plan (#.(n^ 'p285)))
+nil
+nil
+nil
+p287
+:pat t (#.(n^ 'v7))
+(&ant- (#.(n^ 'm38)) class (#.(n^ 'm12)) member (#.(n^ 'v7)))
+nil
+nil
+nil
+m38
+:mol t nil
+(forall (#.(n^ 'v7) #.(n^ 'v5) #.(n^ 'v2)) &ant (#.(n^ 'p287) #.(n^ 'p198) #.(n^ 'p9)) cq (#.(n^ 'p286)))
+(hyp (#.(c^ 'C35)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C38) #.(c^ 'C36) #.(c^ 'C35))
+m39
+:mol t nil
+(class (#.(n^ 'm12)) member (#.(n^ 'm30)))
+(hyp (#.(c^ 'C37)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C38) #.(c^ 'C37))
+B
+:base t nil
+(lex- (#.(n^ 'm40)))
+nil
+nil
+nil
+m40
+:mol t nil
+(arg1- (#.(n^ 'm47)) member- (#.(n^ 'm41)) object- (#.(n^ 'm46)) lex (#.(n^ 'B)))
+nil
+nil
+nil
+m41
+:mol t nil
+(class (#.(n^ 'm12)) member (#.(n^ 'm40)))
+(hyp (#.(c^ 'C39)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C40) #.(c^ 'C39))
+C
+:base t nil
+(lex- (#.(n^ 'm42)))
+nil
+nil
+nil
+m42
+:mol t nil
+(arg1- (#.(n^ 'm45)) member- (#.(n^ 'm43)) object- (#.(n^ 'm44)) lex (#.(n^ 'C)))
+nil
+nil
+nil
+m43
+:mol t nil
+(class (#.(n^ 'm12)) member (#.(n^ 'm42)))
+(hyp (#.(c^ 'C41)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C42) #.(c^ 'C41))
+m44
+:mol t nil
+(object (#.(n^ 'm42)) property (#.(n^ 'm14)))
+(hyp (#.(c^ 'C43)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C44) #.(c^ 'C43))
+v9
+:var t nil
+(member- (#.(n^ 'p299)))
+nil
+nil
+nil
+p299
+:pat t (#.(n^ 'v9))
+(class (#.(n^ 'm8)) member (#.(n^ 'v9)))
+nil
+nil
+nil
+m45
+:mol t nil
+(arg1 (#.(n^ 'm42)) arg2 (#.(n^ 'b1)) rel (#.(n^ 'm17)))
+(hyp (#.(c^ 'C45)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C46) #.(c^ 'C45))
+m46
+:mol t nil
+(object (#.(n^ 'm40)) property (#.(n^ 'm14)))
+(hyp (#.(c^ 'C47)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C48) #.(c^ 'C47))
+v10
+:var t nil
+(member- (#.(n^ 'p300)))
+nil
+nil
+nil
+p300
+:pat t (#.(n^ 'v10))
+(class (#.(n^ 'm8)) member (#.(n^ 'v10)))
+nil
+nil
+nil
+m47
+:mol t nil
+(arg1 (#.(n^ 'm40)) arg2 (#.(n^ 'b1)) rel (#.(n^ 'm17)))
+(hyp (#.(c^ 'C49)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C50) #.(c^ 'C49))
+m48
+:mol t nil
+(object (#.(n^ 'm30)) property (#.(n^ 'm14)))
+(hyp (#.(c^ 'C51)))
+nil
+(#.(c^ 'C54) #.(c^ 'C52) #.(c^ 'C51))
+v11
+:var t nil
+(member- (#.(n^ 'p301)))
+nil
+nil
+nil
+p301
+:pat t (#.(n^ 'v11))
+(class (#.(n^ 'm8)) member (#.(n^ 'v11)))
+nil
+nil
+nil
+m49
+:mol t nil
+(arg1 (#.(n^ 'm30)) arg2 (#.(n^ 'b1)) rel (#.(n^ 'm17)))
+(hyp (#.(c^ 'C53)))
+nil
+(#.(c^ 'C54) #.(c^ 'C53))
+
+17 ;; SNePSUL variable definitions:
+sneps::lastvalue
+()
+#:block7225
+(:val (#.(n^ 'v7)))
+#:block5157
+(:val (#.(n^ 'v5)))
+#:support1820
+(:val (#.(n^ 'v4)))
+#:support1693
+(:val (#.(n^ 'v3)))
+#:block1110
+(:val (#.(n^ 'v2)))
+x
+(:val (#.(n^ 'v11)))
+primitive-actions
+(:val (#.(n^ 'm6) #.(n^ 'm5) #.(n^ 'm4) #.(n^ 'm3) #.(n^ 'm2) #.(n^ 'm1)))
+NEW-RELATIONS
+(:val (member class object property rel arg1 arg2 sub sup agent component presumably lex object3))
+default-defaultct
+(:val #.(c^ 'C54))
+variables
+(:val (sneps::lastvalue #:block7225 #:block5157 #:support1820 #:support1693 #:block1110 x primitive-actions NEW-RELATIONS default-defaultct variables relations nodes sneps:command sneps::lastcommand sneps::contexts assertions patterns defaultct))
+nodes
+(:val (#.(n^ 'm49) #.(n^ 'p301) #.(n^ 'v11) #.(n^ 'm48) #.(n^ 'm47) #.(n^ 'p300) #.(n^ 'v10) #.(n^ 'm46) #.(n^ 'm45) #.(n^ 'p299) #.(n^ 'v9) #.(n^ 'm44) #.(n^ 'm43) #.(n^ 'm42) #.(n^ 'C) #.(n^ 'm41) #.(n^ 'm40) #.(n^ 'B) #.(n^ 'm39) #.(n^ 'm38) #.(n^ 'p287) #.(n^ 'p286) #.(n^ 'p285) #.(n^ 'p284) #.(n^ 'm37) #.(n^ 'p283) #.(n^ 'p282) #.(n^ 'm36) #.(n^ 'p281) #.(n^ 'p280) #.(n^ 'p279) #.(n^ 'v8) #.(n^ 'p278) #.(n^ 'p277) #.(n^ 'v7) #.(n^ 'm35) #.(n^ 'third) #.(n^ 'second) #.(n^ 'first) #.(n^ 'm34) #.(n^ 'pile) #.(n^ 'm33) #.(n^ 'p256) #.(n^ 'p255) #.(n^ 'p254) #.(n^ 'p253) #.(n^ 'p252) #.(n^ 'v6) #.(n^ 'm32) #.(n^ 'p225) #.(n^ 'm31) #.(n^ 'p212) #.(n^ 'm30) #.(n^ 'A) #.(n^ 'm29) #.(n^ 'p199) #.(n^ 'p198) #.(n^ 'p197) #.(n^ 'p196) #.(n^ 'm28) #.(n^ 'p195) #.(n^ 'p194) #.(n^ 'latter) #.(n^ 'v5) #.(n^ 'm27) #.(n^ 'p176) #.(n^ 'm26) #.(n^ 'p159) #.(n^ 'm25) #.(n^ 'p142) #.(n^ 'p141) #.(n^ 'm24) #.(n^ 'p124) #.(n^ 'm23) #.(n^ 'p108) #.(n^ 'p107) #.(n^ 'p106) #.(n^ 'm22) #.(n^ 'p93) #.(n^ 'p92) #.(n^ 'm21) #.(n^ 'held) #.(n^ 'm20) #.(n^ 'p77) #.(n^ 'p76) #.(n^ 'm19) #.(n^ 'p48) #.(n^ 'p47) #.(n^ 'p46) #.(n^ 'm18) #.(n^ 'p38) #.(n^ 'v4) #.(n^ 'p35) #.(n^ 'p34) #.(n^ 'v3) #.(n^ 'm17) #.(n^ 'on) #.(n^ 'm16) #.(n^ 'p21) #.(n^ 'p20) #.(n^ '|0|) #.(n^ 'm15) #.(n^ 'p10) #.(n^ 'p9) #.(n^ 'p8) #.(n^ 'm14) #.(n^ 'clear) #.(n^ 'p7) #.(n^ 'p6) #.(n^ 'v2) #.(n^ 'm13) #.(n^ 'm12) #.(n^ 'block) #.(n^ 'm11) #.(n^ 'm10) #.(n^ 'support) #.(n^ 'p1) #.(n^ 'v1) #.(n^ 'm9) #.(n^ 'b1) #.(n^ 'm8) #.(n^ 'table) #.(n^ 'm7) #.(n^ 'be) #.(n^ 'm6) #.(n^ 'put) #.(n^ 'm5) #.(n^ 'pickup) #.(n^ 'm4) #.(n^ 'believe) #.(n^ 'm3) #.(n^ 'achieve) #.(n^ 'm2) #.(n^ 'sniterate) #.(n^ 'm1) #.(n^ 'snsequence)))
+sneps:command
+(:val (outnet "sneps:demo;snere;blocksworld;blocksworld.net"))
+sneps::lastcommand
+(:val (^ (parse -1)))
+assertions
+(:val (#.(n^ 'm49) #.(n^ 'm48) #.(n^ 'm47) #.(n^ 'm46) #.(n^ 'm45) #.(n^ 'm44) #.(n^ 'm43) #.(n^ 'm41) #.(n^ 'm39) #.(n^ 'm38) #.(n^ 'm33) #.(n^ 'm32) #.(n^ 'm31) #.(n^ 'm29) #.(n^ 'm27) #.(n^ 'm26) #.(n^ 'm25) #.(n^ 'm24) #.(n^ 'm23) #.(n^ 'm22) #.(n^ 'm20) #.(n^ 'm19) #.(n^ 'm16) #.(n^ 'm15) #.(n^ 'm13) #.(n^ 'm11) #.(n^ 'm9)))
+patterns
+(:val (#.(n^ 'p301) #.(n^ 'p300) #.(n^ 'p299) #.(n^ 'p287) #.(n^ 'p286) #.(n^ 'p285) #.(n^ 'p284) #.(n^ 'p283) #.(n^ 'p282) #.(n^ 'p281) #.(n^ 'p280) #.(n^ 'p279) #.(n^ 'p278) #.(n^ 'p277) #.(n^ 'p256) #.(n^ 'p255) #.(n^ 'p254) #.(n^ 'p253) #.(n^ 'p252) #.(n^ 'p225) #.(n^ 'p212) #.(n^ 'p199) #.(n^ 'p198) #.(n^ 'p197) #.(n^ 'p196) #.(n^ 'p195) #.(n^ 'p194) #.(n^ 'p176) #.(n^ 'p159) #.(n^ 'p142) #.(n^ 'p141) #.(n^ 'p124) #.(n^ 'p108) #.(n^ 'p107) #.(n^ 'p106) #.(n^ 'p93) #.(n^ 'p92) #.(n^ 'p77) #.(n^ 'p76) #.(n^ 'p48) #.(n^ 'p47) #.(n^ 'p46) #.(n^ 'p38) #.(n^ 'p35) #.(n^ 'p34) #.(n^ 'p21) #.(n^ 'p20) #.(n^ 'p10) #.(n^ 'p9) #.(n^ 'p8) #.(n^ 'p7) #.(n^ 'p6) #.(n^ 'p1)))
+defaultct
+(:val default-defaultct)

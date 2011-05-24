@@ -1,0 +1,92 @@
+/* Simple command loop that tries to run an AML macro nextcommand.aml
+
+/* Copyright (C) 1984--2004
+/* Research Foundation of State University of New York
+
+/* Version: $Id: command-loop.aml,v 1.1 2011/05/24 17:59:36 mwk3 Exp $
+
+/* This file is part of SNePS.
+
+/* SNePS is free software; you may redistribute it and/or modify
+/* it under the terms of the GNU General Public License as published by
+/* the Free Software Foundation; either version 2, or (at your option)
+/* any later version.
+
+/* SNePS is distributed in the hope that it will be useful,
+/* but WITHOUT ANY WARRANTY; without even the implied warranty of
+/* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+/* GNU General Public License for more details.
+
+/* You should have received a copy of the GNU General Public License
+/* along with SNePS; see the file COPYING.  If not, write to
+/* the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA, or to
+/* Dr. Stuart C. Shapiro, Department of Computer Science, State University of
+/* New York at Buffalo, 
+;; 201 Bell Hall, Buffalo, NY 14260, USA
+
+
+/* Simple command loop that tries to run an AML macro nextcommand.aml
+/* if it exists in the communication directory %interface%, 
+/* and waits otherwise. Used to interface lisp and arc.
+/*
+/* Author:   Hans Chalupsky
+/* Created:  May 31, 1990
+/* Modified: July 25, 1990
+/*
+
+/* The INTERFACE variable holds the pathname of the LISP/ARC communication
+/* directory viewed from the machine ARC is running on (ARC and LISP
+/* might run on different machines)
+/* If no directory is supplied the default-directory will be used.
+/*
+/* &s interface /u/faculty/cs/hans/interface  
+/* &s interface /net/lictor.acsu/home/grad/cs/hans/arcinfointerface
+/*
+&arg interface
+
+&s default-interface /u0/grads/hans/interface
+
+&if [null %interface%] &then
+    &s interface %default-interface%
+&type Communication directory is %interface%
+
+&s nextcom %interface%/nextcommand.aml     /* pathname of nextcommand
+&s exit %interface%/exit                   /* pathname of exit flag
+
+&s sleep 1   /* Number of seconds to sleep between command cycles
+
+/* start-up
+
+&s status [delete %exit%]
+&s status [delete %nextcom%]
+
+&s continue .true.
+&do &while %continue%
+    &if [exists %nextcom%] &then
+       &do
+       /* run command, give it output directory as argument, so that
+       /* the LISP side does not have to know what the ARC side thinks
+       /* where the communication directory is
+       &run %nextcom% %interface%
+       &s status [delete %nextcom%]
+       &end
+    &else
+       &do
+       /* don't use all CPU time just for looping
+       &system sleep %sleep%
+       &end
+    &if [exists %exit%] &then
+       &s continue .false.
+&end
+
+&type Bye
+&return
+
+
+
+    
+    
+
+
+
+

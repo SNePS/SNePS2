@@ -1,0 +1,13 @@
+#!  /bin/csh -f
+#
+# This script runs ARC, starts up the command loop
+# and automatically exits once the loop terminates
+#
+
+set interfacedir = /u0/grads/hans/interface
+set snactordir   = /u0/grads/hans/snactor
+
+arc <<EOF
+ &run $snactordir/command-loop $interfacedir
+ quit
+EOF

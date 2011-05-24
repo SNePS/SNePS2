@@ -1,0 +1,143 @@
+;;; First, the SNePS relations used in the GATN are defined.
+(^^ define agent act object propername member class lex)
+
+;;; Next, a global variable, a global constant, and two functions are defined.
+(^^ defvar *SaynBeforeVowels* nil
+    "If true and the next word starts with a vowel, print 'n ' before that next word.")
+
+(^^ defconstant *vowels* '(#\a #\e #\i #\o #\u)
+    "A list of the vowels.")
+
+(^^ defun SayOneWord (word)
+    "Prints the single WORD, which must be a string or a node.
+     If the word is 'a', sets *SaynBeforeVowels*.
+     If *SaynBeforeVowels* is set, then prints 'n ' before word/s
+     if the first letter of word/s is a vowel."
+    (check-type word (or string sneps:node))
+    (when (sneps:node-p word)
+      (setf word (format nil "~A" word)))
+    (when *SaynBeforeVowels*
+      (when (member (char word 0) *vowels* :test #'char=)
+        (format t "n"))
+      (setf *SaynBeforeVowels* nil))
+    (when (string\= word "a")
+      (setf *SaynBeforeVowels* t))
+    (format t " ~A" word))
+
+(^^ defun say (word/s)
+    "Prints the single word or the list of words.
+     If the word is 'a', sets *SaynBeforeVowels*.
+     If *SaynBeforeVowels* is set, then prints 'n ' before word/s
+     if the first letter of word/s is a vowel."
+    (if (listp word/s) (mapc #'SayOneWord word/s)
+        (SayOneWord word/s)))
+
+;;; The initial arc is used to make two SNePSUL variables, each of
+;;; which holds a SNePS variable node.  This results in a major
+;;; efficiency gain over creating new SNePS variable nodes each time a
+;;; question or an indefinite NP is parsed.
+(s (jump s1 t 
+         (or (* 'wh) ($ 'wh)) ; a SNePS variable to use for Wh questions
+         (or (* 'x) ($ 'x)) ; a variable for indef NP's in questions
+         ))
+
+(s1 (push ps t                ; Parse a sentence, and send results to RESPOND
+          (jump respond)))
+
+(ps (cat wh t			; A Wh question starts with "who" or "what".
+         (setr agent (* 'wh))	; set AGENT to a variable node.
+         (setr mood 'question) (liftr mood) (to vp))
+    (push np t (sendr mood 'decl) ; The only acceptable statements are NP V [NP].
+				; MOOD must be sent down, because an indefinite
+				; NP introduces a new individual in a statement,
+				; but must be treated as a variable to be found
+				; in a question. 
+          (setr agent *)	; set AGENT to parse of subject.
+          (setr mood 'decl) (liftr mood) ; The state RESPOND must know whether
+				; it is echoing a statement or answering
+				; a question.
+	  (to vp)))
+
+(vp (cat v t			; Accept just a simple verb for this example.
+         (setr act *) (to vp/v)))
+
+(vp/v (push np t (sendr mood)
+            (setr object *)	; set OBJECT to parse of object.
+            (to s/final))
+      (jump s/final t))		; if no object.
+      
+
+(s/final (jump s/end (overlap embedded t)) ; an embedded proposition
+         (wrd "." (overlap mood 'decl) (to s/end))
+         (wrd "?" (overlap mood 'question) (to s/end)))
+
+(s/end (pop #!((assert agent ~(getr agent)
+                       act   (build lex ~(getr act))
+                       object ~(getr object)))
+            (and (overlap mood 'decl) (nullr embedded)))
+       (pop #2!((build agent ~(getr agent)
+                       act   (build lex ~(getr act))
+                       object ~(getr object)))
+            (and (getr embedded) (overlap mood 'decl)))
+       (pop #!((deduce agent ~(getr agent)
+                       act   (build lex ~(getr act))
+                       object ~(getr object)))
+            (overlap mood 'question)))
+   
+
+(np (wrd "that" t        ; an embedded proposition
+         (to nomprop))
+    (cat npr t
+         (setr head
+               (or #!((find (compose object- ! propername) ~(getr *)))
+                   #!((find object-
+                            (assert object #head propername ~(getr *))))))
+         (to np/end))
+    (cat art t (setf def (getf definite)) (to np/art)))
+
+(np/art (cat n (overlap def t) ; a definite np
+             (setr head ; find the referent
+                   #!((find member-
+                            (deduce member *x
+                                    class (build lex ~(getr *))))))
+             (to np/end))
+        (cat n (and (disjoint def t) (overlap mood 'decl))
+             (setr head        ; create a new referent
+               #!((find member-
+                        (assert member #hd
+                          class (build lex ~(getr *))))))
+             (to np/end))
+        (cat n (and (disjoint def t) (overlap mood 'question))
+             (setr head (* 'x)) ; a variable node.
+             (to np/end)))
+
+(nomprop (push ps t ; Return the parse of embedded sentence.
+               (sendr embedded t) (setr head *) (to np/end)))
+
+(np/end (pop head t))
+
+(respond (jump g (and (getr *) (overlap mood 'decl)) (say "I understand that"))
+         (jump g (and (getr *) (overlap mood 'question)))
+	 (jump g/end (nullr *) (say "I don't know.")))
+
+(g (rcall gnp (geta agent) (geta agent) ; Generate the agent as an np.
+          reg (jump g/subj)))
+
+(g/subj (jump g/v (geta act)
+              (say (verbize 'past
+                            (first (geta lex (geta act)))))))
+
+(g/v (rcall gnp (geta object) (geta object) ; Generate the object.
+            reg (to g/end))
+     (to (g/end) (null (geta object)))) ; No object.
+
+(g/end (pop nil t))
+
+(gnp (to (gnp/end) (geta propername (geta object-))
+         (say (geta propername (geta object-)))) ; Generate an npr.
+     (to (gnp/end) (geta class (geta member-)) ; An indef np.
+         (say (cons "a" #!((find (lex- class- ! member) ~(getr *))))))
+     (call g * (geta act) (say "that") * ; An embedded proposition
+	   (to gnp/end)))
+
+(gnp/end (pop nil t))

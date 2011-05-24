@@ -1,0 +1,200 @@
+;;; ***************************************************************************
+;;; Using source credibility for culprit selection
+;;; ***************************************************************************
+;;; The knowledge base for this example was taken from:
+;;; Johnson, F. L. and Shapiro, S. C. (1999). Says Who? - Incorporating Source
+;;; Credibility Issues into Belief Revision. Technical Report 99-08, Department
+;;; of Computer Science and Engineering and Center for Multisource Information
+;;; Fusion and Center for Cognitive Science, State University of New York at
+;;; Buffalo, Buffalo, NY.
+set-mode-1
+expert
+br-mode auto
+br-tie-mode manual
+
+;;; Use source credibilities as epistemic ordering criteria.
+;;; N.B. If a proposition has multiple sources, the behavior of autobr
+;;; will be undefined.
+set-order source
+
+;;; The holy book is a better source than the professor.
+IsBetterSource(holybook, prof).
+
+;;; The professor is a better source than the nerd.
+IsBetterSource(prof, nerd).
+
+;;; The nerd is a better source than the sexist.
+IsBetterSource(nerd, sexist).
+
+;;; Fran is a better source than the nerd.
+IsBetterSource(fran, nerd).
+
+;;; IsBetterSource is a transitive relation
+all(x,y,z)({IsBetterSource(x,y), IsBetterSource(y,z)} &=> IsBetterSource(x,z))!
+
+;;; All jocks are not smart.
+all(x)(jock(x)=>~smart(x)). ;wff10
+
+;;; The source of the statement 'All jocks are not smart' is the nerd.
+HasSource(wff10, nerd).
+
+;;; All females are not smart.
+all(x)(female(x)=>~smart(x)). ;wff12
+
+;;; The source of the statement 'All females are not smart' is the sexist.
+HasSource(wff12, sexist).
+
+;;; All graduate students are smart.
+all(x)(grad(x)=>smart(x)). ;wff14
+
+;;; The source of the statement 'All graduate students are smart' is the
+;;; professor.
+HasSource(wff14, prof).
+
+;;; All old people are smart.
+all(x)(old(x)=>smart(x)). ;wff16
+
+;;; The source of the statement 'All old people are smart' is the holy book.
+HasSource(wff16, holybook).
+
+;;; The source of the statement 'Fran is an old female jock who is a graduate
+;;; student' is fran.
+HasSource(and{jock(fran),grad(fran),female(fran),old(fran)},fran).
+
+;;; The KB thus far
+list-asserted-wffs
+
+;;; Fran is an old female jock who is a graduate student (asserted with forward
+;;; inference).
+;;; * Please be patient; this step takes about 40 seconds on a Core i7 860.
+and{jock(fran),grad(fran),female(fran),old(fran)}!
+
+;;; The resulting knowledge base
+list-asserted-wffs
+
+;;; ***************************************************************************
+;;; Preferring non-fluents over fluents
+;;; ***************************************************************************
+
+set-mode-3
+expert
+
+;;; When a contradiction is detected, automatically use the autobr subsystem
+;;; to resolve it.
+br-mode auto
+
+;;; When the autobr subsystem needs help on deciding which belief of a set of
+;;; beliefs is least important to keep, ask the user to make a choice rather
+;;; than arbitrarily picking one.
+br-tie-mode manual
+
+;;; [OnFloor(x)] = The agent is on floor [x].
+define-frame OnFloor(nil onfloor)
+
+;;; [Location(x)] = The location of the agent is [x].
+;;; (In this example, x is either aboveGround or belowGround)
+define-frame Location(nil loc)
+define-frame Fluent(nil fluent)
+
+^(attach-primaction believe believe disbelieve disbelieve)
+
+;;; Use an entrenchment ordering that favors non-fluents over fluents
+set-order fluent
+
+;;; Establish what kinds of propositions are fluents, specifically:
+;;;   - The current floor on which the agent is located is something that
+;;;     may change over time.
+;;;   - The state of being above or below ground is something that may
+;;;     change over time.
+^(setf *fluents* '(OnFloor Location))
+
+;;; At any given time, the agent is either above ground level or below it.
+xor{Location(belowGround), Location(aboveGround)}.
+
+;;; Floors 1 and 2 are below ground level.
+{OnFloor(1), OnFloor(2)} => {Location(belowGround)}.
+
+;;; Floors 3 and 4 are above ground level.
+{OnFloor(3), OnFloor(4)} => {Location(aboveGround)}.
+
+;;; Tell the agent to believe it is now on floor 1.
+perform believe(OnFloor(1))
+
+list-asserted-wffs
+
+;;; Tell the agent to believe it is now on floor 4.
+perform believe(OnFloor(4))
+list-asserted-wffs
+
+;;; ****************************************************************************
+;;; Results of selecting a minimally desired hypothesis for removal when there
+;;; are multiple no-goods
+;;; ****************************************************************************
+
+set-mode-3
+expert
+br-mode auto
+br-tie-mode manual
+^(defun snebr::br-totalorder (lhs rhs) t)
+
+;;; [Walk(prep, obj)] = It walks [prep] a [obj].
+define-frame Walk(verb prep obj)
+
+;;; [Talk(prep, obj]] = It talks [prep] a [obj].
+define-frame Talk(verb prep obj)
+
+;;; We will use x to range over the above frames
+define-frame x(verb prep obj)
+
+;;; [Isa(obj)] = It is a [obj].
+define-frame Isa(verb obj)
+
+;;; If it [x]s like a [y], it is a [y].
+all(x,y)(x(like,y)=>Isa(y)).
+
+;;; It walks like a duck.
+Walk(like, duck)!
+
+;;; It talks like a duck.
+Talk(like, duck)!
+
+list-asserted-wffs
+
+
+;;; It's not a duck.
+~Isa(duck).
+2
+2
+
+list-asserted-wffs
+
+;;; Now let's try that again, but this time we'll select a hypothesis that
+;;; appears in both no-goods
+
+;;; Clear the knowledge base
+clearkb
+
+;;; If it [x]s like a [y], it is a [y].
+all(x,y)(x(like,y)=>Isa(y)).
+
+;;; It walks like a duck.
+Walk(like, duck)!
+
+;;; It talks like a duck.
+Talk(like, duck)!
+
+list-asserted-wffs
+
+;;; It's not a duck.
+~Isa(duck).
+1
+
+;;; Note that after wff1 was selected as minimal, snebr remembered that wff1
+;;; was less desirable than wff5. At that point, the second no-good (which did
+;;; not appear) contained wff1, wff4, and wff5. wff5 was known not to be
+;;; minimally entrenched, and so there was no other way to remove the first
+;;; no-good without removing wff1. Since wff1 was present in the second
+;;; no-good, no further input from the user was required.
+
+list-asserted-wffs
+

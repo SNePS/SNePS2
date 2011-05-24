@@ -1,0 +1,156 @@
+;;; -*- Mode:Common-Lisp; Base:10 -*-
+;
+;;; This file demos various features of SNeRE (the SNePS Rational Engine)
+;
+; Various parts of this demonstration are discussed in:
+;
+; Deepak Kumar: "From Beliefs and Goals to Intentions and Actions -- An
+; Amalgamated Model of Acting and Inference",  Ph.D. Thesis, Department of
+; Computer Science, State University of New York at Buffalo, 1994 (also
+; available as Technical Report 94-04)
+
+;;; NOTED HERE ONLY !!!!
+;;; (FLJ) ALTERED FOR ACL6 BY CHANGING "A" --> "a" IN BLOCK'S LEX 
+;;; ... AND SAME FOR B, C, & D
+
+
+;
+(resetnet t)
+;
+(^ (unless (user:simple-system-created-p "Blocksworld")
+     (user:sneps-load "sneps:demo;snere;blocksworld;load-blocksworld.LISP")))
+;
+(^ (setf \*plantrace\* (if (y-or-n-p "Plantrace? ") t)))
+(^ (setf \*infertrace\* nil))
+;
+; Load the blocksworld state:
+
+
+(innet "sneps:demo;snere;blocksworld;blocksworld.net")
+
+					;
+; Attach functions to their associated primitive action nodes:
+;
+(^ (attach-primaction
+    ;; built-in actions:
+    (build lex "snsequence") snsequence
+    (build lex "sniterate") sniterate
+    (build lex "achieve") achieve
+    (build lex "believe") believe
+    (build lex "withsome") withsome
+    (build lex "withall") withall
+    ;; domain-specific actions:
+    (build lex "pickup") pickup
+    (build lex "put") put
+    (build lex "lookat") lookat))
+;
+;      %%%%%%% Creating the blocksworld %%%%%%
+;
+(^ (initialize-blocksworld))
+;
+; Lets do some stuff...
+;
+; Pick up C.
+(perform (build action (build lex "pickup")
+                object1 (build lex "C")))
+; Put C on B.
+(perform (build action (build lex "put")
+                object1 (build lex "C")
+                object2 (build lex "B")))
+; Is A clear?
+(describe (deduce object (build lex "A")
+                  property (build lex "clear")))
+; How would you pile B on C on A?
+(describe (deduce act (build action (build lex "pile")
+                             object1 (build lex "B")
+                             object2 (build lex "C")
+                             object3 (build lex "A"))
+                  plan $plan))
+; D is a block.
+(assert member (build lex "D") class (build lex "block"))
+; D is clear.
+(assert object (build lex "D") property (build lex "clear"))
+; Pick up D.
+(perform (build action (build lex "pickup")
+                object1 (build lex "D")))
+; Put D on A.
+(perform (build action (build lex "put")
+                object1 (build lex "D")
+                object2 (build lex "A")))
+; Pick up a clear block.
+(perform
+  (build action (build lex "withsome")
+         vars $x
+         suchthat (build min 2 max 2
+                         arg ((build member *x class (build lex "block"))
+                              (build object *x property (build lex "clear"))))
+         do (build action (build lex "pickup")
+                   object1 *x)))
+;
+; ==================================================================
+; Now type a form like the following at the prompt (fill in real blocks):
+; 
+; (perform
+;   (build action (build lex "put")
+;          object1 (build lex <the block that is held>)
+;          object2 (build lex <the block that was supporting it>)))
+;
+; And when it is done type `(lisp)' to continue with the demo.
+; ==================================================================
+;
+dc-sneps
+; Put all clear blocks on the table.
+(perform
+  (build action (build lex "withall")
+         vars $x
+         suchthat (build min 2 max 2
+                         arg ((build member *x class (build lex "block"))
+                              (build  object *x property (build lex "clear"))))
+         do (build action (build lex "put")
+		   object1 *x
+		   object2 (find (member- ! class) (build lex "table")))))
+; John is an agent.
+(assert member (build lex "john") class (build lex "agent"))
+; When some agent performs some act then believe the act's effects.
+(assert forall ($agent $act $effect)
+	&ant ((build act *act effect *effect)
+	      (build member *agent class (build lex "agent")))
+	cq (build when (build agent *agent act *act)
+		  do (build action (build lex "believe")
+			    object1 *effect)))
+; What would you do when John picks up A?
+(describe (deduce when (build agent (build lex "john")
+			      act (build action (build lex "pickup")
+					 object1 (build lex "A")))
+		    do $what))
+; John picked up A.
+(john-pickup A)
+; What would you do if John puts A on D?
+(describe (deduce when (build agent (build lex "john")
+			      act (build action (build lex "put")
+					 object1 (build lex "A")
+					 object2 (build lex "D")))
+		  do $what))
+(john-putdown A D)
+; If you want to know what the color of a block is look at it.
+(assert forall ($x $y)
+	ant (build member *x class (build lex "block"))
+	cq (build do (build action (build lex "lookat")
+			    object1 *x)
+		  if (build rel (build lex "color")
+			    arg1 *x
+			    arg2 *y)))
+; All red colored blocks are wooden.
+(assert forall $a
+	  &ant ((build rel (build  lex "color")
+		       arg1 *a
+		       arg2 (build lex "red"))
+		(build member *a class (build lex "block")))
+	  cq (build object *a property (build lex "wooden")))
+;
+(^ (setf \*infertrace\* t))
+; Is A wooden?
+(describe
+ (deduce object (build lex "A") property (build lex "wooden")))
+
+

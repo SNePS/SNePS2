@@ -1,0 +1,59 @@
+; Simple backward inference demo that illustrates node activation
+;
+; Authors: Deepak Kumar, Hans Chalupsky (Spring 92)
+;
+;   Inference is carried out by node processes. The state of the
+;   node processes is shown graphically according to the following map:
+;
+;         Process state                 XGinseng node color
+;           inactive                         WHITE
+;    initiated on the Multi queue          LIGHT-GREY
+;           executing                      DARK-GREY
+;
+;   When a process is executing it schedules new processes on the Multi
+;   queue which will continue inference once the current process terminates.
+;
+
+;;; adjustment for ACL6 (FLJ)
+^^
+#+(and allegro-version>= (version>= 6 0))
+   (sneps:adjust-for-acl6 :before )
+^^
+
+
+
+(resetnet t)
+; Define relations
+(define member class)
+; All men are mortal
+(describe
+ (assert forall $x
+	 ant (build member *x class man)
+	 cq (build member *x class mortal)))
+; Socrates is a man.
+(describe
+ (assert member Socrates class man))
+; Load the activation demo system:
+(^ (unless (user:simple-system-created-p "Activation")
+     (user:sneps-load "sneps:demo;activation;load-activation.LISP")
+     (unless (user:simple-system-created-p "Activation")
+       (sneps::demo-control :dc-quit))))
+dc-no-pause
+; Show the current network in XGinseng:
+(^ (xginseng::restore-layout
+    "sneps:demo;activation;rule-layout.LISP" nil))
+; Is Socrates mortal?
+(describe
+ (deduce member Socrates class mortal))
+; Display the result
+;
+; Click on <XGinseng QUIT> to exit the demo
+;
+(^ (xginseng::restore-layout
+    "sneps:demo;activation;result-layout.LISP"))
+
+
+^^
+#+(and allegro-version>= (version>= 6 0))
+(sneps:adjust-for-acl6 :after) 
+^^

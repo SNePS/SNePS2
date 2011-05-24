@@ -1,0 +1,9 @@
+all (x) (a(x) => b(x))
+
+all (x) (a(x) => c(x))
+
+all (x) (c(x) and b(x) => d(x))
+
+a(r)
+
+d(?q)?

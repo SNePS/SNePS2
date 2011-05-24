@@ -1,0 +1,20 @@
+etags   ./*.lisp \
+        ./demo/*.lisp \
+        ./demo/*/*.lisp \
+	./demo/*/*/*.lisp \
+	./ginseng/*.lisp \
+	./match/*.lisp \
+	./match/*/*.lisp \
+	./multi/*.lisp \
+	./multi/*/*.lisp \
+	./nlint/*.lisp \
+	./nlint/*/*.lisp \
+	./snebr/*.lisp \
+	./sneps/*.lisp \
+	./sneps/*/*.lisp \
+	./snepslog/*.lisp \
+	./snepslog/*/*.lisp \
+	./snip/*.lisp \
+	./snip/*/*.lisp \
+	./snip22/*.lisp \
+	./xginseng/*.lisp 

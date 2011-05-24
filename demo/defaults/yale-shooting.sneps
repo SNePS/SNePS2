@@ -1,0 +1,50 @@
+; This demo works only with Maria Cravo's implementation of default rules:
+;
+; 4.2 THE YALE SHOOTING PROBLEM
+;
+(resetnet t)
+;
+(define fact event sit)
+;
+; Normally for any fact F, any event E, and any situation S, if fact F
+; is true in situation S, then it will still be true in the situation
+; which results from S by the occurrence of event E.
+;
+(assert deflt ($f $e $s)
+	ant(build  fact *f sit *s)
+	cq(build fact *f sit (build event *e sit *s)))
+; 
+; Given any situation S, the gun will be loaded in the situation
+; which results from S by the occurrence of event LOADing the gun.
+;
+(assert forall ($s)  fact loaded sit (build event load sit *s))
+; 
+; Given any situation S, if the gun is loaded in situation S,
+; then the default rule M1 cannot be applied to infer that
+; the victim is ALIVE in the situation resulting from S by the
+; the occurrence of event SHOOTing the gun.
+;
+(assert forall ($s) ant(build fact loaded sit *s) 
+	cq(build min 0 max 0 arg(build applicable m1
+				       darg1 alive darg2 shoot darg3 *s)))
+;
+; Given any situation S, the victim will be dead in the situation
+; resulting from S by the occurrence of event SHOOTing the gun.
+;
+(assert forall ($s) ant(build fact loaded sit *s) 
+	cq(build fact dead sit (build event shoot sit *s)))
+;
+; The victim is ALIVE in SITUATION0.
+;
+(assert fact alive sit situation0)
+;
+; Which facts are true in the situation which results from
+; SITUATION0 by the occurrence of the following sequence
+; of events: 1) Someone LOADs the gun,
+;            2) There is a WAIT time,
+;            3) Someone SHOOTs the gun.
+;
+(describe (deduce fact $f sit
+		  (build event shoot sit
+			 (build event wait sit
+				(build event load sit situation0))))) 

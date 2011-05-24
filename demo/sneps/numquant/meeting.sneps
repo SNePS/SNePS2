@@ -1,0 +1,27 @@
+;
+;  At least 3 of 5 professors are in meeting
+;
+(resetnet t)
+(define member class agent rela object)
+;
+(describe (assert etot 5 emin 3 pevb $x
+	&ant (build member *x class professor)
+	cq  (build agent *x rela in object meeting)))
+;
+; whoever is in the hall is not in the meeting
+;
+(describe (assert forall $x
+	ant (build agent *x rela in object hall)
+	cq (build min 0 max 0
+		  arg (build agent *x rela in object meeting))))
+;
+(describe (assert member pat class professor))
+(describe (assert member gabor class professor))
+(describe (assert member nick class professor))
+(describe (assert member john class professor))
+(describe (assert member stu class professor))
+;
+(describe (assert agent pat rela in object hall))
+(describe (assert agent nick rela in object hall))
+;
+(describe (deduce agent *x rela in object meeting))

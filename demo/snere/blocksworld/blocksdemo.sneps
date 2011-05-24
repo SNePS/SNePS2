@@ -1,0 +1,150 @@
+;;; -*- Mode:Common-Lisp; Base:10 -*-
+;
+; The Blocks World
+; ================
+; Various parts of this demonstration are discussed in the following
+; publications: 
+;
+; S.C. Shapiro, B. Woolf, D. Kumar, S.S. Ali, P. Sibun, D. Foster,
+; S. Anderson, J. Pustejovesky, and J. Haas "Discussing, using and recognizing
+; plans", Technical Report, North-East Artificial Intelligence Consortium, 1989
+;
+; D. Kumar, S.S. Ali, J. Haas, and S.C.Shapiro "The SNePS acting system", in
+; K.E. Bettinger and G. Srikantan, eds., Proc. of the Fifth Annual University
+; at Buffalo Graduate Conference on Computer Science, pp.91-100, 1990
+;
+; Deepak Kumar: "From Beliefs and Goals to Intentions and Actions -- An
+; Amalgamated Model of Acting and Inference",  Ph.D. Thesis, Department of
+; Computer Science, State University of New York at Buffalo, 1994 (also
+; available as Technical Report 94-04)
+;
+
+;; Altered for ACL 6 by FLJ
+
+(resetnet t)
+;
+(^ (unless (user:simple-system-created-p "Blocksworld")
+     (user:sneps-load "sneps:demo;snere;blocksworld;load-blocksworld.LISP")))
+;
+;;; Arc labels for predicates and relations
+;
+(= (define member class object property rel arg1 arg2
+           sub sup agent component presumably
+           lex object3) NEW-RELATIONS)
+;
+; Define a useful path.
+;
+(define-path class (compose class (kstar (compose sub- sup))))
+;
+; Read in the lexicon.
+;
+(^ (lexin "sneps:demo;snere;blocksworld;lexicon.dat"))
+;
+; Read in the GATN grammar.
+;
+(^ (atnin "sneps:demo;snere;grammar.dat"))
+;
+(^ (setq \*terminating-punctuation-flag\* '("." "!" "?")
+	 \*infertrace\* nil
+	 parser::\*debug\* nil))
+;
+(^ (setf \*plantrace\* (if (y-or-n-p "Plantrace? ")
+                           (if (y-or-n-p "Surface? ")
+                               'surface
+                             t))))
+;
+;;; Attach functions to their associated primitive action nodes:
+;
+(^ (attach-primaction
+    ;; built-in actions:
+    (build lex "snsequence") snsequence
+    (build lex "sniterate") sniterate
+    (build lex "achieve") achieve
+    (build lex "believe") believe
+    ;; domain-specific actions:
+    (build lex "pickup") pickup
+    (build lex "put") put))
+;
+; Reset internal nlib variables:
+(^ (reset-all))
+;
+;;; Domain-specific information.
+
+
+(^ (parse -1))
+There is a table.
+The table is a support.
+Blocks are supports.
+Before picking up a block the block must be clear.
+After picking up a block the block is not clear.
+If a block is on a support then
+   after picking up the block the block is not on the support.
+If a block is on a support then
+   after picking up the block the support is clear.
+After picking up a block the block is held.
+Before putting a block on a support the support must be clear.
+Before putting a block on a support the block must be held.
+After putting a block on a support the block is not held.
+After putting a block on a support the block is clear.
+After putting a block on a support the block is on the support.
+After putting a block on another block the latter block is not clear.
+A plan to achieve that a block is held is to pick up the block.
+A plan to achieve that a block is on a support
+    is to put the block on the support.
+If a block is on a support then
+    a plan to achieve that the support is clear
+    is to pick up the block and then
+    put the block on the table.
+A plan to pile a block on another block on a third block
+        is to put the third block on the table and then
+        put the second block on the third block and then
+        put the first block on the second block.
+A is a block.
+B is a block.
+C is a block.
+C is clear.
+C is on the table.
+B is clear.
+B is on the table.
+A is clear.
+A is on the table.
+^end.
+;
+; This is the point where we created the state used by `sneredemo.sneps':
+;(outnet "sneps:demo;snere;blocksworld;blocksworld.net")
+;
+;      %%%%%%% Creating the blocksworld %%%%%%
+;
+(^ (initialize-blocksworld))
+;
+; Lets do some stuff...
+;
+(^(parse -1))
+Pick up C.
+Put C on A.
+Pick up B.
+Put B on the table.
+How would you pile A on C on B?
+Pile A on B on C.
+Is A on B?
+Is A on C?
+If a block is on a support then the block is not on another support.
+Is A on C?
+D is a block.
+D is clear.
+Pick up D.
+Put D on the table.
+Put D on B.
+There is a hand.
+The hand is empty.
+Before picking up a block the hand must be empty.
+After picking up a block the hand is not empty.
+After putting a block on a support the hand is empty.
+If a block is held then a plan to achieve that
+the hand is empty is to put the block on the
+table.
+Put A on B.
+^end.
+
+
+

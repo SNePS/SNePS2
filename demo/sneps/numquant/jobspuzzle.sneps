@@ -1,0 +1,107 @@
+;;; -*- Mode:Common-Lisp; Package:SNEPS; Base:10 -*-
+;;;
+;;; THE JOBS PUZZLE
+;;; A SNePS Exercise demonstrating non-standard connectives and quantifiers
+;;; by Stuart C. Shapiro
+;;; based on
+;;; The Jobs Puzzle in Full, Chapter 3.2
+;;; of Automated Reasoning: Introduction and Applications
+;;; by Larry Wos, Ross Overbeek, Ewing Lusk, and Jim Boyle
+;;; Prentice-Hall, Englewood Cliffs, NJ, 1984, pp. 55-58.
+;;;
+;;; Most inputs below are preceded by a line labelled "jp:",
+;;;      which comes directly from the statement of the jobs puzzle,
+;;;      p. 55 of Wos et al.
+;;; and some lines labelled "inf", which are permissable immediate
+;;; inferences from the puzzle statement according to page 56 or
+;;; Chapter 3.2.1, "The Solution by Person or Persons Unknown"
+;;; of Wos et al.
+;;; and some lines labelled "scs:", which are my comments.
+;
+(resetnet t)
+(define member class employee job)
+;
+; jp: There are four people: Roberta, Thelma, Steve, and Pete.
+(describe (assert member (Roberta Thelma Steve Pete)
+		  class person))
+;
+; jp: The jobs are: chef, guard, nurse, telephone operator, police
+;     officer (gender not implied), teacher, actor, and boxer.
+(describe (assert member (chef guard nurse telephone\ operator
+			  police\ officer teacher actor boxer)
+		  class job))
+;
+; jp: Among [the people], they hold eight different jobs.
+; jp: Each holds exactly two jobs.
+(describe (assert forall $person
+		  ant (build member *person class person)
+		  cq (build pevb $job emin 2 emax 2 etot 8
+			    &ant (build member *job class job)
+			    cq (build employee *person job *job))))
+;
+; inf: "No job is held by more than one person."
+(describe (assert forall *job
+		  ant (build member *job class job)
+		  cq (build pevb *person emin 1 emax 1 etot 4 
+			    &ant (build member *person class person)
+			    cq (build employee *person job *job))))
+;
+; inf: "if the four names did not clearly imply the sex of the people,
+; [the puzzle] would be impossible to solve."
+(describe (assert member (Roberta Thelma) class female))
+(describe (assert member (Steve Pete) class male))
+;
+; jp: The job of nurse is held by a male.
+; inf: "everyday language distinguishes [actors and actresses] based
+;      on sex."
+; jp: The husband of the chef is the telephone operator.
+; inf: "the implicit fact that husbands are male"
+; scs: So neither the nurse, the actor, nor the telephone operator is
+;      a woman.
+(describe
+ (assert forall $woman
+	 ant (build member *woman class female)
+	 cq (build min 0 max 0
+		   arg ((build employee *woman job nurse)
+			(build employee *woman job actor)
+			(build employee *woman job telephone\ operator)))))
+;
+; inf: since the chef has a husband, she must be female.
+(describe (assert forall $man
+		  ant (build member *man class male)
+		  cq (build min 0 max 0
+			    arg (build employee *man job chef))))
+;
+; jp: Roberta is not a boxer.
+(describe (assert min 0 max 0
+		  arg (build employee Roberta job boxer)))
+;
+; jp: Pete has no education past the ninth grade.
+; inf: "the jobs of nurse, police officer, and teacher each require
+;      more than a ninth-grade education."
+(describe (assert min 0 max 0
+		  arg ((build employee Pete job nurse)
+		       (build employee Pete job police\ officer)
+		       (build employee Pete job teacher))))
+;
+; jp: Roberta, the chef, and the police officer went golfing together.
+; inf: "Thus, we know that Roberta is neither the chef nor the police
+;      officer."
+(describe (assert min 0 max 0
+		  arg ((build employee Roberta job chef)
+		       (build employee Roberta job police\ officer))))
+;
+; inf: "Since they went golfing together, the chef and the police
+;      officer are not the same person."
+(describe
+ (assert forall *person
+	 ant (build member *person class person)
+	 cq (build min 0 max 1
+		   arg ((build employee *person job chef)
+			(build employee *person job police\ officer)))))
+;
+; jp: Question: Who holds which jobs?
+; scs: Stop as soon as you find 8 positive answers.
+(describe (deduce (8 0) employee *person job *job))
+;
+(describe (findassert employee ?p job ?j))

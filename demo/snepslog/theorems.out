@@ -1,0 +1,808 @@
+
+> (snepslog)
+
+   Welcome to SNePSLog (SNePS-2.1)
+   10/28/1989 15:22:47
+
+: 
+Now reading from sneps2.snepslog.examples;teoremas2.snlog
+ 
+
+
+ CPU time : 0.08     GC time : 0.00 
+
+: expert 
+
+
+ CPU time : 0.00     GC time : 0.00 
+
+: ;a1
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.00     GC time : 0.00 
+
+: (p or p) => p ? 
+
+I wonder if (ANDOR(1,2){P}) => P
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+Let me assume that ANDOR(1,2){P}  {<HYP,{WFF1},{}>}
+
+I wonder if P
+holds within the BS defined by hypotheses (WFF1) 
+
+It is the case that P
+
+Since P
+were derived under the assumption: ANDOR(1,2){P}  {<HYP,{WFF1},{}>}
+I infer (ANDOR(1,2){P}) => P
+
+
+(ANDOR(1,2){P}) => P  {<DER,{},{}>}
+
+
+ CPU time : 0.72     GC time : 0.00 
+
+: ;a2
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.00     GC time : 0.00 
+
+: q => (p or q) ? 
+
+I wonder if Q => (P or Q)
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+Let me assume that Q  {<HYP,{Q},{}>}
+
+I wonder if P or Q
+holds within the BS defined by hypotheses (Q) 
+
+
+
+
+ CPU time : 0.47     GC time : 0.00 
+
+: ;a3
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.00     GC time : 0.00 
+
+: (p or q) => (q or p) ? 
+
+I wonder if (P or Q) => (P or Q)
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+Let me assume that P or Q  {<HYP,{WFF1},{}>}
+
+I know P or Q  {<HYP,{WFF1},{}>}
+
+
+
+
+ CPU time : 0.52     GC time : 0.00 
+
+: ;a4
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.08     GC time : 0.00 
+
+: (q => r) => ((p or q) => (p or r)) ? 
+
+I wonder if (Q => R) => ((P or Q) => (P or R))
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+Let me assume that Q => R  {<HYP,{WFF1},{}>}
+
+I wonder if (P or Q) => (P or R)
+holds within the BS defined by hypotheses (WFF1) 
+
+Let me assume that P or Q  {<HYP,{WFF2},{}>}
+
+I wonder if P or R
+holds within the BS defined by hypotheses (WFF1 WFF2) 
+
+
+
+
+ CPU time : 0.78     GC time : 0.00 
+
+: ;pc13   lei da identidade
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.08     GC time : 0.00 
+
+: thresh(1) (p, p)? 
+
+I wonder if P
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+
+
+
+ CPU time : 0.17     GC time : 0.00 
+
+: ;pc14
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.00     GC time : 0.00 
+
+: p => (p or q) ? 
+
+I wonder if P => (P or Q)
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+Let me assume that P  {<HYP,{P},{}>}
+
+I wonder if P or Q
+holds within the BS defined by hypotheses (P) 
+
+
+
+
+ CPU time : 0.47     GC time : 0.00 
+
+: ;pc15
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.00     GC time : 0.00 
+
+: (p and q) => p ? 
+
+I wonder if (P and Q) => P
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+Let me assume that P and Q  {<HYP,{WFF1},{}>}
+
+I wonder if P
+holds within the BS defined by hypotheses (WFF1) 
+
+It is the case that P
+
+Since P
+were derived under the assumption: P and Q  {<HYP,{WFF1},{}>}
+I infer (P and Q) => P
+
+
+(P and Q) => P  {<DER,{},{}>}
+
+
+ CPU time : 0.63     GC time : 0.00 
+
+: ;pc16
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.00     GC time : 0.00 
+
+: (p and q) => q ? 
+
+I wonder if (P and Q) => Q
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+Let me assume that P and Q  {<HYP,{WFF1},{}>}
+
+I wonder if Q
+holds within the BS defined by hypotheses (WFF1) 
+
+It is the case that Q
+
+Since Q
+were derived under the assumption: P and Q  {<HYP,{WFF1},{}>}
+I infer (P and Q) => Q
+
+
+(P and Q) => Q  {<DER,{},{}>}
+
+
+ CPU time : 0.70     GC time : 0.00 
+
+: ;pc17
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.02     GC time : 0.00 
+
+: p => (q => p) ? 
+
+I wonder if P => (Q => P)
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+Let me assume that P  {<HYP,{P},{}>}
+
+I wonder if Q => P
+holds within the BS defined by hypotheses (P) 
+
+Let me assume that Q  {<HYP,{Q},{}>}
+
+I know P  {<HYP,{P},{}>}
+
+
+
+
+ CPU time : 0.60     GC time : 0.00 
+
+: ;pc18
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.08     GC time : 0.00 
+
+: ~p => (p => q) ? 
+
+I wonder if (~P) => (P => Q)
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+Let me assume that ~P  {<HYP,{WFF1},{}>}
+
+I wonder if P => Q
+holds within the BS defined by hypotheses (WFF1) 
+
+Let me assume that P  {<HYP,{P},{{WFF1}}>}
+
+I wonder if Q
+holds within the BS defined by hypotheses (WFF1 P) 
+
+
+
+
+ CPU time : 2.40     GC time : 0.00 
+
+: ;pc19   lei da adjuncao
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.08     GC time : 0.00 
+
+: p => (q => (p and q)) ? 
+
+I wonder if P => (Q => (P and Q))
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+Let me assume that P  {<HYP,{P},{}>}
+
+I wonder if Q => (P and Q)
+holds within the BS defined by hypotheses (P) 
+
+Let me assume that Q  {<HYP,{Q},{}>}
+
+I wonder if P and Q
+holds within the BS defined by hypotheses (P Q) 
+
+I know P  {<HYP,{P},{}>}
+
+I know Q  {<HYP,{Q},{}>}
+
+Since P  {<HYP,{P},{}>}
+and since Q  {<HYP,{Q},{}>}
+I infer P and Q
+
+
+
+
+ CPU time : 1.03     GC time : 0.00 
+
+: ;pc20  lei da permutacao
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.08     GC time : 0.00 
+
+: thresh(1) (p => (q => r), q => (p => r)) ? 
+
+I wonder if P => (Q => R) <=> Q => (P => R)
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+
+
+
+ CPU time : 0.30     GC time : 0.00 
+
+: ;pc21 lei do silogismo 1
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.00     GC time : 0.00 
+
+: (p => q) =>((q => r) => (p => r))? 
+
+I wonder if (P => Q) => ((Q => R) => (P => R))
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+Let me assume that P => Q  {<HYP,{WFF1},{}>}
+
+I wonder if (Q => R) => (P => R)
+holds within the BS defined by hypotheses (WFF1) 
+
+Let me assume that Q => R  {<HYP,{WFF2},{}>}
+
+I wonder if P => R
+holds within the BS defined by hypotheses (WFF1 WFF2) 
+
+Let me assume that P  {<HYP,{P},{}>}
+
+I wonder if R
+holds within the BS defined by hypotheses (WFF1 WFF2 P) 
+
+I wonder if Q
+holds within the BS defined by hypotheses (WFF1 WFF2 P) 
+
+I know P  {<HYP,{P},{}>}
+
+Since P => Q  {<HYP,{WFF1},{}>}
+and P  {<HYP,{P},{}>}
+I infer Q
+
+Since Q => R  {<HYP,{WFF2},{}>}
+and Q
+I infer R
+
+Since R
+were derived under the assumption: P  {<HYP,{P},{}>}
+I infer P => R
+
+Since P => R  {<DER,{WFF2,WFF1},{}>}
+were derived under the assumption: Q => R  {<HYP,{WFF2},{}>}
+I infer (Q => R) => (P => R)
+
+Since (Q => R) => (P => R)  {<DER,{WFF1},{}>}
+were derived under the assumption: P => Q  {<HYP,{WFF1},{}>}
+I infer (P => Q) => ((Q => R) => (P => R))
+
+
+(P => Q) => ((Q => R) => (P => R))  {<DER,{},{}>}
+
+
+ CPU time : 2.08     GC time : 0.00 
+
+: ;pc22 lei do silogismo 2
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.00     GC time : 0.00 
+
+: (q => r) => ((p => q) => (p => r))? 
+
+I wonder if (Q => R) => ((P => Q) => (P => R))
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+Let me assume that Q => R  {<HYP,{WFF1},{}>}
+
+I wonder if (P => Q) => (P => R)
+holds within the BS defined by hypotheses (WFF1) 
+
+Let me assume that P => Q  {<HYP,{WFF2},{}>}
+
+I wonder if P => R
+holds within the BS defined by hypotheses (WFF1 WFF2) 
+
+Let me assume that P  {<HYP,{P},{}>}
+
+I wonder if R
+holds within the BS defined by hypotheses (WFF1 WFF2 P) 
+
+I wonder if Q
+holds within the BS defined by hypotheses (WFF1 WFF2 P) 
+
+I know P  {<HYP,{P},{}>}
+
+Since P => Q  {<HYP,{WFF2},{}>}
+and P  {<HYP,{P},{}>}
+I infer Q
+
+Since Q => R  {<HYP,{WFF1},{}>}
+and Q
+I infer R
+
+Since R
+were derived under the assumption: P  {<HYP,{P},{}>}
+I infer P => R
+
+Since P => R  {<DER,{WFF2,WFF1},{}>}
+were derived under the assumption: P => Q  {<HYP,{WFF2},{}>}
+I infer (P => Q) => (P => R)
+
+Since (P => Q) => (P => R)  {<DER,{WFF1},{}>}
+were derived under the assumption: Q => R  {<HYP,{WFF1},{}>}
+I infer (Q => R) => ((P => Q) => (P => R))
+
+
+(Q => R) => ((P => Q) => (P => R))  {<DER,{},{}>}
+
+
+ CPU time : 1.98     GC time : 0.00 
+
+: ;pc23  lei da importacao
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.07     GC time : 0.00 
+
+: (p => (q => r)) => ((p and q) => r)? 
+
+I wonder if (P => (Q => R)) => ((P and Q) => R)
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+Let me assume that P => (Q => R)  {<HYP,{WFF2},{}>}
+
+I wonder if (P and Q) => R
+holds within the BS defined by hypotheses (WFF2) 
+
+Let me assume that P and Q  {<HYP,{WFF3},{}>}
+
+I wonder if R
+holds within the BS defined by hypotheses (WFF2 WFF3) 
+
+I wonder if Q => R
+holds within the BS defined by hypotheses (WFF2 WFF3) 
+
+I wonder if P
+holds within the BS defined by hypotheses (WFF2 WFF3) 
+
+It is the case that P
+
+Since P => (Q => R)  {<HYP,{WFF2},{}>}
+and P
+I infer Q => R
+
+I wonder if Q
+holds within the BS defined by hypotheses (WFF2 WFF3) 
+
+It is the case that Q
+
+Since Q => R  {<DER,{WFF3,WFF2},{}>}
+and Q
+I infer R
+
+Since R
+were derived under the assumption: P and Q  {<HYP,{WFF3},{}>}
+I infer (P and Q) => R
+
+Since (P and Q) => R  {<DER,{WFF2},{}>}
+were derived under the assumption: P => (Q => R)  {<HYP,{WFF2},{}>}
+I infer (P => (Q => R)) => ((P and Q) => R)
+
+
+(P => (Q => R)) => ((P and Q) => R)  {<DER,{},{}>}
+
+
+ CPU time : 1.87     GC time : 0.00 
+
+: ;pc 24 lei da exportacao
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.00     GC time : 0.00 
+
+: ((p and q) => r) => (p => (q => r))? 
+
+I wonder if ((P and Q) => R) => (P => (Q => R))
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+Let me assume that (P and Q) => R  {<HYP,{WFF2},{}>}
+
+I wonder if P => (Q => R)
+holds within the BS defined by hypotheses (WFF2) 
+
+Let me assume that P  {<HYP,{P},{}>}
+
+I wonder if Q => R
+holds within the BS defined by hypotheses (WFF2 P) 
+
+Let me assume that Q  {<HYP,{Q},{}>}
+
+I wonder if R
+holds within the BS defined by hypotheses (WFF2 P Q) 
+
+I wonder if P and Q
+holds within the BS defined by hypotheses (WFF2 P Q) 
+
+I know P  {<HYP,{P},{}>}
+
+I know Q  {<HYP,{Q},{}>}
+
+Since P  {<HYP,{P},{}>}
+and since Q  {<HYP,{Q},{}>}
+I infer P and Q
+
+Since (P and Q) => R  {<HYP,{WFF2},{}>}
+and P and Q  {<EXT,{Q,P},{}>}
+I infer R
+
+
+
+
+ CPU time : 1.65     GC time : 0.00 
+
+: ;pc25 lei da composicao
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.00     GC time : 0.00 
+
+: (p => q) => ((p => r) => (p => (q and r)))? 
+
+I wonder if (P => Q) => ((P => R) => (P => (Q and R)))
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+Let me assume that P => Q  {<HYP,{WFF1},{}>}
+
+I wonder if (P => R) => (P => (Q and R))
+holds within the BS defined by hypotheses (WFF1) 
+
+Let me assume that P => R  {<HYP,{WFF2},{}>}
+
+I wonder if P => (Q and R)
+holds within the BS defined by hypotheses (WFF1 WFF2) 
+
+Let me assume that P  {<HYP,{P},{}>}
+
+I wonder if Q and R
+holds within the BS defined by hypotheses (WFF1 WFF2 P) 
+
+I wonder if Q
+holds within the BS defined by hypotheses (WFF1 WFF2 P) 
+
+I wonder if R
+holds within the BS defined by hypotheses (WFF1 WFF2 P) 
+
+I know P  {<HYP,{P},{}>}
+
+Since P => R  {<HYP,{WFF2},{}>}
+and P  {<HYP,{P},{}>}
+I infer R
+
+Since P => Q  {<HYP,{WFF1},{}>}
+and P  {<HYP,{P},{}>}
+I infer Q
+
+Since Q
+and since R
+I infer Q and R
+
+
+
+
+ CPU time : 1.77     GC time : 0.00 
+
+: ;pc26
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.00     GC time : 0.00 
+
+: (p => q) => ((r => s) => ((p and r) => (q and s)))? 
+
+I wonder if (P => Q) => ((R => S) => ((P and R) => (Q and S)))
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+Let me assume that P => Q  {<HYP,{WFF1},{}>}
+
+I wonder if (R => S) => ((P and R) => (Q and S))
+holds within the BS defined by hypotheses (WFF1) 
+
+Let me assume that R => S  {<HYP,{WFF2},{}>}
+
+I wonder if (P and R) => (Q and S)
+holds within the BS defined by hypotheses (WFF1 WFF2) 
+
+Let me assume that P and R  {<HYP,{WFF3},{}>}
+
+I wonder if Q and S
+holds within the BS defined by hypotheses (WFF1 WFF2 WFF3) 
+
+I wonder if Q
+holds within the BS defined by hypotheses (WFF1 WFF2 WFF3) 
+
+I wonder if S
+holds within the BS defined by hypotheses (WFF1 WFF2 WFF3) 
+
+I wonder if P
+holds within the BS defined by hypotheses (WFF1 WFF2 WFF3) 
+
+I wonder if R
+holds within the BS defined by hypotheses (WFF1 WFF2 WFF3) 
+
+It is the case that R
+
+It is the case that P
+
+Since R => S  {<HYP,{WFF2},{}>}
+and R
+I infer S
+
+Since P => Q  {<HYP,{WFF1},{}>}
+and P
+I infer Q
+
+Since Q
+and since S
+I infer Q and S
+
+
+
+
+ CPU time : 2.15     GC time : 0.00 
+
+: ;pc27 
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.08     GC time : 0.00 
+
+: (p => r) => ((q => r) => ((p or q) => r))? 
+
+I wonder if (P => R) => ((Q => R) => ((P or Q) => R))
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+Let me assume that P => R  {<HYP,{WFF1},{}>}
+
+I wonder if (Q => R) => ((P or Q) => R)
+holds within the BS defined by hypotheses (WFF1) 
+
+Let me assume that Q => R  {<HYP,{WFF2},{}>}
+
+I wonder if (P or Q) => R
+holds within the BS defined by hypotheses (WFF1 WFF2) 
+
+Let me assume that P or Q  {<HYP,{WFF3},{}>}
+
+I wonder if R
+holds within the BS defined by hypotheses (WFF1 WFF2 WFF3) 
+
+I wonder if P
+holds within the BS defined by hypotheses (WFF1 WFF2 WFF3) 
+
+I wonder if Q
+holds within the BS defined by hypotheses (WFF1 WFF2 WFF3) 
+
+I wonder if P
+holds within the BS defined by hypotheses (WFF1 WFF2 WFF3) 
+
+I wonder if Q
+holds within the BS defined by hypotheses (WFF1 WFF2 WFF3) 
+
+
+
+
+ CPU time : 1.40     GC time : 0.00 
+
+: ;pc28                 Da' erro     
+;resetnet
+Unrecognized input
+ 
+
+
+ CPU time : 0.00     GC time : 0.00 
+
+: ;thresh(1) (thresh(1) (~p, q), thresh(1) (p, ~q))?
+Unrecognized input
+ 
+
+
+ CPU time : 0.08     GC time : 0.00 
+
+: ;pc29                 Da' erro     
+;resetnet 
+Unrecognized input
+ 
+
+
+ CPU time : 0.05     GC time : 0.00 
+
+: ;thresh(1) (thresh(1)(p,q),thresh(1)(~p, ~q))?
+Unrecognized input
+ 
+
+
+ CPU time : 0.00     GC time : 0.00 
+
+: ;pc30
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.00     GC time : 0.00 
+
+: thresh(1)(~p => p, p)? 
+
+I wonder if (~P) => P <=> P
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+
+
+
+ CPU time : 0.33     GC time : 0.00 
+
+: ;pc31
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.00     GC time : 0.00 
+
+: thresh(1) ((q => p) and (~q => p), p)? 
+
+I wonder if ((Q => P) and ((~Q) => P)) <=> P
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+
+
+
+ CPU time : 0.32     GC time : 0.00 
+
+: ;pc32
+resetnet 
+Net reset - Relations are still defined
+ 
+
+
+ CPU time : 0.00     GC time : 0.00 
+
+: thresh(1) ((p => q) and (p => ~q), ~p)? 
+
+I wonder if ((P => Q) and (P => (~Q))) <=> (~P)
+holds within the BS defined by context DEFAULT-DEFAULTCT 
+
+
+
+
+ CPU time : 0.45     GC time : 0.00 
+
+: 
+Closing file WATSON: SNEPS2.SNEPSLOG.EXAMPLES; TEOREMAS2.SNLOG#2.
+ 
+
+
+ CPU time : 0.08     GC time : 0.00 
+
+: 
+NIL
+> (dribble-end)

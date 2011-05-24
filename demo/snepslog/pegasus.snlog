@@ -1,0 +1,22 @@
+;; Simple demo that shows how SNePSLOG handles contradictions:
+clearkb
+set-mode-1
+;; Tornado is a white horse
+white(tornado).
+horse(tornado).
+;; Horses do not fly
+all (x) (horse(x) => ~flies(x)).
+;; Winged horses do fly...
+all (x) (winged-horse(x) => flies(x)).
+;; ...they are horses...
+all (x) (winged-horse(x) => horse(x)).
+;; ... and they have wings.
+all (x) (winged-horse(x) => has-wings (x)).
+;; Pegasus is a winged horse
+winged-horse(pegasus).
+;; Does Pegasus have wings...YES
+has-wings(pegasus)?
+;; Does Tornado fly? - NO
+flies(tornado)?
+;; Does Pegasus fly? Type in the query and try it out.
+;; flies(pegasus)?

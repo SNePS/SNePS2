@@ -1,0 +1,10 @@
+(in-package :xginseng)
+(create-instance 'M3 node
+  (:box '(1227 1481 33 30))
+  (:name "M3!")
+  (:sneps-node (sneps:node 'SNEPSUL::M3)))
+(dolist (node '(M3))
+  (push (eval node) (g-value display-window :nodes-on-display))
+  (opal:add-component display-aggregate (eval node)))
+(opal:add-component display-aggregate (make-arc M3 SOCRATES "member") :back)
+(opal:add-component display-aggregate (make-arc M3 MORTAL "class") :back)

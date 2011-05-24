@@ -1,0 +1,256 @@
+Problem:
+________
+
+The idea is to try and determine the category (noun, verb, adjective, adverb,
+or preposition) of a word, when you have it's root word in a lexicon of words.
+
+Brief Description Of Solution:
+______________________________
+
+The actual steps of proceeding are basically the same as the original algorithm,
+which are implemented already in the current englex package.
+
+The steps are repeated until englex finds the category of word or it can not 
+proceed any further:
+  1)Look directly in lexicon for the word, because it may be stored there.
+  2)Englex tries finding and stripping off a suffix or word ending and looks
+    to see if that is in the lexicon, 
+    (Note: the program has knowledge about what a word can be when it has a 
+     specific suffix or word ending).
+    Using the suffix or word ending and the root word from the lexicon (if it
+    was found) the category of the original word can be determined.
+  3)Try finding and stripping off a prefix, and if one is found repeat steps
+    1 to 3.
+
+What I did was look up example words for each suffix or word ending. Next, I
+said for that specific suffix (or word ending) it could only have those 
+possible root words (noun, verb, adjective, adverb, preposition).
+
+For each word I would apply a few spelling rules in order to try and determine
+if each word had a root in the current lexicon.
+
+The Spelling Rules Handled By My Program Are:
+_____________________________________________
+
+1)Adding a Suffix to One Syllable Words:
+  Take the word "stop." It's a one syllable word ending in a single consonant 
+  (P), and the consonant is preceded by a single vowel (O). When adding a 
+  suffix the last consonant is doubled:
+
+	stop + ing = stopping
+	hot  + est = hottest
+	big  +  er = bigger
+
+  However, the rule does not apply if a word ends with two consonants or if it
+  ends with one consonant preceded by two vowels:
+
+	stick + er = sticker
+	sweet + er = sweeter
+
+2)Adding a Suffix to a Word with Two or More Syllables:
+  If a word is accented on the last syllable, treat it as if it were a 
+  one-syllable word. Double the last consonant if the word ends in a single 
+  consonant preceded by a single vowel.
+
+	prefer + ing = preferring
+
+  Again, the suffix must begin with a vowel.
+  If the word ends with two consonants or if the final consonant is preceded by
+  two vowels, the rule does not apply.
+  If the word is not accented on the last syllable, just add the suffix.
+  The exception is simple. When the accent shifts to the first syllable of the
+  word after the suffix is added, don't double the consonant. A dictionary will
+  help you make the decision here.
+
+3)Words Ending in a Silent E:
+  Usually when the word ends with a silent e, drop the e if the suffix begins 
+  with a vowel:
+
+	glide + ing = gliding
+
+  Here the exceptions are many.
+  1. Words with a soft g or c sound keep the e if the suffixes able or ous are
+     being added.
+
+  2. Again, keep the e if the word could be mistaken for another word:
+
+	dyeing, shoeing
+
+  3. If the word ends in ie, drop the e and change the i to y before adding 
+     ing:
+
+	dying, lying
+
+4)Adding a Suffix with a Consonant to a Word with a Silent E:
+  When adding a suffix that begins with a consonant, ment, ness, less, and so
+  on, and the word ends with a silent e, usually keep the e. Some exceptions
+  are judge, true, argue, whole, nine, acknowledge, and awe.
+
+5)Words Ending with Y:
+  When a word ends with y and is preceded by a consonant, change the y to i and
+  add the suffix.
+  Some exceptions are babyhood, beauteous, ladylike, plenteous, and wryly.
+  If the y is preceded by a vowel, there is no change.
+
+6)Added k:
+  If a root word ends in a hard c and an ending beginning with a vowel is added,
+  a k is inserted to maintain the hard c sound.
+  
+	colic    -  colicky
+	frolic   -  frolicked,  frolicking
+	mimic    -  mimicked,   mimicker
+ 	panic    -  panicked,   panicking
+	picnic   -  picnicked,  picnicker
+	politic  -  politicked, politicking
+	shellac  -  shellacked, shellacking, shellacker
+	traffic  -  trafficked, trafficking, trafficker
+
+  However, do not insert the k with the following words if the suffix al, ally,
+  or ism is added:
+	
+	academic - academical
+	athletic - athletically
+	mystic - mysticism
+
+Englex Implementes The Spelling Rules When It Removes A Suffix
+______________________________________________________________
+
+Or Word Ending And Checks The Below:
+____________________________________
+
+  1)Look first to see if word is in the lexicon
+    [Reference Spelling Rules 1, 2, 3, 4, And 5 Above],
+  2)Look to see if have word in lexicon with new ending (Where new endings 
+    are generally different for different words. These are passed to the
+    routine.)
+    Bad example: add suffix "able" to "cap" to produce "capable".
+  3)Take off one of final double letters and look in lexicon.
+    [Reference Spelling Rules 1, and, 2 Above],
+  4)Remove a final "k" letter ending of a string and try to find resulting word
+    in the lexicon.
+    [Reference Spelling Rule 6 Above],
+  5)Change a final "i" letter ending to a "y" letter ending and look for that
+    word in lexicon et cetera.
+    [Reference Spelling Rules 5, and 3.3 Above],
+  6)Add "e" to the end of the current string and look for that word in lexicon.
+    [Reference Spelling Rule 3 Above],
+  7)If have a "s" at the end of the current string then try removing it and 
+    concatenating "d", "de", "t", and "re".
+    Egs:
+      elude -> elus-ion, elus-ive, conclude -> conclus-ion, conclus-ive,
+      expand -> expans-ive, expans-ion, respond -> respons-ive, respons-ible,
+      divert -> divers-ion, divers-ity, divers-ify, (diverse),
+      cohere -> ccohes-ion, cohes-ive, adhere -> adhes-ion, adhes-ive,
+  8)If have a "c" at the end of the current string then try removing it and 
+    concatenating "ke".
+    Egs:
+      convoke -> convoc-ation, convoc-ator, convoc-able,
+      revoke -> revoc-ation, revoc-able, irrevoc-able, revoc-atory,
+  9)See if word has "embedded suffixes" which now ends with either "ag", "in",
+    "ur", "at", "iv", or "iz". We concatenate the final "e" back and 
+    recursively call the spelling rules routine.
+  10)See if word has other suffixes or word endings which can be removed
+     by recursively calling the spelling rules routine.
+
+Note: A few other spelling and non-spelling rules have been implemented
+      elsewhere in the program. (Eg: "leaves" from "leaf" etc.)
+
+The few homographs were handled directly by checking for specific cases and 
+processing them that way with the spelling rules. I distinguished the homo-
+graphs by saying that each of their root words may belong to a specific
+group or groups of categories. As an example, I said words having the suffix 
+"al" could belong to one of 2 homographs, so if that word had a root word of 
+category noun then it was of category adjective, but if the word had a root 
+word in the lexicon with either categories adjective or verb then that word 
+belonged to category noun.
+
+The program has a large default lexicon of words. All words in the default 
+lexicon are mentioned in appendices A, and C as common word beginnings or 
+common word endings.
+
+Example runs of program:
+_______________________
+
+(1)     ;Note: Assume have declared the word "gentleman" in the lexicon.
+
+	;At the SPE prompt (short for Symbolic Programming Environment) type 
+        ;function call with a string as a argument:
+
+	> (lookup "ungentlemanliness")
+
+	;The environment (on the Sparc Station) replies:
+
+	(((NEG . T) (NUM . SING) (ROOT . "ungentlemanliness") (CTGY . N)))
+
+	;Meaning that the word ungentlemanliness has 4 features with values:
+
+	;NEG means the word ungentlemanliness is a negative word
+
+	;NUM means it's either singular or plural word (here it's SING for
+	;singular)
+
+	;ROOT is root word (here it's the original word to retain meaning
+        ;of what was sent to the program)
+
+	;CTGY means category of word (here it's N for noun)
+
+(2)     ;Run showing output from trace information.
+        ;Note: Assume have declared the word "gentle" in the lexicon.
+        > (englex::lookup "gentlemanliness" t) 
+
+        ;or 
+        ;> (setq englex::*Trace* t) 
+        ;> (englex::lookup "gentlemanliness") 
+
+        [Ending ] Tracing --> gentlemanliness
+        [Ending ness] Tracing --> gentlemanli
+        [Ending ness] Tracing --> gentlemanlie
+        [Ending ness] Tracing --> gentlemanly
+        [Ending ness] Tracing --> gentlemanley
+        [Ending ness] Tracing --> gentlemanlie
+        [Ending ly] Tracing --> gentleman
+        [Ending ly] Tracing --> gentlemanle
+        [Ending ly] Tracing --> gentlemane
+        (((CTGY . N) (NUM . SING) (ROOT . "man")))
+        [Ending man] Tracing --> gentle
+        [Ending ly] Tracing --> gentleman
+        [Ending ly] Tracing --> gentlemane
+        [Ending man] Tracing --> gentle
+        (((ENGLEX:NUM . ENGLEX:SING) (ENGLEX:ROOT . "gentlemanliness")
+                                     (ENGLEX:CTGY . SNEPSUL:N)))
+
+
+
+
+
+
+
+
+
+
+
+
+
+References:
+
+   The Misspeller's Dictionary By Peter and Craig Norback
+	Quadrangle/The New York Times Book Company
+
+   Sight And Sound A Handbook Of Spelling By Paul Richard Craven (Page 70)
+       
+   Webster's II New Riverside University Dictionary 1984
+
+   Webster's Third New International Dictionary
+	Of The English Language Unabridged 1976
+
+   Funk & Wagnalls New Standard Dictionary 
+	Of The English Language 1964
+   
+
+
+
+
+
+
+
+

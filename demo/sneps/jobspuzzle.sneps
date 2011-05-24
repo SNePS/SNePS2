@@ -1,0 +1,61 @@
+(resetnet t)
+(define member class employee job)
+(describe (assert member Roberta class person))
+(describe (assert member Thelma class person))
+(describe (assert member Steve class person))
+(describe (assert member Pete class person))
+(describe (assert member chef class job))
+(describe (assert member guard class job))
+(describe (assert member nurse class job))
+(describe (assert member telephone\ operator class job))
+(describe (assert member police\ officer class job))
+(describe (assert member teacher class job))
+(describe (assert member actor class job))
+(describe (assert member boxer class job))
+(describe (assert forall $person
+		  ant (build member *person class person)
+		  cq (build min 2 max 2
+			    arg ((build employee *person job chef)
+				 (build employee *person job guard)
+				 (build employee *person job nurse)
+				 (build employee *person job telephone\ operator)
+				 (build employee *person job police\ officer)
+				 (build employee *person job teacher)
+				 (build employee *person job actor)
+				 (build employee *person job boxer)))))
+(describe (assert forall $job
+		  ant (build member *job class job)
+		  cq (build min 1 max 1
+			    arg ((build employee Roberta job *job)
+				 (build employee Thelma job *job)
+				 (build employee Steve job *job)
+				 (build employee Pete job *job)))))
+(describe (assert member Roberta class female))
+(describe (assert member Thelma class female))
+(describe (assert member Steve class male))
+(describe (assert member Pete class male))
+(describe (assert forall *person
+		  ant (build member *person class female)
+		  cq (build min 0 max 0
+			    arg ((build employee *person job nurse)
+				 (build employee *person job actor)
+				 (build employee *person job telephone\ operator)))))
+(describe (assert forall *person
+		  ant (build member *person class male)
+		  cq (build min 0 max 0
+			    arg (build employee *person job chef))))
+(describe (assert min 0 max 0
+		  arg (build employee Roberta job boxer)))
+(describe (assert min 0 max 0
+		  arg ((build employee Pete job nurse)
+		       (build employee Pete job police\ officer)
+		       (build employee Pete job teacher))))
+(describe (assert min 0 max 0
+		  arg ((build employee Roberta job chef)
+		       (build employee Roberta job police\ officer))))
+(describe (assert forall *person
+		  ant (build member *person class person)
+		  cq (build min 0 max 1
+			    arg ((build employee *person job chef)
+				 (build employee *person job police\ officer)))))
+(describe (deduce (8 0) employee *person job *job))

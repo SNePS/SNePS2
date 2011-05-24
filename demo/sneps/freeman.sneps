@@ -1,0 +1,93 @@
+;;;
+;;; WHO WILL FREEMAN MARRY
+;;; 
+(define member class person age profession agent willmarry)
+; Freeman knows 5 women: Ada, Bea, Cyd, Deb, Eve.
+(describe (assert min 13 max 13 arg((build  member (ada bea cyd deb eve) class woman)
+;
+; Two women are over 30, three are under 30.
+(build min 2 max 2
+		  arg ((build person ada age over30)
+		       (build person bea age over30)
+		       (build person cyd age over30)
+		       (build person deb age over30)
+		       (build person eve age over30)))
+(build forall $woman
+		  ant (build member *woman class woman)
+		   cq (build min 1 max 1
+			     arg ((build person *woman age over30)
+				  (build person *woman age under30))))
+;
+; Two women are teachers, three are secretaries.
+(build min 2 max 2
+		  arg ((build person ada profession teacher)
+		       (build person bea profession teacher)
+		       (build person cyd profession teacher)
+		       (build person deb profession teacher)
+		       (build person eve profession teacher)))
+(build forall *woman
+		  ant (build member *woman class woman)
+		   cq (build min 1 max 1
+			     arg ((build person *woman profession teacher)
+				  (build person *woman profession secretary))))
+;
+; Ada and Cyd are in the same age bracket.
+(build member (over30 under30) class age)
+(build forall $age
+		  ant (build member *age class age)
+		  cq (build thresh 1
+			    arg ((build person ada age *age)
+				 (build person cyd age *age))))
+;
+; Deb and Eve are in different age brackets.
+(build forall *age
+		  ant (build member *age class age)
+		  cq (build min 1 max 1
+			    arg ((build person deb age *age)
+				 (build person eve age *age))))
+;
+; Bea and Eve have the same occupation.
+(build member (teacher secretary) class occupation)
+(build forall $occupation
+		  ant (build member *occupation class occupation)
+		  cq (build thresh 1
+			    arg ((build person bea profession *occupation)
+				 (build person eve profession *occupation))))
+;
+; Cyd and Deb have different occupations.
+(build forall *occupation
+		  ant (build member *occupation class occupation)
+		  cq (build min 1 max 1
+			    arg ((build person cyd profession *occupation)
+				 (build person deb profession *occupation))))
+;
+; Of the five women, Freeman will marry the teacher over 30.
+(build min 1 max 1
+		  arg ((build min 2 max 2
+			      arg ((build person ada age over30)
+				   (build person ada profession
+					  teacher)))
+		       (build min 2 max 2
+			      arg ((build person bea age over30)
+				   (build person bea profession
+					  teacher)))
+		       (build min 2 max 2
+			      arg ((build person cyd age over30)
+				   (build person cyd profession
+					  teacher)))
+		       (build min 2 max 2
+			      arg ((build person deb age over30)
+				   (build person deb profession
+					  teacher)))
+		       (build min 2 max 2
+			      arg ((build person eve age over30)
+				   (build person eve profession
+					  teacher)))))
+(build forall *woman
+		  ant (build member *woman class woman)
+		  cq (build thresh 1
+			    arg ((build min 2 max 2
+					arg ((build person *woman age over30)
+					     (build person *woman profession teacher)))
+				 (build agent freeman willmarry *woman)))))))
+

@@ -1,0 +1,374 @@
+;;; -*- Mode:Common-Lisp; Package:SNEPSUL; Base:10 -*-
+
+;;; Author:      Stuart C. Shapiro
+;;; Written:     March 90
+;;; Description: The following is the solution to a CS572 (Intro. to AI) project
+;;;              It defines a grammar that allows parsing of simple descriptive
+;;;              sentences such as 'Elephants are animals.', 'Dumbo is an 
+;;;              elephant.' or 'Elephants are grey.'. During the parse a simple
+;;;              knowledge base is built that allows answering of questions such
+;;;              as 'Who is grey?' or 'What can fly?' (see end of this file for 
+;;;              example sentences). Inheritance along various links is 
+;;;              performed to answer these questions (see code for details).
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;                         KNOWLEDGE BASE FUNCTIONS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(^^ setq kb (make-hash-table))
+
+(^^ defconstant isapath '(kstar |be|)
+    "If x--isapath-->y then (isa x y)")
+
+(^^ defconstant isa-path '(kstar |be-|)
+    "If y--isa-path-->x then (isa x y)")
+
+(^^ defconstant propertypath '(compose (kstar |be|) |property|)
+    "If x--propertypath-->y then (property x y)")
+
+(^^ defconstant property-path '(compose |property-| (kstar |be-|))
+    "If y--property-path-->x then (property x y)")
+
+(^^ defconstant has-partpath '(compose (kstar |be|) (kplus |have|) (kstar |be|))
+    "If x--has-partpath-->y then (has-part x y)")
+
+(^^ defconstant has-part-path '(compose (kstar |be-|) (kplus |have-|) (kstar |be-|))
+    "If y--has-part-path-->x then (has-part x y)")
+
+(^^ defconstant canpath '(or (compose (kstar |be|) |can|)
+			     (compose (kstar |be-|) (kstar |be|) |can|))
+    "If x--canpath-->y then (can x y)")
+
+(^^ defconstant can-path '(or (compose |can-| (kstar |be-|))
+			      (compose |can-| (kstar |be-|) (kstar |be|)))
+    "If y--can-path-->x then (can x y)")
+
+(^^ defun print-kb ()
+    "Prints the Knowledge Base as a sequence of <entity plist-of-entity> lines."
+    (maphash (function (lambda (key val) (format t "~&~A ~S~%" key val))) kb))
+
+(^^ defun add-pair (rel obj alist)
+    "Adds OBJ into the value of the property REL in the plist-like ALIST.
+     Returns the, possibly modified, possibly newly created, ALIST."
+    (cond ((null alist) (acons rel (list obj) nil))
+	  ((null (assoc rel alist)) (acons rel (list obj) alist))
+	  (t (pushnew obj (cdr (assoc rel alist))) alist)))
+
+(^^ defun add-kb (fact)
+    "Takes a FACT of the form (rel object value),
+     and adds VALUE to the list which is the value of the property REL on the
+     association list of the symbol OBJECT in the hash table KB,
+     and also adds OBJECT to the list which is the value of the property REL-
+     on the association list of the symbol VALUE in the hash table KB."
+    ;; The order of the value lists are assumed to be unimportant.
+    ;; This version will add new values to the beginning.
+    (setf (gethash (second fact) kb)
+	  (add-pair (first fact) (third fact) (gethash (second fact) kb))
+	  (gethash (third fact) kb)
+	  (add-pair (intern (concatenate 'string
+					 (symbol-name (first fact))
+					 "-"))
+		    (second fact)
+		    (gethash (third fact) kb))))
+
+(^^ defun query-kb (query)
+    "Answers the QUERY, which could be a Wh-query or a T/F query,
+     based on the knowledge stored in KB by ADD-KB."
+    (if (member 'wh query)
+	(apply (function answer-wh) query)
+	(if (case (first query)
+	      (|be| (isa-p (second query) (third query)))
+	      (|have| (has-part-p (second query) (third query)))
+	      (|can| (can-p (second query) (third query)))
+	      (|property| (property-p (second query) (third query)))
+	      (t (member (third query) (kbget (second query) (first query)))))
+	    '|Yes.|
+	    '|I don't know.|)))
+
+(^^ defun isa-p (object superclass)
+    "Returns True if (be object superclass) was stored in the database (with
+     ADD-KB), or if that fact is provable from the database and the
+     following rules:
+          (forall (x) (isa x))
+          (forall (x y z) (implies (and (isa x y) (isa y z))
+                                   (isa x z)))"
+    (or (eql object superclass)
+	(dolist (y (kbget object '|be|))
+	  (when (isa-p y superclass) (return t)))))
+
+(^^ defun has-part-p (object subpart)
+    "Returns True if (has-part object subpart) was stored in the database
+     (with ADD-KB), or if that fact is provable from the database and the
+     following rules:
+          (forall (x y z) (if (and (has-part x y) (isa y z))
+                              (has-part x z)))
+          (forall (x y z) (if (and (has-part x y) (has-part y z))
+                              (has-part x z)))
+          (forall (x y z) (if (and (isa x y) (has-part y z))
+                              (has-part x z)))"
+    (or (dolist (y (kbget object '|have|))
+	  (when (or (isa-p y subpart)
+		    (has-part-p y subpart))
+	    (return t)))
+	(dolist (y (kbget object '|be|))
+	  (when (has-part-p y subpart) (return t)))))
+
+(^^ defun can-p (object ability)
+    "Returns True if (can object ability) was stored in the database
+     (with ADD-KB), or if that fact is provable from the database and the
+     following rule:
+          (forall (x y) (if (or (inherit-can x y) (observe-can x y))
+                              (can x z)))"
+    (or (member ability (kbget object '|can|))
+	(inherit-can-p object ability)
+	(observe-can-p object ability)))
+
+(^^ defun inherit-can-p (object ability)
+    "Returns True if (can object ability) was stored in the database
+     (with ADD-KB), or if (inherit-can object ability) is provable from the
+     database and the following rule:
+          (forall (x y z) (if (and (isa x y) (inherit-can y z))
+                              (inherit-can x z)))"
+    (or (member ability (kbget object '|can|))
+	(dolist (y (kbget object '|be|))
+	  (when (inherit-can-p y ability) (return t)))))
+
+(^^ defun observe-can-p (object ability)
+    "Returns True if (can object ability) was stored in the database
+     (with ADD-KB), or if (observe-can object ability) is provable from the
+     database and the following rule:
+          (forall (x y z) (if (and (isa y x) (can y z))
+                              (observe-can x z)))"
+    (or (member ability (kbget object '|can|))
+	(dolist (y (kbget object '|be-|))
+	  (when (can-p y ability) (return t)))))
+
+(^^ defun property-p (object ability)
+    "Returns True if (property object ability) was stored in the database
+     (with ADD-KB), or if that fact is provable from the database and the
+     following rule:
+          (forall (x y z) (if (and (isa x y) (property y z))
+                              (property x z)))"
+    (or (member ability (kbget object '|property|))
+	(dolist (y (kbget object '|be|))
+	  (when (property-p y ability) (return t)))))
+
+(^^ defun kbget (object relation)
+    "Returns all x such that (relation object x) has been stored in the kb."
+    (cdr (assoc relation (gethash object kb))))
+
+(^^ defun answer-wh (pred subj obj)
+    "Answers the Wh-QUERY."
+    (case pred
+      (|be| (let ((object (if (eql subj 'wh) obj subj)))
+	      (format t "~&~A has the following subclasses and elements: ~S~%"
+		      object (findpath object isa-path))
+	      (format t "~&~A has the following classes and superclasses: ~S~%"
+		      object (findpath object isapath))
+	      (format t "~&~A is/are: ~S~%"
+		      object (findpath object propertypath))
+	      (format t "~&~A can do the following: ~S~%"
+		      object (findpath object canpath))))
+      (|have| (if (eql subj 'wh)
+		  (format t "~&The following have ~A: ~S.~%"
+			  obj (findpath obj has-part-path))
+		  (format t "~&~A has: ~S~%"
+			  subj (findpath subj has-partpath))))
+      (|can| (if (eql subj 'wh)
+		 (format t "~&The following can ~A: ~S~%"
+			 obj (findpath obj can-path))
+		 (format t "~&~A can do the following: ~S~%"
+			 subj (findpath subj canpath))))
+      (|property| (if (eql subj 'wh)
+		      (format t "~&The following are ~A: ~S~%"
+			      obj (findpath obj property-path))
+		      (format t "~&~A is/are: ~S~%"
+			      subj (findpath subj propertypath))))
+      (t (if (eql subj 'wh)
+	     (format t "~&~S ~A ~A~%"
+		     (findpath obj
+			       (intern
+				 (concatenate 'string
+					      (symbol-name pred) "-")))
+		     pred obj)
+	     (format t "~&~A ~A ~S~%"
+		     subj pred (findpath subj pred)))))
+    (values))
+
+(^^ defun findpath (object path)
+    "Returns a list of all objects at the end of PATH from OBJECT,
+   or `I don't know'."
+    (or (pathfrom (list object) path)
+	'|I don't know.|))
+
+(^^ defun pathfrom (objects path)
+    "Returns a list of all the objects that are related to the objects on the
+    list of OBJECTS by the relation PATH.  I.e. (path object x)."
+    ;; a path can be:  1. a symbol
+    ;;                 2. (compose path1 ... pathn)
+    ;;                 3. (kstar path)
+    ;;                 4. (kplus path
+    ;;                 5. (or path1 path2)
+    (cond ((symbolp path)
+	   (let (results)
+	     (dolist (object objects results)
+	       (setq results
+		     (union (kbget object path) results)))))
+	  ((eql (first path) 'kstar)
+	   (do ((relation (second path))
+		(newobjects objects
+			    (union (rest newobjects)
+				   (set-difference (kbget (first newobjects) relation)
+						   results)))
+		(results objects (union results (kbget (first newobjects) relation))))
+	       ((null newobjects) results)))
+	  ((eql (first path) 'kplus)
+	   (pathfrom (pathfrom objects (second path)) (cons 'kstar (rest path))))
+	  ((eql (first path) 'compose)
+	   (if (cddr path)
+	       (pathfrom (pathfrom objects (second path))
+			 (cons 'compose (cddr path)))
+	       (pathfrom objects (second path))))
+	  ((eql (first path) 'or)
+	   (union (pathfrom objects (second path))
+		  (pathfrom objects (third path))))
+	  (t (error "Unrecognizable path ~S." path))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;                             GRAMMAR
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(s (cat wh t ; A Wh question starts with "who" or "what".
+	(setr mood 'question) (hold 'wh 'wh) (to s/wh))
+   (jump s/wh t (setr mood 'statement)))
+
+(s/wh
+   (cat v (getf modal)				; A question can start with a modal.
+	(setr mood 'question) (setr modal t) (setr pred (intern (getr *)))
+	(to s/initaux))
+   (cat v (getf aux)				; A question can start with an auxiliary verb.
+	(setr mood 'question) (setr aux t) (setr pred (intern (getr *)))
+	(to s/initaux))
+   (jump s/initaux t))
+
+(s/initaux (push np t ; Parse the subject noun phrase.
+		 (setr subj *) (to s/np))
+	   (vir wh t (setr subj 'wh) (setr num 'sing 'plur) (to s/np)))
+
+(s/np (cat v (and (getf modal) (overlap mood 'statement))
+	   (setr pred (intern (getr *))) (setr modal t) (to s/modal))
+      (jump s/modal t (setr modal nil)))
+
+(s/modal
+      (cat v (and (getf aux) (nullr aux)
+		  (or (getr modal) (overlap (getf num) num)))
+	   (setr aux t) (setr pred (intern (getr *))) (to s/aux))
+      (jump s/aux t))
+
+(s/aux (cat v (and (getr modal) (nullr aux) (overlap * lex))
+	    (setr pred '|can|)
+	    (setr obj (intern (getr *))) (to s/end))
+       (cat v (and (getr modal) (getr aux))
+	    (setr pred '|can|)
+	    (setr obj (intern (getr *))) (to s/end))
+       (cat v (and (nullr modal)
+		   (or (getr aux) ; number was tested when aux was seen
+		       (and (overlap num 'plur) (overlap * lex))
+		       (and (overlap num 'sing) (disjoint * lex))))
+	    (setr pred (intern (getr *))) (to s/v))
+       (jump s/v (getr aux)))
+
+(s/v (cat adj t (setr pred '|property|) (setr obj (intern (getr *))) (to s/end))
+     (vir wh (endofsentence) (setr obj 'wh) (to s/end))
+     (jump s/end (endofsentence) (setr obj pred) (setr pred '|can|))
+     (push np t (setr obj *) (to s/end)))
+
+(s/end (wrd "." (overlap mood 'statement)
+	    (setr fact pred subj obj) (to store))
+       (wrd "?" (overlap mood 'question)
+	    (when (overlap pred '|do|) (setr pred '|can|))
+	    (setr fact pred subj obj) (to answer)))
+
+(store (pop fact t (add-kb (getr fact))))
+
+(answer (pop (query-kb (getr fact)) t))
+
+(np (cat det t (setr num (getf num)) (to np/det))
+    (cat npr t (setr npstring " " *) (setr num 'sing) (to np/npl))
+    (jump np/det t ; must be a bare plural
+	  (setr num 'plur)))
+
+(np/det (cat adj t (addr npstring " " *) (to np/det))
+	(cat n (and (overlap (getf num) 'plur) (overlap num (getf num)))
+	     ;; A plural noun is only allowed when expected,
+	     ;; and must end the noun string.
+	     (addr npstring " " *) (setr num 'plur) (to np/npl))
+	(cat n (overlap (getf num) 'sing) ; singular noun begins a noun
+						 ; string 
+	     (addr npstring " " *) (to np/n)))
+
+(np/n (cat n (and (overlap (getf num) 'plur) (overlap num (getf num)))
+	   ;; A plural noun is only allowed when expected,
+	   ;; and must end the noun string.
+	   (addr npstring " " *) (setr num 'plur) (to np/npl))
+      (cat n (overlap (getf num) 'sing)	; internal singular noun
+	   (addr npstring " " *) (to np/n))
+      (jump np/npl (overlap num 'sing)
+	    ;; If we've run out of nouns, it must be a singular np.
+	    (setr num 'sing)))
+
+(np/npl
+  (pop (intern (apply (function concatenate) 'string (rest (getr npstring))))
+       t (liftr num)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;                         SAMPLE SENTENCES
+;;;
+;;; Elephants are animals.
+;;; A circus elephant is an elephant.
+;;; Clyde is a circus elephant.
+;;; Alex is an AI course instructor.
+;;; Tweety is a bird.
+;;; Dumbo is an elephant.
+;;; Circus elephants are performers.
+;;; Is Clyde an animal?
+;;; Are circus elephants animals?
+;;; Elephants have trunks.
+;;; Animals have heads.
+;;; A head has a mouth.
+;;; Circus performers have colorful costumes.
+;;; Does Clyde have a mouth?
+;;; Do elephants have trunks?
+;;; Elephants are gray.
+;;; AI course instructors are insane.
+;;; Are circus elephants gray?
+;;; Is Alex insane?
+;;; Birds fly.
+;;; Dumbo flew.
+;;; Elephants can play.
+;;; Elephant cans play.
+;;; Performers can dance.
+;;; Can Tweety fly?
+;;; Can elephants fly?
+;;; Can Clyde play?
+;;; Can elephants dance?
+;;; Can Clyde fly?
+;;; An elephant can play.
+;;; An elephant can plays.
+;;; A play can play.
+;;; A gray flying circus elephant can be dancing.
+;;; A bird can have a heart.
+;;; Birds can be animals.
+;;; Can a bird be an animal?
+;;; Who is an elephant?
+;;; What is a bird?
+;;; What is Clyde?
+;;; What does an elephant have?
+;;; What has a mouth?
+;;; What can elephants do?
+;;; What can fly?
+;;; What are grey?
+;;; Dumbo loves Tweety.
+;;; Who loves Tweety?
+;;; Who does Dumbo love?
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

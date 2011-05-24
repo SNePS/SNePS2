@@ -1,0 +1,259 @@
+; Database example from Date, Third Edition, Vol. 1, Figure 6.2
+;
+(resetnet t)
+;
+(define snum sname status city
+        pnum pname color weight
+        jnum jname qty)
+;
+(assert snum s1 sname smith status \20 city london)
+;
+^ 
+(defsnepscom s ((snum sname status city))
+  #!((assert snum ~snum sname ~sname status ~status city ~city)))
+;
+(s s2 jones \10 paris)
+(s s3 blake \30 paris)
+(s s4 clark \20 london)
+(s s5 adams \30 athens)
+;
+^
+(defsnepscom p ((pnum pname color weight city))
+  #!((assert pnum ~pnum pname ~pname color ~color
+	     weight ~weight city ~city)))
+;
+(p p1 nut red \12 london)
+(p p2 bolt green \17 paris)
+(p p3 screw blue \17 rome)
+(p p4 screw red \14 london)
+(p p5 cam blue \12 paris)
+(p p6 cog red \19 london)
+;
+^
+(defsnepscom j ((jnum jname city))
+  #!((assert jnum ~jnum jname ~jname city ~city)))
+;
+(j j1 sorter paris)
+(j j2 punch rome)
+(j j3 reader athens)
+(j j4 console athens)
+(j j5 collator london)
+(j j6 terminal oslo)
+(j j7 tape london)
+;
+^
+(defsnepscom spj ((snum pnum jnum qty))
+  #!((assert snum ~snum pnum ~pnum jnum ~jnum qty ~qty)))
+;
+(spj s1 p1 j1 \200)
+(spj s1 p1 j4 \700)
+(spj s2 p3 j1 \400)
+(spj s2 p3 j2 \200)
+(spj s2 p3 j3 \200)
+(spj s2 p3 j4 \500)
+(spj s2 p3 j5 \600)
+(spj s2 p3 j6 \400)
+(spj s2 p3 j7 \800)
+(spj s2 p5 j2 \100)
+(spj s3 p3 j1 \200)
+(spj s3 p4 j2 \500)
+(spj s4 p6 j3 \300)
+(spj s4 p6 j7 \300)
+(spj s5 p2 j2 \200)
+(spj s5 p2 j4 \100)
+(spj s5 p5 j5 \500)
+(spj s5 p5 j7 \100)
+(spj s5 p6 j2 \200)
+(spj s5 p1 j4 \1000)
+(spj s5 p3 j4 \1200)
+(spj s5 p4 j4 \800)
+(spj s5 p5 j4 \400)
+(spj s5 p6 j4 \500)
+;
+; Database Queries from Date, Third Edition, Vol. 1, Exercises 7.1-34
+;
+; 7.1  Get full details of all projects.
+;
+(dump (find jname ?x))
+;
+; 7.2  Get full details of all projects in London.
+;
+(dump (find jname ?x city london))
+;
+; 7.3  Get the part number for parts such that no other part
+;      has a smaller weight value.
+;
+(find (pnum- weight) (dbmin (find weight- ?x)))
+;
+; 7.4  Get S# values for supliers who supply project J1.
+;
+(find (snum- jnum) j1)
+;
+; 7.5  Get S# values for suppliers who supply project J1 with part P1.
+;
+(find snum- (find jnum j1 pnum p1))
+;
+; 7.6  Get JNAME values for projects supplied by supplier S1.
+;
+(find (jname- jnum jnum- snum) s1)
+;
+; 7.7  Get COLOR values for parts supplied by supplier S1.
+;
+(find (color- pnum pnum- snum) s1)
+;
+; 7.8  Get S# values for suppliers who supply both projects J1 and J2.
+;
+(find (snum- jnum) j1 (snum- jnum) j2)
+;
+; 7.9  Get S# values for suppliers who supply project J1 with a red part.
+;
+(find snum- (find jnum j1 (pnum pnum- color) red))
+;
+; 7.10  Get P# values for parts supplied to any project in London.
+;
+(find (pnum- jnum jnum- city) london)
+;
+; 7.11  Get S# values for suppliers who supply a London or Paris
+;       project with a red part.
+;
+(find snum- (find (jnum jnum- city) (london paris) (pnum pnum- color) red))
+;
+; 7.12  Get P# values for parts supplied to any project by
+;       a supplier in the same city.
+;
+(find pnum- (find jnum (find jnum- (find city ?city))
+                  snum (find snum- (find city ?city))))
+;
+; 7.13  Get P# values for parts supplied to any project in London
+;       by a supplier in London.
+;
+(find pnum- (find (jnum jnum- city) london (snum snum- city) london))
+;
+; 7.14  Get J# values for projects supplied by at least one
+;       supplier not in the same city.
+;
+(find jnum- (find qty ?any) - (find (jnum jnum- city) ?city
+                                    (snum snum- city) ?city))
+;
+; 7.15  Get J# values for projects not supplied with any red part
+;       by any London supplier.
+;
+(- (find jnum- ?x) (find jnum- (find (pnum pnum- color) red
+                                     (snum snum- city) london)))
+;
+; 7.16  Get S# values for suppliers supplying at least one part supplied by
+;       at least one supplier who supplies at least one red part.
+;
+(find (snum- pnum pnum- snum snum- pnum pnum- color) red)
+;
+; 7.17  Get J# values for projects using at least one part
+;       available from supplier S1.
+;
+(find (jnum- pnum pnum- snum) s1)
+;
+; 7.18  Get all pairs of CITY values such that a supplier in the
+;       first city supplies a project in the second city.
+;
+(define city1 city2)
+;
+(define-path city1 (compose snum snum- city)
+             city2 (compose jnum jnum- city))
+;
+(dbproject (find qty ?q) city1 city2)
+;
+; 7.19  Get all <CITY,P#,CITY> triples such that a supplier in the first city
+;       supplies the specified part to a project in the second city.
+;
+(dbproject (find qty ?q) city1 pnum city2)
+;
+; 7.20  Repeat Exercise 7.19, but do not retrieve triples in which
+;       the two CITY values are the same.
+;
+(dbproject (- (find qty ?q) (find city1 ?c city2 ?c)) city1 pnum city2) 
+;
+; 7.21 Get S# values for suppliers who supply the same part to all projects.
+;
+(find jnum- ?x)
+;
+(find snum- (find pnum ?p jnum j1)
+      snum- (find pnum ?p jnum j2)
+      snum- (find pnum ?p jnum j3)
+      snum- (find pnum ?p jnum j4)
+      snum- (find pnum ?p jnum j5)
+      snum- (find pnum ?p jnum j6)
+      snum- (find pnum ?p jnum j7))
+;
+; 7.22  Get J# values for projects supplied entirely by supplier S1.
+;
+(- (find (jnum- snum) s1)
+   (find (jnum- snum) (find snum- ?x) - s1))
+;
+; 7.23 Get P# values for parts supplied to all projects in London.
+;
+(find (jnum- city)  london)
+;
+(find (pnum- jnum) j5 (pnum- jnum) j7)
+;
+; 7.24  Get J# values for projects supplied with at least all parts
+;       supplied by supplier S1.
+;
+(find (pnum- snum) s1)
+;
+(find (jnum- pnum) p1)
+;
+; 7.25 Get J# values for projects which use only parts which are
+;      available from supplier S1.
+;
+(- (find jnum- (find qty ?q))
+   (find (jnum- pnum)
+         (find pnum- ?r) - (find (pnum- snum) s1)))
+;
+; 7.26  Get J# values for projects supplied by supplier S1 with all parts that
+;       supplier S1 supplies.
+;
+(find (pnum- snum) s1)
+;
+(find jnum- (find snum s1 pnum p1))
+;
+; 7.28  Get J# values for projects supplied by all suppliers who supply some
+;       red part.
+;
+(find (snum- pnum pnum- color) red)
+;
+(find (jnum- snum) s1
+      (jnum- snum) s3
+      (jnum- snum) s4
+      (jnum- snum) s5)
+;
+; 7.29  Change the name of project J6 to 'VIDEO'.
+(erase (find jnum j6 city ?c))
+;
+(describe (assert jnum j6 jname video city *c))
+;
+; 7.30  Change the color of all red parts to orange.
+;
+(dump (find color red))
+;
+(p p1 nut orange \12 london)
+;
+(p p4 screw orange \14 london)
+;
+(p p6 cog orange \19 london)
+;
+(erase (find color red))
+;
+; 7.31  Delete all red parts and the corresponding SPJ records.
+;
+(erase (find (pnum pnum- color) red))
+;
+; 7.32  Get the total number of projects supplied by supplier S3.
+;
+(dbcount (find (jnum- snum) s3))
+;
+; 7.33 Get the total quantity of part P1 supplied by supplier S1.
+;
+(dbtot (find qty- (find pnum p1 snum s1)))
+;
+; Clean up, so the special demo commands won't clutter up the environment:
+;
+(^ (undefsnepscoms s p j spj))

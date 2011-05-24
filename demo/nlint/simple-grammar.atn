@@ -1,0 +1,26 @@
+
+;;; Author:      Stuart C. Shapiro
+;;; Written:     February 90
+;;; Description: The following is a simple grammar that allows parsing
+;;;              of sentences such as 'John caught a ball.', or
+;;;              'I tell a story.'. For successful parses a parse-tree
+;;;              will be returned.
+
+(s (jump s-maj t (setq parser:*parse-trees* t)))
+
+(s-maj (push s-min t (setr s (buildq (s-maj *))) (to s/s-min))) 
+(s/s-min (cat final-punc (addr s (buildq ((final-punc *)))) (to ends)))
+(ends (pop s t))
+
+(s-min (push np t (setr subj *) (to s/np)))
+(s/np (cat v (setr vp (buildq (v *))) (to s/v)))
+(s/v (push np t (setr vp (buildq (vp + *) vp)) (to ends-min)))
+(ends-min (pop (buildq (s + +) subj vp) t))
+
+(np (cat pro t (setr np (buildq ((pro *)))) (to endnp))
+    (cat npr t (setr np (buildq ((npr *)))) (to endnp))
+    (cat det t (setr np (buildq ((det *)))) (to np/det))
+    (jump np/det t))
+(np/det (cat adj t (addr np (buildq ((adj *)))) (to np/det))
+	(cat n t (addr np (buildq ((n *)))) (to endnp)))
+(endnp (pop (buildq (@ (np) +) np) t))

@@ -1,0 +1,78 @@
+;;; -*- Mode:Common-Lisp; Package:SNEPS; Base:10 -*-
+;;;
+;;; THE JOBS PUZZLE
+;;; A SNePS Exercise demonstrating non-standard connectives and quantifiers
+;;; by Stuart C. Shapiro
+;;; based on
+;;; The Jobs Puzzle in Full, Chapter 3.2
+;;; of Automated Reasoning: Introduction and Applications
+;;; by Larry Wos, Ross Overbeek, Ewing Lusk, and Jim Boyle
+;;; Prentice-Hall, Englewood Cliffs, NJ, 1984, pp. 55-58.
+;;;
+;;; Most inputs below are preceded by a line labelled "jp:",
+;;;      which comes directly from the statement of the jobs puzzle,
+;;;      p. 55 of Wos et al.
+;;; and some lines labelled "inf", which are permissable immediate
+;;; inferences from the puzzle statement according to page 56 or
+;;; Chapter 3.2.1, "The Solution by Person or Persons Unknown"
+;;; of Wos et al.
+;;; and some lines labelled "scs:", which are my comments.
+;;;
+clearkb
+set-mode-1
+
+;;;
+;;; jp: There are four people: Roberta, Thelma, Steve, and Pete.
+Person({Roberta, Thelma, Steve, Pete}).
+;;;
+;;; jp: The jobs are: chef, guard, nurse, telephone operator, police
+;;;     officer (gender not implied), teacher, actor, and boxer.
+Job({chef, guard, nurse, telephoneOperator,
+	   policeOfficer, teacher, actor, boxer}).
+;;;
+;;; jp: Among [the people], they hold eight different jobs.
+;;; jp: Each holds exactly two jobs.
+all(p)(Person(p) => nexists(2,2,8)(j)({Job(j)}: {hasJob(p,j)})).
+;;;
+;;; inf: "No job is held by more than one person."
+all(j)(Job(j) => nexists(1,1,4)(p)({Person(p)}: {hasJob(p,j)})).
+;;;
+;;; inf: "if the four names did not clearly imply the sex of the people,
+;;; [the puzzle] would be impossible to solve."
+Female({Roberta, Thelma}).
+Male({Steve, Pete}).
+;;;
+;;; jp: The job of nurse is held by a male.
+;;; inf: "everyday language distinguishes [actors and actresses] based
+;;;      on sex."
+;;; jp: The husband of the chef is the telephone operator.
+;;; inf: "the implicit fact that husbands are male"
+;;; scs: So neither the nurse, the actor, nor the telephone operator is
+;;;      a woman.
+all(w)(Female(w)
+       => nor{hasJob(w, nurse), hasJob(w, actor),hasJob(w, telephoneOperator)}).
+;;;
+;;; inf: since the chef has a husband, she must be female.
+all(m)(Male(m) => ~hasJob(m, chef)).
+;;;
+;;; jp: Roberta is not a boxer.
+~hasJob(Roberta, boxer).
+;;;
+;;; jp: Pete has no education past the ninth grade.
+~educatedPastNinthGrade(Pete).
+;;; inf: "the jobs of nurse, police officer, and teacher each require
+;;;      more than a ninth-grade education."
+all(x)(~educatedPastNinthGrade(x) =>
+       nor{hasJob(x, nurse),hasJob(x, policeOfficer), hasJob(x, teacher)}).
+;;;
+;;; jp: Roberta, the chef, and the police officer went golfing together.
+;;; inf: "Thus, we know that Roberta is neither the chef nor the police
+;;;      officer."
+nor{hasJob(Roberta, chef), hasJob(Roberta, policeOfficer)}.
+;;;
+;;; inf: "Since they went golfing together, the chef and the police
+;;;      officer are not the same person."
+all(p)(Person(p) => nand{hasJob(p, chef), hasJob(p, policeOfficer)}).
+;;;
+;;; jp: Question: Who holds which jobs?
+ask hasJob(?p, ?j)?

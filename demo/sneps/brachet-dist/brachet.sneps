@@ -1,0 +1,952 @@
+;; Brachet demo - created by K. Ehrlich
+;;              - modified by A. Hunt & J. Koplas
+;;              - modified by M. Broklawski
+;;              - modified by S. Napieralski
+
+;;; To aid in setting up the brachet demo:
+;;; The opening lines (up to ";;; load background knowledge") added by FLJ 8/26/04
+;;;   this includes making the file named:  brachet-setup.lisp
+;;; Lines after call to load brachet-setup.lisp were copied from WJRs web run
+
+(^ (unless (user:simple-system-created-p "Brachet")
+     (user:sneps-load "sneps:demo;sneps;brachet-dist;brachet-setup.lisp")))  
+
+
+;; clear all information out of the network
+(resetnet t)                                                                 
+
+;; turn off singular path inference
+^(in-package snip)
+
+;;; redefine function to return nil
+;;; so that forward inference will not be limited
+^(defun broadcast-one-report (rep)
+   (let (anysent)
+     (do.chset (ch *OUTGOING-CHANNELS* anysent)
+	       (when (isopen.ch ch)
+		 (setq anysent (or (try-to-send-report rep ch) anysent)))))
+   nil)
+
+
+;;; return to sneps package
+^(in-package sneps)
+
+;;; turn off inference tracing [wjr]
+^(setf snepsul::*infertrace* nil)
+
+
+;;; load background knowledge
+(demo "sneps:demo;sneps;brachet-dist;rels.LISP")   ;;; Bill's web-version uses (intext "..")
+(demo "sneps:demo;sneps;brachet-dist;paths.LISP")
+(demo "sneps:demo;sneps;brachet-dist;brachet-base.LISP")
+
+
+;;; This is the content of Karen's original "br.txt1" file  ;;;
+
+;Right so as they sat, there came a white hart running into the hall with
+;a white brachet next to him, and thirty couples of black hounds came
+;running after them with a great cry.  
+
+;; In the story, there is a hart
+(describe
+(add member #hart1  class (build lex "hart") 
+	kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; Presumably, the hart bears live young
+;; Presumably, the herbivores are mammals
+;; Presumably, herbivores are animals
+;; The hart is a hart
+;; The hart is a quadruped
+;; The hart is a deer
+;; The hart is a mammal
+;; The hart is a herbivore
+;; The hart is a vertebrate
+;; The hart is a physical object
+;; The hart is a animal
+
+;; In the story, the hart runs into something
+(describe
+(add agent *hart1 act (build action (build lex "run")) into #hall1 kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the thing that the hart runs into is a hall
+(describe
+(add member *hall1 class (build lex "hall") kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the hall is King Arthur's hall (KA from background)
+(describe
+(add object *hall1 rel (build lex "hall") possessor *KA kn_cat "story-comp"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, there is a brachet
+(describe
+(add member #brachet1  class (build lex "brachet")
+	kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the brachet is next to a hart
+(describe 
+ (add object *brachet1 location 
+      (build sp-rel (build lex "next to") object (build lex "hart"))
+      kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the brachet is white
+(describe
+(add object *brachet1 property (build lex "white") kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; Brachet is a subclass of physical object.
+
+
+;; What does brachet mean?
+^ (defineNoun "brachet")
+
+;; In the story, there is a hound
+(describe
+(add member #hounds1  class (build lex "hound") kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; Presumably, the hound bears live young
+;; The hound hunts.
+;; The hound is a hound.
+;; The hound is a dog.
+;; The hound is a quadruped.
+;; The hound is a mammal.
+;; The hound is a vertebrate.
+;; The hound is a physical object.
+;; The hound is an animal.
+;; In the story, the hound is a hound.
+;; Presumably, brachet is a subclass of mammal.
+;; Presumably, brachet is a subclass of animal
+
+;; In the story, the hound is black
+(describe
+(add object *hounds1 property (build lex "black") kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; Hart is a subclass of physical object
+;; Hound is a subclass of physical object
+;; Vertebrate is a subclass of physical object
+;; Quadruped is a subclass of physical object
+;; Physical object is a subclass of physical object
+;; Dog is a subclass of physical object
+;; Pony is a subclass of physical object
+;; Horse is a subclass of physical object
+;; Deer is a subclass of physical object
+;; Mammal is a subclass of physical object
+;; Animal is a subclass of physical object
+
+;; In the story, the hound is running
+(describe
+(add agent *hounds1 act (build action (build lex "run")) kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the hound is behind the hart
+(describe
+(add object *hounds1 
+     location (build sp-rel (build lex "behind") 
+                     object *hart1)
+     kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;Then the hart went running about the Round Table; as he went by the sideboard,
+;the white brachet bit him in the buttock [. . .]
+
+;; In the story, the hart is next to the Round Table.
+(describe
+(add object *hart1 
+        location (build sp-rel (build lex "next to") 
+			object (build lex "Round Table"))
+	kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the brachet bites something.
+(describe
+(add agent *brachet1 
+     act (build action (build lex "bite") 
+	 	object #butt1)
+     kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; Brachet is a subclass of animal
+
+;; In the story, the thing that the brachet bites is part of the hart.
+(describe
+(add whole *hart1 part *butt1 kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the thing that the brachet bites is a buttock
+(describe
+(add member *butt1 class (build lex "buttock") kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; What does brachet mean?
+^ (defineNoun "brachet")
+;
+;Therewith the knight arose, took up the brachet, went forth out of the hall,
+;took his horse and rode away with the brachet.
+
+;; In the story, there is a knight
+(describe
+(add member #knight1 class (build lex "knight") kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; The knight is a knight
+;; The knight is a person
+
+;; In the story, the knight arises
+(describe
+(add agent *knight1 act (build action (build lex "arise")) kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the knight picks up the brachet
+(describe
+(add agent *knight1 
+     act (build action (build lex "pick up") 
+	        object *brachet1)
+     kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the knight mounts something
+(describe
+(add agent *knight1 
+     act (build action (build lex "mount") 
+                object #horsey1) 
+     kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the thing that the knight mounts is a horse
+(describe
+(add member *horsey1 class (build lex "horse") kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; The horse is a horse.
+;; The horse is a herbivore.
+;; The horse is a vertebrate.
+;; The horse is a quadruped.
+;; The horse is a physical object.
+;; The horse is an animal.
+;; 
+
+;; In the story, the knight rides the horse
+(describe
+(add agent *knight1 
+     act (build action (build lex "ride") 
+                object *horsey1)
+      kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the knight carries the brachet
+(describe
+(add agent *knight1 
+     act (build action (build lex "carry") 
+	        object *brachet1)
+     kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; The brachet is small.
+
+;; What does brachet mean?
+^ (defineNoun "brachet")
+
+;
+;Right so a lady came in on a white palfrey and cried aloud to King Arthur,
+;`Sire, suffer me not to have this spite for the brachet is mine that the knight
+;led away.'"  [p66]
+
+;; In the story, there is a lady
+(describe
+(add member #lady1  class (build lex "lady") kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the lady says that the knight took the brachet
+(describe
+(add agent *lady1 
+     act (build action (build lex "say that")
+                object (build agent *knight1 
+                              act (build action (build lex "take") 
+                                         object *brachet1)))
+     kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the lady says that the brachet belongs to her.
+(describe
+(add agent *lady1 
+     act (build action (build lex "say that")
+                object (build possessor *lady1 
+                              object *brachet1 
+                              rel (build lex "brachet")))
+     kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the lady says that she wants the brachet.
+(describe
+(add agent *lady1 
+     act (build action (build lex "say that")
+                object (build agent *lady1 
+                              act (build action (build lex "want") 
+                                         object *brachet1)))
+     kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; The brachet is valuable.
+
+;; What does brachet mean?
+^ (defineNoun "brachet")
+
+
+;;; This is the content of Karen's original "br.txt2" file  ;;;
+
+;"'Then,' said Merlin, 'call sir Gawain, for he must bring back the white
+;hart.  Also, sir, ye must call Sir Tor, for he must bring back the brachet
+;and the knight, or else slay him. ...'"  [p67]
+
+;; In the story, Merlin (from background) says that Sir Gawain (from BG) must bring
+;;   the hart to the hall
+(describe
+(add    agent *Mer 
+        act (build action (build lex "say that")
+                   object (build mode (build lex "must")
+                                 object (build agent *SG
+                                               act (build action build lex "bring")
+                                                          object *hart1)
+                                               to *hall1))
+	kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, Merlin says that an unknown thing must bring the 
+;;    brachet to the hall
+(describe
+(add    agent *Mer 
+        act (build action (build lex "say that")
+                   object (build mode (build lex "must")
+                                 object (build agent #SirTor
+                                               act (build action (build lex "bring")
+                                                          object *brachet1)
+                                               to *hall1)))
+	kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the thing that must bring the brachet to the hall is 
+;;   named Sir Tor
+(describe
+(assert object *SirTor proper-name (build lex "Sir Tor") kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, Sir Tor is a knight
+(describe
+(assert member *SirTor class (build lex "knight") kn_cat "story-comp"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, Merlin says that Sir Tor must either bring the knight who took the brachet
+;;  to the hall or he must slay the knight who took the brachet.
+(describe
+(add    agent *Mer 
+        act (build action (build lex "say that")
+                   object (build mode (build lex "must")
+                                 object (build min 1 max 1 
+                                               arg (build agent *SirTor
+                                                          act (build action 
+                                                                 (build lex "bring")
+                                                                     object *knight1)
+                                                          to *hall1))
+                                               arg (build agent *SirTor
+                                                          act (build action (build lex "slay")
+                                                          object *knight1))))
+	kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; What does brachet mean?
+^ (defineNoun "brachet")
+
+;;; This is the content of Karen's original "br.txt3" file  ;;;
+
+;`Sir,' said the elder `there came a white hart this way this day and
+;many hounds chased him, and a white brachet was always next to him.'
+;[p67]
+
+;; In the story, there is an elder
+(describe 
+(assert member #elder class (build lex "elder") kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, there is a hart
+(describe
+(assert member #hart2 class (build lex "hart") kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the hart is white
+(describe
+(assert object *hart2 property (build lex "white") kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the elder says that the hart came to something.
+(describe
+(add 	agent *elder 
+        act (build action (build lex "say that")
+	           object (build agent *hart2 
+				 act (build action (build lex "come") 
+					    place #elderplace)))
+	kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the elder says that something is chasing the hart.
+(describe
+(add 	agent *elder 
+        act (build action (build lex "say that")
+	           object (build agent #hounds2 
+                                 act (build action (build lex "chase") 
+                                            object *hart2)))
+	kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the thing chasing the hart is a hound
+(describe
+(assert member *hounds2  class (build lex "hound")
+	kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the elder says that something is next to the hart
+(describe
+(add 	agent *elder 
+        act (build action (build lex "say that")
+	           object (build object #brachet2
+		                 location (build sp-rel (build lex "next to")
+		                                 object *hart2)))
+	kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the thing that is next to the hart is a brachet
+(describe
+(assert member *brachet2  class (build lex "brachet") 
+	kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the brachet is white
+(describe
+(assert object *brachet2 property (build lex "white") kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the two brachets are actually the same brachet.
+(describe
+(assert equiv *brachet1 equiv *brachet2 kn_cat "story-comp"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the two harts are actually the same hart.
+(describe
+(assert equiv *hart1 equiv *hart2 kn_cat "story-comp"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the two hounds are actually the same hound.
+(describe
+(assert equiv *hounds1 equiv *hounds2 kn_cat "story-comp"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; What does brachet mean?
+^ (defineNoun "brachet")
+
+;;; This is the content of Karen's original "br.txt4" file  ;;;
+
+;When Sir Tor was ready, he mounted upon his horse's back, and rode after the 
+;knight with the brachet.  [71]
+
+;; In the story, Sir Tor mounts something.
+(describe
+(add agent *SirTor 
+     act (build action (build lex "mount") 
+                object #torhorse kn_cat "story")))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the thing that Sir Tor mounts is his horse.
+(describe
+(assert object *torhorse rel (build lex "horse") possessor *SirTor 
+	kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, Sir Tor's horse is a horse.
+(describe
+(assert member *torhorse class (build lex "horse") kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, Sir Tor rides his horse
+(describe
+(add agent *SirTor 
+     act (build action (build lex "ride") 
+                object *torhorse) 
+	direction *knight1 kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the knight who took the brachet is with the brachet.
+(describe
+(assert object1 *knight1 rel (build lex "with") object2 *brachet1 
+	kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;
+;`Ye shall say [you are sent]  by the knight who went in quest of the knight 
+;with the brachet.'  [71]
+
+;; In the story, Sir Tor says that something shall say that it was sent by the knight
+;;  who is questing for the brachet.
+(describe
+(add agent *SirTor 
+     act (build action (build lex "say that")
+                object (build mode (build lex "shall")
+	                      object (build agent #guys 
+			                    act (build action (build lex "say that")
+		                                       object (build 
+	                                                        agent (build skf "questor-for"
+						                a1 *knight1
+					                        a2 *brachet1)
+								act (build object *guys
+				               			           action (build 
+                                                                             lex "send")))))))
+	kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, Sir Tor is the knight who is questing for the brachet
+(describe
+(assert equiv (build skf "questor-for" a1 *knight1 a2 *brachet1)
+	equiv *SirTor  kn_cat "story-comp"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; What does brachet mean?
+^ (defineNoun "brachet")
+
+;
+;`I know you ride after the knight with the white brachet, and I shall bring
+; you where he is,' said the dwarf.  [72]
+
+; In the story, there is a dwarf
+(describe
+(assert member #dwarf1  class (build lex "dwarf") kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the dwarf says that he knows that Sir Tor seeks the knight who took the brachet.
+(describe
+(add agent *dwarf1 
+     act (build action (build lex "say that")
+                object (build agent *dwarf1
+			      act (build action (build lex "know that") 
+	     	                         object (build agent *SirTor 
+						       act (build action (build lex "seek")
+			                                          object *knight1)))))
+     kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the dwarf says that he will bring Sir Tor someplace.
+(describe
+(add agent *dwarf1 
+     act (build action (build lex "say that")
+                object (build agent *dwarf1 
+                              act (build action (build lex "bring") 
+		              object *SirTor to #brplace)))
+     kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the knight is in the place that the dwarf is taking Sir Tor.
+(describe
+(assert object *knight1 location *brplace kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the brachet is in the place that the dwarf is taking Sir Tor.
+(describe
+(assert object *brachet1 location *brplace kn_cat "story-comp"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;;; This is the content of Karen's original "br.txt5" file  ;;;
+
+;Then he went to the other pavilion and found a lady lying sleeping therein;
+;and there was the white brachet which bayed at him fast. 
+
+;; In the story, Sir Tor goes to some place
+(describe
+(add agent *SirTor act (build action (build lex "go")) to #pavilion1 kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the place that Sir Tor goes to is a pavilion
+(describe
+(assert member *pavilion1  class (build lex "pavilion")
+	kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the lady is sleeping in the pavilion
+(describe
+(add agent *lady1 act (build action (build lex "sleep") place *pavilion1) kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, Sir Tor finds the lady in the pavilion
+(describe
+(add agent *SirTor 
+     act (build action (build lex "find") 
+                object *lady1)
+     place *pavilion1
+     kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, Sir Tor finds the brachet in the pavilion
+(describe
+(add agent *SirTor 
+     act (build action (build lex "find") 
+                object *brachet1)
+     place *pavilion1
+     kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the brachet bays at Sir Tor.
+(describe
+(add agent *brachet1 
+     act (build action (build lex "bay") 
+                direction *SirTor)	
+     kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; The brachet bays.
+;; Brachet is a subclass of hound.
+
+;; What does brachet mean?
+^ (defineNoun "brachet")
+
+;;; This is the content of Karen's original "br.txt6" file  ;;;
+
+;As soon as Sir Tor spied the white brachet, he took it by force and gave it 
+;to the dwarf.  
+
+;; In the story, Sir Tor spys the brachet
+(describe
+(add agent *SirTor 
+     act (build action (build lex "spy") 
+                object *brachet1)
+     kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, Sir Tor takes the bracket
+(describe
+(add agent *SirTor 
+     act (build action (build lex "take") 
+                object *brachet1)
+     kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, Sir Tor gives the brachet to the dwarf
+(describe
+(add agent *SirTor 
+     act (build action (build lex "give") 
+                object *brachet1 
+                indobj *dwarf1)
+	kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;
+;With the noise, the lady came out of the pavilion with all her damosels.
+
+;; In the story, the lady comes from the pavilion
+(describe
+(add agent *lady1 act (build action (build lex "come") from *pavilion1) kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, there is a noise
+(describe
+(assert member #noise1  class (build lex noise) kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the noise caused the lady to come from the pavilion.
+(describe
+(add  	cause *noise1
+	effect (build agent *lady1 act (build action (build lex "come") from *pavilion1))
+	kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, there is a damosel
+(describe
+(assert member *damosels1  class (build lex "damosel") 
+	kn_cat "story"))
+
+;; In the story, the damosel comes from the pavilion
+(describe
+(add agent #damosels1 act (build action (build lex "come") from *pavilion1) kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the noise caused the damosel to come from the pavilion 
+(describe
+(add  	cause *noise1
+	effect (build agent *damosels1 act (build action 
+						(build lex "come") from *pavilion1))
+	kn_cat "story"))
+
+;; In the story, the damosel is a person
+(describe
+(assert member *damosels1 class (build lex "person") kn_cat "story-comp"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the noise was the brachet baying.
+(describe
+(assert equiv *noise1 equiv (build agent *brachet1 act (build action (build lex "bay")))
+	kn_cat "story_comp"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;;; `What!  Will ye take my brachet from me?' said the lady.
+
+;; In the story, the lady asks Sir Tor why he took the brachet from her.
+(describe
+(add agent *lady1 
+     act (build action (build lex "ask") 
+                object (build agent *SirTor 
+                              act (build action (build lex "take") 
+                                         object *brachet1)
+	 	              from *lady1))
+                indobj *SirTor kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story, the lady is angry.
+(describe
+(assert object *lady1 property (build lex "angry") kn_cat "story-comp"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story,Sir Tor taking the brachet caused the lady to be angry.
+(describe
+(assert cause (build agent *SirTor 
+		     act (build action (build lex "take") 
+                                object *brachet1)
+	 	     from *lady1)
+	effect (build object *lady1 property (build lex "angry"))
+	kn_cat "story-comp"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;
+; `Yes,' said Sir Tor, `this brachet I have sought from King Arthur's court
+; hither.'  [72]
+
+;; In the story,Sir Tor tells the lady that he took the brachet from her.
+(describe
+(add agent *SirTor 
+     act (build action (build lex "say that")
+                object (build agent *SirTor 
+                              act (build action (build lex "take") 
+                                         object *brachet1)
+	 	              from *lady1)
+                indobj *lady1)  kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; In the story,Sir Tor says that he sought the brachet from the hall to the pavilion.
+(describe
+(add agent *SirTor 
+     act (build action (build lex "say that")
+                object (build agent *SirTor 
+                              act (build action (build lex "seek") 
+                                         object *brachet1)
+     		              from *hall1 
+                              to *pavilion1)) 
+     kn_cat "story"))
+
+;; Newly inferred information:
+;; 
+;; None.
+
+;; What does brachet mean?
+^ (defineNoun "brachet")

@@ -1,0 +1,33 @@
+; This demo works only with Maria Cravo's implementation of default rules:
+;
+(resetnet t)
+;
+(define mem class)
+;
+; Normally birds fly
+(assert deflt $x ant(build class bird mem *x) cq(build class flies mem *x))
+;
+; Penguins and ostriches are exceptions to the default rule M1.
+(assert forall $x
+	ant((build class penguin mem *x) (build class ostrich mem *x))
+	cq(build min 0 max 0 arg(build applicable m1 darg1 *x)))
+;
+; Oscar is a bird.
+(assert mem oscar class bird)
+;
+; Tweety is a bird
+(assert mem tweety class bird)
+;
+; Who flies?
+(describe (deduce mem $who class flies))
+;
+(belief-spaces)
+;
+; Tweety is either a penguin or an ostrich.
+(assert min 1 max 1 arg((build mem tweety class penguin)(build mem tweety class ostrich)))
+;
+; Who flies?
+(describe (deduce mem $who class flies))
+;
+(belief-spaces)
+(consequence m3 m8) 

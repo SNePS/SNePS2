@@ -1,0 +1,29 @@
+(s (jump s1 t (setf *parse-trees* t)))
+
+(s1 (cat wh t (setr subj '(np \?)) (setr mood 'question) (to vp))
+    (push np t (setr subj *) (setr mood 'decl) (to vp)))
+
+(vp (cat v (setr verb *) (to vp/v)))
+
+(vp/v (push np t (setr obj *) (to s/final))
+      (jump s/final t))
+
+(s/final (jump s/end (overlap embedded t))
+	 (wrd "." (overlap mood 'decl) (to s/end))
+	 (wrd "?" (overlap mood 'question) (to s/end)))
+
+(s/end (pop (buildq (s (mood +) + (vp (v +))) mood subj verb) 
+	    (nullr obj))
+       (pop (buildq (s (mood +) + (vp (v +) +)) mood subj verb obj)
+	    obj))
+
+(np (wrd "that" t (to nomprop))
+    (cat npr t (setr np (buildq (npr *))) (setr def t) (to np/end))
+    (cat art t (setr def (getf definite)) (to np/art)))
+
+(np/art (cat n t (setr np (buildq (n *))) (to np/end)))
+
+(nomprop (push s1 t (sendr embedded t) (setr def t) (setr np *)
+	       (to np/end)))
+
+(np/end (pop (buildq (np (definite +) +) def np) t))

@@ -1,0 +1,134 @@
+_______________________________________________________________________________
+
+Below is a brief description of how I handled the homographs for the englex
+package. 
+
+Note: Symbol * when it appears after a suffix or word ending means if you are 
+      just interested in obtaining 1st category of a word then you can define 
+      in the lexicon the word without any limitations, but to obtain the other
+      categories of words there are strict limitations. Note for limitations
+      mentioned above, look at column heading labeled as 'Declare Root As'. 
+	      Example From Table:
+	      stand *    1st category is n   it's limitations     examples
+        	         2nd category is v   it's limitations     examples
+       
+Note: These suffixes and word endings are alphabetized from right to left.
+
+Note: For explanation of notation used look at appendix A.
+
+		              Homographs
+			      4 Columns
+_______________________________________________________________________________
+ENDING   CATEGORY  DECLARE ROOT AS    EXAMPLES
+_______________________________________________________________________________
+1)ed        past     n v adj adv prep (ended faded tried pated)
+            participle 
+            v        n v adj adv prep (upped jabbed intended laughed)
+            adj      n                (togaed moneyed)
+
+2)red       n        n v              (hatred kindred prehatred)
+            adj      Not Implemented  (extrared)
+
+3)id        n        v                (liquid, stupid)
+            adj      v                (putrid, torrid, horrid,liquid, stupid)
+
+4)oid       n        n                (meteoroid spheroid prismoid metalloid)
+            adj      n adj            (Mongoloid resinoid styloid humanoid 
+                                       coralloid)
+
+5)fold      v        n adj prep adv   (backfold infold underfold)
+            adj      n adj            (threefold tenfold)
+
+6)stand     n        v n adj          (newsstand bookstand headstand)
+            v        v n adj prep adv (withstand upstand outstand understand)
+
+7)side      n        v n adj adv prep (backside underside hillside countryside)
+            prep     prep adv   -----}
+            adv      v adv prep -----}(alongside inside beside)
+
+8)ee        n        n v adj          (divorcee employee escapee selectee
+            		   	       warrantee repartee)
+            v        Not Implemented  (guarantee)
+
+9)le        n        n adj v          (steeple nipple)
+            adj      Not Implemented  (brittle stable nimble)
+
+10)ile      adj      n v adj          (infantile contractile mobile)
+            n        n adv            (percentile centile)
+
+11)some     adj      n adj v adv      (awesome lonesome troublesome)
+            n        n adj            (twosome foursome fivesome)
+
+12)ine      n        n                (heroine hatchettine estuarine)
+            adj      n adj            (adamantine adulterine (crystalline ?))
+
+13)ate      n        n v              (retardate distillate)
+            v        n v adj          (medicate activate chloridate pollinate)
+            adj      n adj            (Latinate nervate affectionate)
+
+14)ite      n        v n adj          (sternite laborite Israelite)
+            adj & n  v                (composite opposite)
+
+15)ing      v        n v              (walking scrubbing robbing)
+            n        n adj            (icing painting roofing dancing)
+            adj      n v              (singing weeping bleeding drinking)
+
+16)al       adj      n                (tribal judgmental educational)
+            n        n adj v          (bestowal ceremonial dismissal)
+
+17)meal     adv      n                (piecemeal inchmeal)
+            n        n                (oatmeal wheatmeal poundmeal)
+
+18)ful      n        n v adj          (handful mouthful bucketful)
+            adj      n v adj          (dreadful eventful beautiful pitiful)
+
+19)en       adj      n adj            (oaken leaden golden)
+            presprt  v                (taken gotten ridden)
+	    v	     n adj adv 	      (deaden steepen darken brighten lengthen 
+				       leafen sharpen embolden hearten darken
+				       breadthen strengthen)
+            n (plur) n                (oxen children (brethren ?))
+
+20)ar *     n        v                (beggar liar pillar)
+            adj      n                (globular polar linear)
+
+21)er       adv      n adv adj        (sooner faster quicker)
+            n        n v adj          (robber hatter jailer)
+            adj      n v adj          (drier fatter)
+            v        n v              (flicker twitter)
+
+22)s        v        n v              (walks runs sleeps)
+            n        n                (books cats boys)
+            adv      adj adv          (backwards always unawares)
+
+23)es       v        n v              (washes defies misses)
+            n        n                (dishes babies calves)
+
+24)ant      n        n                (inhabitant precipitant confidant)
+            adj      v n              (resistant defiant pleasant)
+
+25)ent      n        v n              (innocent resident)
+            adj      v n              (innocent persistent confident resident)
+
+26)ept      past     n v              (slept kept wept swept crept)
+      	    pastp    n v              (slept kept wept swept crept)
+
+27)est      adj      adj adv n_____\  (biggest soonest oldest)
+            adv      adj adv       /  (oftenest luckiest remotest)
+            v        Not Implemented  (biddest enoblest diddest)
+
+28)y        adj      n v adj          (sleepy smeary muddy clayey juicy)
+            n        n v              (grocery bakery entreaty subsidy)
+
+29)ly *     adv      adj v            (quickly improbably submissively)
+            adj      n                (teacherly hourly yearly manly)
+
+30)ary      adj      n adj            (legendary secondary)
+            n        Not Implemented  (judiciary herbary lapidary)
+
+31)ory      n        n v              (accessory responsory)
+            adj      n v              (sensory infusory)
+
+_______________________________________________________________________________
+
+References: Same As Appendix A.

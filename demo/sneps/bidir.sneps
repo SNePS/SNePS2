@@ -1,0 +1,34 @@
+; Node-Based, Bi-Directional Inference
+;
+; Define arcs.
+(define member class object property)
+;
+; for every p
+;  if p is a man or p is a woman then p is mortal and p is a rational animal.
+(describe (assert forall $p
+		     ant ((build member *p class man)
+			  (build member *p class woman))
+		      cq ((build object *p property mortal)
+			  (build member *p class "rational animal"))))
+;
+; Socrates is a man.
+(describe (assert member Socrates class man))
+;
+; Backward inference looks for all possible antecedents,
+; but ignores other possible conclusions.
+; Is Socrates mortal?
+(describe (deduce object Socrates property mortal))
+;
+; Forward inference yields all possible conclusions.
+; Ada is a woman!
+(describe (add member Ada class woman))
+;
+; Backward inference to establish the context that what we are
+; interested in is whether anyone is a rational animal.
+; Who is a rational animal?
+(describe (deduce member *p class "rational animal"))
+;
+; Now, when we add information, conclusions irrelevant to the context
+; are not drawn.
+; Turing is a man!
+(describe (add member Turing class man))

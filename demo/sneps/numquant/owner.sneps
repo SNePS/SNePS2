@@ -1,0 +1,33 @@
+;
+;    Of 5 dog ownership relations, between 2 and 4 involve spoiling.
+;
+(resetnet t)
+(define member class agent object rela)
+;
+(describe (assert etot 5 emin 2 emax 4 pevb ($x $y)
+		  &ant ((build member *x class person)
+			(build member *y class dog)
+			(build agent *x rela owns object *y))
+		  cq (build agent *x rela spoils object *y)))
+;
+(describe (assert member john class person))
+(describe (assert member jane class person))
+(describe (assert member mary class person))
+(describe (assert member jim class person))
+;
+(describe (assert member rover class dog))
+(describe (assert member spot class dog))
+(describe (assert member lassie class dog))
+;
+(describe (assert agent john rela owns object rover))
+(describe (assert agent john rela owns object spot))
+(describe (assert agent mary rela owns object lassie))
+(describe (assert agent jane rela owns object spot))
+(describe (assert agent jim rela owns object lassie))
+;
+(describe (assert agent john rela spoils object rover))
+(describe (assert agent john rela spoils object spot))
+(describe (assert agent jane rela spoils object spot))
+(describe (assert agent mary rela spoils object lassie))
+;
+(describe (deduce agent *x rela spoils object *y))
