@@ -3,7 +3,7 @@
 ;; Copyright (C) 1984--2011
 ;; Research Foundation of State University of New York
 
-;; Version: $Id: orders.lisp,v 1.1 2011/05/24 17:59:37 mwk3 Exp $
+;; Version: $Id: orders.lisp,v 1.2 2011/05/25 20:03:22 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -69,26 +69,28 @@
       (setf pred (get-node-name (car pred))))
     (member pred *fluents*)))
 
-;;;; Description:  An ordering function that causes propositions with more
-;;;               reliable sources to be more epistemically entrenched than
-;;;               propositions with less reliable sources. Also, unsourced
-;;;               propositions are more entrenched than sourced ones.
-;;; [HasSource(x,y)] = The source of [x] is [y]
-;;; [IsBetterSource(x,y)] = [x] is a better source than [y]
-(defun source (lhs rhs)
-  (or
-    (and
-      (let ((source-lhs (tell "askwh HasSource(~A, ?x)" lhs))
-            (source-rhs (tell "askwh HasSource(~A, ?x)" rhs)))
-        (cond ((and source-lhs source-rhs)
-            (let ((source-lhs-term
-                    (cdr (assoc 'x (first source-lhs))))
-                  (source-rhs-term
-                    (cdr (assoc 'x (first source-rhs)))))
-              (not (tell "ask IsBetterSource(~A, ~A)"
-                      source-lhs-term source-rhs-term))))
-          (source-rhs nil)
-          (t t))))))
+(defun source (p1 p2)
+  "Returns t iff p1 <= p2 in the epistemic entrenchment ordering.
+   Uses assertions:
+        HasSource(p,s) to mean that proposition p's source is s;
+        IsBetterSource(s1,s2) to mean that s1 is a more credible source than s2.
+   If neither p1 nor p2 has a source, then they're epistemically tied.
+   If only one of p1 or p2 has a source,
+      then the one without the source is more epistemically entrenched than the other.
+   If they both have sources,
+      then p1 <= p2
+           iff for every source of p1 
+                  there is a source of p2 that is more credible than p1's source."
+  (let ((p1sources (mapcar #'(lambda (sub) (match:value.sbst 'x sub))
+			   (tell "askwh HasSource(~A, ?x)" p1)))
+	(p2sources (mapcar #'(lambda (sub) (match:value.sbst 'x sub))
+			   (tell "askwh HasSource(~A, ?x)" p2))))
+    (if (and p1sources p2sources) 
+	(every #'(lambda (s1)
+		   (some #'(lambda (s2) (tell "ask IsBetterSource(~A, ~A)" s2 s1))
+			 p2sources))
+	       p1sources)
+      (not p2sources))))
 
 
 ;;; Description: An ordering function relying on explicit statements of
