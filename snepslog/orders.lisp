@@ -3,7 +3,7 @@
 ;; Copyright (C) 1984--2011
 ;; Research Foundation of State University of New York
 
-;; Version: $Id: orders.lisp,v 1.2 2011/05/25 20:03:22 shapiro Exp $
+;; Version: $Id: orders.lisp,v 1.3 2011/07/11 19:40:15 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -74,6 +74,7 @@
    Uses assertions:
         HasSource(p,s) to mean that proposition p's source is s;
         IsBetterSource(s1,s2) to mean that s1 is a more credible source than s2.
+   If p1 and p2 are the same, then they're epistemically tied.
    If neither p1 nor p2 has a source, then they're epistemically tied.
    If only one of p1 or p2 has a source,
       then the one without the source is more epistemically entrenched than the other.
@@ -81,16 +82,17 @@
       then p1 <= p2
            iff for every source of p1 
                   there is a source of p2 that is more credible than p1's source."
-  (let ((p1sources (mapcar #'(lambda (sub) (match:value.sbst 'x sub))
-			   (tell "askwh HasSource(~A, ?x)" p1)))
-	(p2sources (mapcar #'(lambda (sub) (match:value.sbst 'x sub))
-			   (tell "askwh HasSource(~A, ?x)" p2))))
-    (if (and p1sources p2sources) 
-	(every #'(lambda (s1)
-		   (some #'(lambda (s2) (tell "ask IsBetterSource(~A, ~A)" s2 s1))
-			 p2sources))
-	       p1sources)
-      (not p2sources))))
+  (or (eq p1 p2)
+      (let ((p1sources (mapcar #'(lambda (sub) (match:value.sbst 'x sub))
+			       (tell "askwh HasSource(~A, ?x)" p1)))
+	    (p2sources (mapcar #'(lambda (sub) (match:value.sbst 'x sub))
+			       (tell "askwh HasSource(~A, ?x)" p2))))
+	(if (and p1sources p2sources) 
+	    (every #'(lambda (s1)
+		       (some #'(lambda (s2) (tell "ask IsBetterSource(~A, ~A)" s2 s1))
+			     p2sources))
+		   p1sources)
+	  (not p2sources)))))
 
 
 ;;; Description: An ordering function relying on explicit statements of
