@@ -3,7 +3,7 @@
 ;; Copyright (C) 1984--2011
 ;; Research Foundation of State University of New York
 
-;; Version: $Id: orders.lisp,v 1.3 2011/07/11 19:40:15 shapiro Exp $
+;; Version: $Id: orders.lisp,v 1.4 2011/07/12 14:02:13 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -79,19 +79,22 @@
    If only one of p1 or p2 has a source,
       then the one without the source is more epistemically entrenched than the other.
    If they both have sources,
-      then p1 <= p2
-           iff for every source of p1 
-                  there is a source of p2 that is more credible than p1's source."
+      then p1 <= p2 (not (p1 > p2))
+           iff it is not the case
+               that for every source of p2
+                       there is a source of p1 that is more credible than p2's source."
   (or (eq p1 p2)
       (let ((p1sources (mapcar #'(lambda (sub) (match:value.sbst 'x sub))
 			       (tell "askwh HasSource(~A, ?x)" p1)))
 	    (p2sources (mapcar #'(lambda (sub) (match:value.sbst 'x sub))
 			       (tell "askwh HasSource(~A, ?x)" p2))))
 	(if (and p1sources p2sources) 
-	    (every #'(lambda (s1)
-		       (some #'(lambda (s2) (tell "ask IsBetterSource(~A, ~A)" s2 s1))
-			     p2sources))
-		   p1sources)
+	    (not (every #'(lambda (s2)
+			    (some #'(lambda (s1)
+				      (and (not (eq s1 s2))
+					   (tell "ask IsBetterSource(~A, ~A)" s1 s2)))
+				  p1sources))
+			p2sources))
 	  (not p2sources)))))
 
 
