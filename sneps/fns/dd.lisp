@@ -3,7 +3,7 @@
 ;; Copyright (C) 1984--2011 Research Foundation of 
 ;;                          State University of New York
 
-;; Version: $Id: dd.lisp,v 1.1 2011/05/24 17:59:37 mwk3 Exp $
+;; Version: $Id: dd.lisp,v 1.2 2011/08/19 19:15:06 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -563,7 +563,10 @@
       (loop for list-elem in (cdr nodetree) 
 			     ;;loop through each node in (arc node1 node2 ...)
 	  do (loop for node in (cdr list-elem)
-		 do (let* ((v1-string  (format nil "~A" m-node))
+		 do (let* ((v1-string  (format nil "~A" 
+					       (if (eql *package* (find-package :snepslog))
+						   (snepslog::m->wff m-node)
+						 m-node)))
 			   (v1 
 			    (or (first (member v1-string 
 					       vertex-list 
@@ -578,7 +581,10 @@
 						vertex-list))))
 			   (v2-sneps-node (if (atom node) node
 					    (print-graph node)))
-		       (v2-string  (format nil "~A" v2-sneps-node))
+			   (v2-string  (format nil "~A" 
+					       (if (eql *package* (find-package :snepslog))
+							(snepslog::m->wff v2-sneps-node)
+							v2-sneps-node)))
 			   (v2 (or (first (member v2-string
 						  vertex-list 
 						  :key #'get-node-access
@@ -829,20 +835,26 @@ this instance of sneps"
 ;;;
 (defun generate-dot-file (nodetree dot-stream)
   (let ((m-node (car nodetree))) 
-    (when (null (cdr nodetree))	; handle the case of showing a base node
+    (when (null (cdr nodetree))		; handle the case of showing a base node
       (format dot-stream "\"~A\"; ~%" m-node))
     ;; loop through nodetree elements i.e. (arc node ...)
     (loop for list-elem in (cdr nodetree) 
-      ;; loop through each node in (arc node1 node2 ...)
-	do (loop for node in (cdr list-elem)
-	     do (format dot-stream "\"~A\" -> \"~A\" [label=\"~A\"]; ~%"
-			m-node	; match first '~A'
-			(if (atom node) 
-			      node	; match second '~A' 
+			   ;; loop through each node in (arc node1 node2 ...)
+	  do (loop for node in (cdr list-elem)
+		   do (format dot-stream "\"~A\" -> \"~A\" [label=\"~A\"]; ~%"
+			      ;; match first '~A'
+			      (if (eql *package* (find-package :snepslog))
+				  (snepslog::m->wff m-node)
+				m-node)
+			      (if (atom node) 
+				  node	; match second '~A' 
 					; this is not an atomic node
 					; so, it must be a nodetree
 					; make a recursive call
-			  (generate-dot-file node dot-stream))
-			(car list-elem)))) ; match third '~A' (an ark)
+				(let ((v2-sneps-node (generate-dot-file node dot-stream)))
+				  (if (eql *package* (find-package :snepslog))
+				      (snepslog::m->wff v2-sneps-node)
+				    v2-sneps-node)))
+			      (car list-elem)))) ; match third '~A' (an ark)
     ;; return m-node
     (values m-node)))
