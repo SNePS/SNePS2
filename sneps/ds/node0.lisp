@@ -3,7 +3,7 @@
 ;; Copyright (C) 1984--2011 Research Foundation of 
 ;;                          State University of New York
 
-;; Version: $Id: node0.lisp,v 1.1 2011/05/24 17:59:37 mwk3 Exp $
+;; Version: $Id: node0.lisp,v 1.2 2011/08/19 19:02:39 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -80,5 +80,5 @@
   ;;
   (let ((crntct (if (boundp 'crntct) crntct (buildcontext nil))))
     (declare (special crntct))
-    (write-string (symbol-name (node-na obj)) stream)
+    (prin1 (node-na obj) stream)
     (if (isassert.n obj) (write-string "!" stream))))
