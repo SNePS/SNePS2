@@ -13,8 +13,8 @@ define-frame Is (state agent location)
 (define-primaction say (object1 object2)
   "Print the argument nodes in order."
   (format t "~&~A ~A~%"
-	  (sneps:choose.ns object1)
-	  (sneps:choose.ns object2)))
+	  (sneps:node-to-lisp-object (sneps:choose.ns object1))
+	  (sneps:node-to-lisp-object (sneps:choose.ns object2))))
 (attach-primaction say say disbelieve disbelieve)
 ^^
 ;;;
@@ -117,7 +117,7 @@ define-frame Person (class member)
 ^^
 (define-primaction say (object1)
   "Print the object."
-  (format t "~&~A" (sneps:choose.ns object1)))
+  (format t "~&~A" (sneps:node-to-lisp-object (sneps:choose.ns object1))))
 (attach-primaction
  say say
  snsequence snsequence)
