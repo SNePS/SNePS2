@@ -2,7 +2,7 @@
 ;;; Copyright (C) 1984--2004 Research Foundation of 
 ;;;                          State University of New York
 
-;;; Version: $Id: generator.atn,v 1.1 2011/05/24 17:59:37 mwk3 Exp $
+;;; Version: $Id: generator.atn,v 1.2 2011/08/19 19:06:36 shapiro Exp $
 
 ;;; This file is part of SNePS.
 
@@ -209,10 +209,11 @@
 ;;; Buffer contents: *
 ;;; Returns the snepslog version of the node.
 ;;;
+;;; Modified 8/18/11 by scs
 
 (g-atomic-node
   (pop (set-snepslog-version (getr *)
-			     (symbol-name (sneps:node-na (getr *))))
+			     (let ((*package* :snepslog)) (prin1-to-string (sneps:node-na (getr *)))))
        t))
 
 ;;;
