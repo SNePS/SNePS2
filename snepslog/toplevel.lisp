@@ -3,7 +3,7 @@
 ;; Copyright (C) 1984--2011
 ;; Research Foundation of State University of New York
 
-;; Version: $Id: toplevel.lisp,v 1.1 2011/05/24 17:59:37 mwk3 Exp $
+;; Version: $Id: toplevel.lisp,v 1.2 2011/08/19 19:10:04 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -70,7 +70,7 @@
 		 (bye-text "Bye"))
 "Enters in the  SNePSLOG environment"
   (in.environment
-    :variables ((*package* (find-package 'snepsul))
+    :variables ((*package* (find-package 'snepslog))
 		(*print-length* nil)
 		(*print-level* nil)
 		(*print-pretty* t)
