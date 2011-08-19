@@ -4,7 +4,7 @@
 ;; Copyright (C) 2006--2011
 ;; Research Foundation of State University of New York
 
-;; Version: $Id: snepslog-parser.lisp,v 1.1 2011/05/24 17:59:37 mwk3 Exp $
+;; Version: $Id: snepslog-parser.lisp,v 1.2 2011/08/19 19:13:45 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -170,15 +170,17 @@
 				*WhiteSpace* 
 				*TerminalPunctuation*
 				*SeparatingPunctuation*
-				'(#\. #\! #\?))
-  "List of punctuation characters.  None may appear in a symbol")
+				'(#\. #\! #\?)))
 
-(defparameter *NotAtomChar* (concatenate 'list
-				*WhiteSpace* 
-				*TerminalPunctuation*
-				*SeparatingPunctuation*
-				'(#\! #\?))
-  "List of characters that may not appear in a symbol")
+(defparameter *SNePSLOGAtomReadTable* (copy-readtable)
+  "Readtable for reading SNePSLOG atoms")
+
+;;; Make {, }, !, and ? act like ) and ( for reading SNePSLOG atoms.
+(set-syntax-from-char #\{ #\( *SNePSLOGAtomReadTable* *readtable*)
+(set-syntax-from-char #\} #\) *SNePSLOGAtomReadTable* *readtable*)
+(set-syntax-from-char #\! #\) *SNePSLOGAtomReadTable* *readtable*)
+(set-syntax-from-char #\? #\) *SNePSLOGAtomReadTable* *readtable*)
+
 
 (defconstant *QMark* 'sneps:?
   "The sneps question mark.")
@@ -1459,15 +1461,18 @@
 (defun SNePSLOGsymbol ()
   "Parse and return a symbol."
   ;; SNePSLOGsymbol ::= (wff <Lisp integer>) | <Lisp atom>
-    (when (string/= *Input* "")
-      (unless (member (elt *Input* 0) *SeparatingPunctuation* :test #'char=)
-        (cond ((member (char *Input* 0) *Punctuation* :test #'char=)
+  (when (string/= *Input* "")
+    (unless (member (elt *Input* 0) *SeparatingPunctuation* :test #'char=)
+      (cond ((member (char *Input* 0) *Punctuation* :test #'char=)
 	     ;; First character is punctuation -- no symbol found
 	     nil)
 	    (t  (multiple-value-bind (token n) (LispAtom)
-		 (setf *Input* 
-		   (string-left-trim *WhiteSpace* (subseq *Input* n)))
-		 token))))))
+		  (setf *Input* 
+		    (string-left-trim *WhiteSpace* (subseq *Input* n)))
+		  (typecase token
+		    (string (intern token))
+		    (number (intern (build-namestring token)))
+		    (t token))))))))
 
 (defun wffName ()
   "Parse a token of the form wffi, for some integer i,
@@ -1580,12 +1585,9 @@
 	 (read-from-string *Input*))
 	((not (member (elt *Input* 0) *Punctuation* :test #'char=))
 	 ;; a Lisp symbol or number
-	 (read-from-string
-	  *Input* nil nil
-	  :end (position-if
-		#'(lambda (c) 
-		    (member c *NotAtomChar* :test #'char=))
-		*Input*)))))
+	 (let ((*readtable* *SNePSLOGAtomReadTable*))
+	   (read-from-string
+	    *Input* nil nil)))))
   
 (defun emptyInputAfter? (n)
   "If after the first n characters,
