@@ -3,7 +3,7 @@
 ;; Copyright (C) 1984--2011
 ;; Research Foundation of State University of New York
 
-;; Version: $Id: load-sneps.lisp,v 1.1 2011/05/24 17:59:35 mwk3 Exp $
+;; Version: $Id: load-sneps.lisp,v 1.2 2011/08/24 19:13:46 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -21,7 +21,7 @@
 ;; or implied. See the License for the specific language gov
 ;; erning rights and limitations under the License.
 ;; 
-;; The Original Code is SNePS 2.7.
+;; The Original Code is SNePS 2.8.
 ;; 
 ;; The Initial Developer of the Original Code is Research Foun
 ;; dation of State University of New York, on behalf of Univer
@@ -150,7 +150,7 @@
 
 ;;; Open the sneps.config file and edit it for your system
 ;;; Change the variable below to point to that file.
-(defvar *config-file* "/projects/snwiz/Install/Sneps-2.7.2/snerg_config.lisp"
+(defvar *config-file* "/projects/snwiz/Install/Sneps-2.8.0/snerg_config.lisp"
 "The location of the SNePS configuration file.")
 
 ;;;;;;;;;;;;;;;;;;;; End user custimization ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -268,7 +268,7 @@ with the loading of compiled Lisp files.")
 ;; tag this release):
 (defparameter *sneps-version*
     (format nil "SNePS-2.8 [PL:0 ~a]"
-	    (let ((date-string "$Date: 2011/05/24 17:59:35 $"))
+	    (let ((date-string "$Date: 2011/08/24 19:13:46 $"))
 	      (if (char-equal (aref date-string 0) #\$)
 		  (subseq date-string 7 26)
 		date-string))))
