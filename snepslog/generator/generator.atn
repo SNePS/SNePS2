@@ -2,7 +2,7 @@
 ;;; Copyright (C) 1984--2004 Research Foundation of 
 ;;;                          State University of New York
 
-;;; Version: $Id: generator.atn,v 1.2 2011/08/19 19:06:36 shapiro Exp $
+;;; Version: $Id: generator.atn,v 1.3 2011/08/24 18:45:52 shapiro Exp $
 
 ;;; This file is part of SNePS.
 
@@ -213,7 +213,7 @@
 
 (g-atomic-node
   (pop (set-snepslog-version (getr *)
-			     (let ((*package* :snepslog)) (prin1-to-string (sneps:node-na (getr *)))))
+			     (let ((*package* (find-package :snepslog))) (prin1-to-string (sneps:node-na (getr *)))))
        t))
 
 ;;;
