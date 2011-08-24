@@ -3,7 +3,7 @@
 ;; Copyright (C) 2006--2011
 ;; Research Foundation of State University of New York
 
-;; Version: $Id: load.lisp,v 1.1 2011/05/24 17:59:37 mwk3 Exp $
+;; Version: $Id: load.lisp,v 1.2 2011/08/24 12:57:37 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -63,20 +63,18 @@
     (t (error "Unrecognized format: ~S" format))))
 
 (defvar *null-stream-output*
-    #+allegro
-  (make-instance
-      'excl:null-simple-stream
-    :external-format
-    (excl:find-external-format :default))
-  #-allegro
-  (defvar *null-stream-output* (make-broadcast-stream))
+  #+allegro (make-instance
+	     'excl:null-simple-stream
+	     :external-format
+	     (excl:find-external-format :default))
+  #-allegro (make-broadcast-stream)
   "The null stream")
 
 (export '*null-stream-output*)
 
 (defun snepslog-load (file)
-  "Executes the contents of the file as a series of SNePSLOG commands."
-  ;; Can issue individual SNePSLOG commands with (tell "<command>")
+  "Executes the contents of the file as a series of SNePSLOG commands."  Can
+  ;; issue individual SNePSLOG commands with (tell "<command>")
   (if snepslog::*SNePSLOGRunning*
       (demo-internal file 
 		     :output-stream 
