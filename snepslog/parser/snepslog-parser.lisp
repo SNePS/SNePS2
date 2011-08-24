@@ -4,7 +4,7 @@
 ;; Copyright (C) 2006--2011
 ;; Research Foundation of State University of New York
 
-;; Version: $Id: snepslog-parser.lisp,v 1.2 2011/08/19 19:13:45 shapiro Exp $
+;; Version: $Id: snepslog-parser.lisp,v 1.3 2011/08/24 18:49:09 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -1631,8 +1631,8 @@
       a-command allTerm andorTerm ask-command atomicTerm c-command
       checkDeduceLimits d-command define-frame-command e-command
       entailment entailmentCq
-      haveEntailmentOp? infixOp infixedTerm l-command n-command
-      negatedTerm nexistsParameter nexistsParameters nexistsTerm
+      haveEntailmentOp? infixOp infixedTerm l-command LispAtom
+      n-command negatedTerm nexistsParameter nexistsParameters nexistsTerm
       nparams p-command path prefixedTerm qmark qvar r-command
       replaceToken requiredWffArg s-command snepslogCommand t-command
       termSequence termSet termSetSequence terminalPunctuation
