@@ -6,7 +6,7 @@
 ;; load-sneps.lisp. This variable must be specified.
  
 (defvar *sneps-directory* 
-    "/projects/snwiz/Install/Sneps-2.7.2")
+    "/projects/snwiz/Install/Sneps-2.8.0")
 
  ;; *use-gui-show* specifies whether to use the GUI version of show or the dot 
  ;; version of show. A value of 't' specifies the GUI, while 'nil' specifies 
