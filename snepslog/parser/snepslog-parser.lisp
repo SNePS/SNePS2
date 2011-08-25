@@ -4,7 +4,7 @@
 ;; Copyright (C) 2006--2011
 ;; Research Foundation of State University of New York
 
-;; Version: $Id: snepslog-parser.lisp,v 1.3 2011/08/24 18:49:09 shapiro Exp $
+;; Version: $Id: snepslog-parser.lisp,v 1.4 2011/08/25 19:23:39 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -867,10 +867,10 @@
 			     "Bad connective in ~Aed sequence at: ~S"
 			     connective *Input*))))
 	 (n (length wffs)))
-    (if (eq connective *iff*)
+    (if (#+abcl string= #-abcl eq connective *iff*)
 	`(sneps:build sneps:thresh 1 sneps:arg ,wffs)
       `(sneps:build
-	min ,(if (eq connective *or*) 1 n) max ,n
+	min ,(if (#+abcl string= #-abcl eq connective *or*) 1 n) max ,n
 	sneps:arg ,wffs))))
 
 (defun entailment ()
