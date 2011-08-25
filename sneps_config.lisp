@@ -123,12 +123,12 @@
  ;; *sneps-no-query* specifies whether to query for compilation for files or 
  ;; not.  Defaults to 't'. Not needed by the SNEPS executeable.
  ;;
-(defvar *sneps-noquery* nil)
+(defvar *sneps-noquery* t)
  
  ;; *sneps-verbose* specifies verbose loading of SNePS files
  ;; Default to 'nil'
  ;;
-(defvar *sneps-verbose* t)
+(defvar *sneps-verbose* nil)
  
  ;; *sneps-load-old-englex*: If this is T the old englex package is loaded 
  ;; instead of Chris Lusardi's new implementation (for compatibility with old 
