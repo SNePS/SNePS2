@@ -3,7 +3,7 @@
 ;; Copyright (C) 1984--2011 Research Foundation of 
 ;;                          State University of New York
 
-;; Version: $Id: generator.lisp,v 1.2 2011/08/19 19:08:40 shapiro Exp $
+;; Version: $Id: generator.lisp,v 1.3 2011/11/30 17:51:10 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -94,24 +94,28 @@
   (get-nodes node 'min))
 
 (defun sneps-not? (node)
-  (and (zerop (numberize (sneps:choose.ns (get-nodes node 'min))))
+  (and (get-nodes node 'min)
+       (zerop (numberize (sneps:choose.ns (get-nodes node 'min))))
        (zerop (numberize (sneps:choose.ns (get-nodes node 'max))))
        (cl:= 1 (length (get-nodes node 'arg)))))
 
 (defun sneps-nor? (node)
-  (and (zerop (numberize (sneps:choose.ns (get-nodes node 'min))))
+  (and (get-nodes node 'min)
+       (zerop (numberize (sneps:choose.ns (get-nodes node 'min))))
        (zerop (numberize (sneps:choose.ns (get-nodes node 'max))))
        (> (length (get-nodes node 'arg)) 1)))
 
 (defun sneps-nand? (node)
-  (and (zerop (numberize (sneps:choose.ns (get-nodes node 'min))))
+  (and (get-nodes node 'min)
+       (zerop (numberize (sneps:choose.ns (get-nodes node 'min))))
        (> (length (get-nodes node 'arg)) 1)
        (cl:= (sneps:node-to-lisp-object
 	      (sneps:choose.ns (get-nodes node 'max)))
 	     (1- (length (get-nodes node 'arg))))))
 
 (defun sneps-xor? (node)
-  (and (cl:= (numberize (sneps:choose.ns (get-nodes node 'min))) 1)
+  (and (get-nodes node 'min)
+       (cl:= (numberize (sneps:choose.ns (get-nodes node 'min))) 1)
        (cl:= (numberize (sneps:choose.ns (get-nodes node 'max))) 1)
        (> (length (get-nodes node 'arg)) 1)))
 
