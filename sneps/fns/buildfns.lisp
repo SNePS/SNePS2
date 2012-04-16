@@ -3,7 +3,7 @@
 ;; Copyright (C) 1984--2011 Research Foundation of 
 ;;                          State University of New York
 
-;; Version: $Id: buildfns.lisp,v 1.1 2011/05/24 17:59:37 mwk3 Exp $
+;; Version: $Id: buildfns.lisp,v 1.2 2012/04/16 15:17:15 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -659,6 +659,9 @@
   "Returns a canonical cableset version of the negation cableset, origCS,
      which is the negation of the node P."
   (cond
+   ((nodeset.n P 'forall)
+    ;; Cannot canonicalize the negation of a quantified wff
+    origCS)
    ((is-and-or.n P)
     (let* ((args (nodeset.n P 'arg))
 	   (min (node-to-number.n (choose.ns (nodeset.n P 'min))))
