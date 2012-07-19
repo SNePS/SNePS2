@@ -3,7 +3,7 @@
 ;; Copyright (C) 1984--2011
 ;; Research Foundation of State University of New York
 
-;; Version: $Id: rule-eintr.lisp,v 1.1 2011/05/24 17:59:38 mwk3 Exp $
+;; Version: $Id: rule-eintr.lisp,v 1.2 2012/07/19 15:02:34 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -112,43 +112,56 @@
 				 (context.rep report)) 
 		       ich)))))))
 
-;
-;
-; =============================================================================
-;
-; filter-introduction-support 
-; ---------------------------
-;
-;       arguments     : support-rep - <support>
-;                       extra-hyps  - <node set>
-;                       ct-channel  - <context>
-;
-;       returns       : <support>
-;
-;       description   : filters "support-rep":
-;                        a) only 'DER tags are accepted
-;                        b) only contexts that:
-;                             1) are a subset of the union of "extra-hyps" with
-;                                "ct-channel", and
-;                             2) include "extra-hyps"
-;                           are returned.
-;
-;                                        written :  njm 11/06/88
-;
-;
-;
+;;;
+;;;
+;;; =============================================================================
+;;;
+;;; filter-introduction-support 
+;;; ---------------------------
+;;;
+;;;       arguments     : support-rep - <support>
+;;;                       extra-hyps  - <node set>
+;;;                       ct-channel  - <context>
+;;;
+;;;       returns       : <support>
+;;;
+;;;       description   : filters "support-rep":
+;;;                        a) only 'DER tags are accepted
+;;;                        b) only contexts that:
+;;;                             1) are a subset of the union of "extra-hyps" with
+;;;                                "ct-channel", and
+;;;                             2) include "extra-hyps"
+;;;                           are returned.
+;;;
+;;;                                        written :  njm 11/06/88
+;;;                                        modified:  7/19/2012 
+;;;                                           according to Aya Saif El-yazal Mahfouz
+;;;                                           based on a suggestion by Haythem Ismail
+;;;
+;;;
+;;;
+
 (defun filter-introduction-support (support-rep extra-hyps ct-channel)
   (let ((new-support (new.sup))
-	(ct-channel-hyps (sneps:context-hyps ct-channel)))
+	(ct-channel-hyps		; assumptions of outer context
+	 (sneps:context-hyps ct-channel)))               
     (dolist (ct (getcontextset.sup 'sneps:der support-rep) new-support)
-      (when (equal extra-hyps (sneps:compl.ns (sneps:context-hyps ct)
-					      ct-channel-hyps))
+      (when
+	  ;; Assumptions of this context must be
+	  ;;   (hypothetical assumptions - (assumptions of outer context
+	  ;;                                - hypothetical assumptions))
+	  ;;   This condition was suggested by Haythem Ismail
+	  ;;      and solved problem of inferring p(a) => q(a)
+	  ;;          when p(a) is both the hypothetical assumption
+	  ;;                            and an assumption in the outer context.
+	  (equal extra-hyps (sneps:compl.ns (sneps:context-hyps ct) 
+					      (sneps:compl.ns ct-channel-hyps extra-hyps))) 
 	(setq new-support
-	      (insert.sup 'der
-			  (fullbuildcontext (sneps:compl.ns (sneps:context-hyps ct)
-							    extra-hyps)
-					    (new.cts))
-			  new-support))))))
+          (insert.sup 'der
+		      (fullbuildcontext (sneps:compl.ns (sneps:context-hyps ct)
+							extra-hyps)
+					(new.cts))
+		      new-support))))))
 
 ;
 ; =============================================================================
