@@ -4,7 +4,7 @@
 ;; Copyright (C) 2006--2011
 ;; Research Foundation of State University of New York
 
-;; Version: $Id: snepslog-parser.lisp,v 1.4 2011/08/25 19:23:39 shapiro Exp $
+;; Version: $Id: snepslog-parser.lisp,v 1.5 2013/06/17 15:26:26 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -297,30 +297,30 @@
     (cond ((emptyInputAfter? 0)
       (if *br-auto-mode*
         (returnForms '(format outunit 
-                        "Automatic belief revision mode currently set to 'auto'"))
+                        "Belief revision mode currently set to 'auto'"))
       (returnForms '(format outunit
-                      "Automatic belief revision mode currently set to 'manual'"))))
+                      "Belief revision mode currently set to 'manual'"))))
     ((haveCommand? "auto")
       (returnForms `(br-mode ,t)
                    '(format outunit
-                     "Automatic belief revision will now be automatically selected.")))
+                     "Belief revision mode will now be set to 'auto'.")))
     ((haveCommand? "manual")
       (returnForms `(br-mode ,nil)
                    '(format outunit 
-                     "Automatic belief revision must now be manually selected.")))
+                     "Belief revision mode will now be set to 'manual'.")))
     (t (parseError
       "The command br-mode can only accept 'auto' or 'manual' as an argument"))))
  ((haveCommand? "br-tie-mode" t)
     (cond ((emptyInputAfter? 0)
       (if *br-tie-mode*
         (returnForms '(format outunit 
-                        "Automatic belief revision tie mode currently set to 'auto'"))
+                        "Belief revision tie mode currently set to 'auto'"))
       (returnForms '(format outunit
-                      "Automatic belief revision tie mode currently set to 'manual'"))))
+                      "Belief revision tie mode currently set to 'manual'"))))
     ((haveCommand? "auto")
       (returnForms `(br-tie-mode ,t)
                    '(format outunit
-                      "Entrenchment ties will now be automatically broken")))
+                      "Entrenchment ties will now be broken automatically")))
     ((haveCommand? "manual")
       (returnForms `(br-tie-mode nil)
                    '(format outunit 
