@@ -54,9 +54,9 @@
       "Rule Introduction - Various examples")
      ("sneps:demo;snepslog;chap4.snlog"
       "Examples of various SNeRE constructs.")
-     ("sneps:demo;snebr;autobr.snlog"
-      "Automated Belief Revision")
-      #|
+     ("sneps:demo;snepslog;blackbird1.snlog"
+      "Automatic Nonprioritized Belief Revision with Manual tie-breaking.")
+     #|
      ("sneps:demo;defaults;birds.sneps"
       "Birds - An example for default rules (all demos dealing with~
      ~%        defaults require Maria Cravo's version of SNePS)")
