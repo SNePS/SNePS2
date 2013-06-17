@@ -3,7 +3,7 @@
 ;; Copyright (C) 1984--2011 Research Foundation of 
 ;;                          State University of New York
 
-;; Version: $Id: snepshandler.lisp,v 1.1 2011/05/24 17:59:37 mwk3 Exp $
+;; Version: $Id: snepshandler.lisp,v 1.2 2013/06/17 15:20:34 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -230,29 +230,30 @@
 ;                                  modified:  mrc 12/18/88
 ;                                  modified:  flj  3/22/99
 ;                                  modified:  aif 02/03/11
+;                                  modified:  scs 06/14/13
 ;
 ;
 ;
 (defun implement-sneps-option (option newnode contrnd)
   (declare (special sneps:crntct sneps:outunit))
-  (cond ((equal option 'snepsul:d) 
+  (cond ((eqans option 'd) 
 	 (name.ct (buildcontext
 		   (remove.ns newnode
 			      (context-hyps
 			       (value.sv sneps:crntct))))
-		  sneps::crntct))
-	((equal option 'snepsul:a)
+		  sneps:crntct))
+	((eqans option 'a)
     (let ((contrsup (ctcs-to-cts (sneps:node-asupport contrnd)))
           (newsup (ctcs-to-cts (sneps:node-asupport newnode))))
       (autobr newsup contrsup (value.sv sneps:crntct) nil)))
-	((equal option 'snepsul:r)
+	((eqans option 'r)
 	 (let ((contrsup (ctcs-to-cts (sneps:node-asupport contrnd)))
 	       (contr-otlst (sneps:ctcs-to-ots (sneps:node-asupport contrnd)))
 	       (newsup (ctcs-to-cts (sneps:node-asupport newnode)))
 	       (new-otlst (sneps:ctcs-to-ots (sneps:node-asupport newnode))))
 	   (change-context newsup contrsup new-otlst contr-otlst 
 			   (value.sv sneps:crntct) sneps:crntct)))
-  ((equal option 'snepsul:c)
+  ((eqans option 'c)
    (setf (sneps::%context-okinconsistent (value.sv sneps:crntct)) t))))
 
 
@@ -276,6 +277,7 @@
 ;                                  modified:  hc 10/19/88 (get rid of repeat)
 ;                                  modified:  flj  3/22/99
 ;                                  modified:  aif 02/03/11
+;                                  modified:  scs 06/14/13
 ;
 ;
 (defun read-sneps-option ()
@@ -283,11 +285,11 @@
   (let (ans)
     (loop (ct-prompt)
 	  (setq ans (read sneps:inunit))
-	  (if (or (eq ans 'snepsul:A)
-		  (eq ans 'snepsul:C)
-		  (eq ans 'snepsul:R)
-		  (eq ans 'snepsul:D))
-	      (RETURN ans))
+	  (if (or (eqans ans 'A)
+		  (eqans ans 'C)
+		  (eqans ans 'R)
+		  (eqans ans 'D))
+	      (return ans))
 	  (format sneps:outunit "Please type a, c, r or d"))))
 
 ;
@@ -356,7 +358,7 @@
 	    (negate-hyps (compl.ns hyps ct)
 			 (fullbuildcontext ct (new.cts))
 			 new-ct contr-ct new-ot contr-ot)
-	    (RETURN ct)))))
+	    (return ct)))))
 
 ;
 ; =============================================================================
@@ -740,6 +742,7 @@
 ;                                  modified:  hc  10/19/88 (remove repeat)
 ;                                  modified:  flj  3/22/99 
 ;                                  modified:  scs  8/17/10
+;                                  modified:  scs  06/14/13
 ;
 ;
 (defun browse-through-hyps (hyplst fullcthyps &optional inc)       
@@ -769,13 +772,13 @@
 	(cond ((numberp ans1)
 	       (setf hyp (nth ans1 hyplst))
 	       (setf ans2 (lookat-hyp hyp fullcthyps)))
-	      ((eq ans1 'snepsul:q) (RETURN hyplst))
-	      ((eq ans1 'snepsul::i) (menu-instructions n))
-	      ((eq ans1 'snepsul::r) 
+	      ((eqans ans1 'q) (RETURN hyplst))
+	      ((eqans ans1 'i) (menu-instructions n))
+	      ((eqans ans1 'r) 
 	       (setf ans2 (see-removed removed fullcthyps)))
-	      ((eq ans1 'snepsul::a) 
+	      ((eqans ans1 'a) 
 	       (print-fullct (compl.ns fullcthyps removed)))
-	      ((eq ans1 'snepsul::d) 
+	      ((eqans ans1 'd) 
 	       (setf ans2 (delete-which n))))
 	(cond ((numberp ans2) 
 	       (setf hyp (nth ans2 hyplst))
@@ -784,8 +787,8 @@
 	      ((is.n ans2) 
 	       (setf hyplst (insert.ns ans2 hyplst))
 	       (setf removed (remove.ns ans2 removed)))
-	      ((eq ans2 'snepsul:q) (RETURN hyplst))
-	      ((eq ans2 'snepsul:d) 
+	      ((eqans ans2 'q) (RETURN hyplst))
+	      ((eqans ans2 'd) 
 	       (setf hyplst (remove.ns hyp hyplst))
 	       (setf removed (insert.ns hyp removed))))))))
 
@@ -809,7 +812,7 @@
 ;                                              
 ;
 ;                                  written :  flj  3/22/99 
-;                                  modified: 
+;                                  modified:  scs 06/14/13
 ;
 ;
 
@@ -837,8 +840,12 @@
 	    (format sneps:outunit 
 		    "~T Numbers should be from the list above.~
                       ~%~T Enter a number OR a, r, d, q or i: ")))
-	 ((member ans '(snepsul:q snepsul::i snepsul::r snepsul:a snepsul::d))
-	  (RETURN ans))
+	 ((or (eqans ans 'q)
+	      (eqans ans 'i)
+	      (eqans ans 'r)
+	      (eqans ans 'a)
+	      (eqans ans 'd))
+	  (return ans))
 	 (t (format sneps:outunit 
 		    "Enter a number from list above OR a, r, d, q or i"))))))
 
@@ -864,7 +871,7 @@
 ;
 ;
 ;                                  written :  flj  3/22/99 
-;                                  modified: 
+;                                  modified:  scs 06/14/13
 ;
 ;
 ;
@@ -884,8 +891,8 @@
 	       (format sneps:outunit 
 		       "~T Numbers should be from the list above.~
                       ~%~T Enter a number OR c or q")))
-	    ((eq ans 'snepsul:q) (RETURN ans))
-	    ((eq ans 'snepsul::c) (RETURN nil))))))
+	    ((eqans ans 'q) (return ans))
+	    ((eqans ans 'c) (return nil))))))
 
 
 
@@ -912,7 +919,7 @@
 ;
 ;
 ;                                  written :  flj  3/22/99 
-;                                  modified: 
+;                                  modified:  scs 06/14/13
 ;
 ;
 ;
@@ -933,8 +940,8 @@
 	     ~%~T (please type d, k, u, q or i)"
 	    (snip:slight-describe-or-surface hyp nil))
     (let ((ans (enquire-hyp-fate)))
-      (cond ((equal ans 'snepsul::i) (inspect-instructions)) 
-	    (t  (RETURN ans))))))
+      (cond ((eqans ans 'i) (inspect-instructions)) 
+	    (t  (return ans))))))
 
 
 
@@ -957,6 +964,7 @@
 ;                                  written :  jpm 11/30/82 
 ;                                  modified:  hc  10/19/88 (remove repeat)
 ;                                  modified:  flj  3/22/99 
+;                                  modified:  scs 06/14/13
 ;
 ;
 ;
@@ -966,7 +974,11 @@
     (loop
       (ct-prompt)
       (setf ans (read sneps:inunit))
-      (if (member ans '(snepsul:d snepsul:k snepsul:u snepsul:q snepsul::i))
+      (if (or (eqans ans 'd)
+	      (eqans ans 'k)
+	      (eqans ans 'u)
+	      (eqans ans 'q)
+	      (eqans ans 'i))
 	  (RETURN ans))
       (format sneps:outunit "Please type d, k, u, q or i"))))
 
@@ -993,7 +1005,7 @@
 ;
 ;
 ;                                  written :  flj  3/22/99 
-;                                  modified: 
+;                                  modified:  scs 06/14/13
 ;
 ;
 ;
@@ -1012,8 +1024,8 @@
 	(cond ((numberp ans) 
 	       (if (return-it (setf hyp (nth ans rlst)) fullcthyps)
 		   (RETURN hyp)))
-	      ((eq ans 'snepsul:q) (RETURN ans))
-	      ((eq ans 'snepsul::r) (RETURN nil)))))))
+	      ((eqans ans 'q) (return ans))
+	      ((eqans ans 'r) (return nil)))))))
 	    
 ;
 ; =============================================================================
@@ -1038,7 +1050,7 @@
 ;
 ;
 ;                                  written :  flj  3/22/99 
-;                                  modified: 
+;                                  modified:  scs 06/14/13
 ;
 ;
 ;
@@ -1061,8 +1073,9 @@
 	       (format sneps:outunit 
 		     "~T Numbers should be from the list above.~
                       ~%~T Enter a number OR r or q")))
-	   ((member ans '(snepsul::r snepsul:q))
-	    (RETURN ans))
+	   ((or (eqans ans 'r)
+		(eqans ans 'q))
+	    (return ans))
 	   (t (format sneps:outunit 
 		      "Enter a number from list above OR r or q"))))))
 
@@ -1529,3 +1542,26 @@
         (setf running-min node)))
     (cons running-min (remove running-min nodeset))))
 
+;
+; =============================================================================
+;
+;
+; eqans
+; -----
+;
+;
+;       arguments     : ans - <symbol>
+;                       option - <symbol>
+;
+;       returns       : T | NIL
+;
+;       description   : This function returns T if ans and option are spelled alike,
+;                       ignoring package and case,
+;                       and returns NIL otherwise.
+;
+;                                  written :  scs 06/14/13
+;
+
+(defun  eqans (ans option)
+  (and (symbolp ans) ; option is always supplied by code
+       (string-equal (symbol-name ans) (symbol-name option))))
