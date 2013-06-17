@@ -3,7 +3,7 @@
 ;; Copyright (C) 1984--2011
 ;; Research Foundation of State University of New York
 
-;; Version: $Id: orders.lisp,v 1.4 2011/07/12 14:02:13 shapiro Exp $
+;; Version: $Id: orders.lisp,v 1.5 2013/06/17 15:25:20 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -65,9 +65,10 @@
 ;;; Arguments:    n - a node
 (defun is-fluent (n)
   (let ((pred (relation-predicate n)))
-    (when (and pred (listp pred))
-      (setf pred (get-node-name (car pred))))
-    (member pred *fluents*)))
+    (member (if (consp pred)
+		(get-node-name (first pred))
+	      pred)
+	    *fluents*)))
 
 (defun source (p1 p2)
   "Returns t iff p1 <= p2 in the epistemic entrenchment ordering.
