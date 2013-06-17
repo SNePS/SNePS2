@@ -3,7 +3,7 @@
 ;; Copyright (C) 1984--2011 Research Foundation of 
 ;;                          State University of New York
 
-;; Version: $Id: findexact.lisp,v 1.1 2011/05/24 17:59:37 mwk3 Exp $
+;; Version: $Id: findexact.lisp,v 1.2 2013/06/17 15:22:34 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -310,7 +310,13 @@
       if such negation node is in the network; 
     else returns nil.
     Uses canonicalcs."
-  (let ((0node (node 'snepsul::\0)))
+  (let ((0node (or 
+		;; try to find the node that looks like zero
+		;;   in either snepslog or snepsul package,
+		;;   preferring snepslog.
+		;;  But what if they're both there??
+		;;                           scs 06/14/13
+		(node 'snepslog::\0) (node 'snepsul::\0))))
     (when 0node
       (let ((ccs (canonicalcs
 		  (putin.cs
