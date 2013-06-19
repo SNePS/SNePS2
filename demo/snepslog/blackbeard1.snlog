@@ -1,0 +1,53 @@
+;;; Assisted Nonprioritized Belief Revision with Manual tie-breaking
+;;; From Section 4.2.1 of
+;;; Ari I. Fogel, On the Use of Epistemic Ordering Functions as Decision
+;;; Criteria for Automated and Assisted Belief Revision in SNePS, MS Thesis,
+;;; Department of Computer Science and Engineering, University at Buffalo,
+;;; Buffalo, NY, June 1, 2011. 
+
+;;; Use mode 1
+set-mode-1
+
+;;; Show supports
+expert
+
+;;; Use the default belief revision mode of "manual".
+;;; This is the default for modes 1 and 2,
+;;;    and still allows the user to choose "auto" mode
+;;;       for each contradiction that occurs.
+br-mode
+
+;;; Use an entrenchment ordering where every proposition is minimally-entrenched.
+;;;                  (epistemic ties are possible)
+;;;
+set-order null-order
+
+;;; Consult the user when an entrenchment tie occurs.
+br-tie-mode manual
+
+;;; All pirates are uneducated
+all(x)(Pirate(x) => ~Educated(x)).
+
+;;; All criminals are uneducated
+all(x)(Criminal(x) => ~Educated(x)).
+
+;;; Blackbeard was a pirate and a criminal.
+and{Pirate(Blackbeard), Criminal(Blackbeard)}!
+
+;;; The knowledge base thus far:
+list-asserted-wffs
+
+;;; Blackbeard was educated (a contradiction)
+Educated(Blackbeard).
+
+;;; Choose automatic belief revision for this problem.
+a
+
+;;; Among these, I least like the proposition that all criminals are not educated.
+1
+
+;;; Among these, I least like the proposition that all pirates are not educated.
+1
+
+;;; The knowledge base now.
+list-asserted-wffs
