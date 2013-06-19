@@ -54,8 +54,11 @@
       "Rule Introduction - Various examples")
      ("sneps:demo;snepslog;chap4.snlog"
       "Examples of various SNeRE constructs.")
-     ("sneps:demo;snepslog;blackbird1.snlog"
-      "Automatic Nonprioritized Belief Revision with Manual tie-breaking.")
+     ("sneps:demo;snepslog;blackbeard1.snlog"
+      "Assisted Nonprioritized Belief Revision with Manual tie-breaking.")
+     ("sneps:demo;snepslog;blackbeard2.snlog"
+      "Assisted Nonprioritized Belief Revision with Manual tie-breaking showing
+Minimal Change of KB.")
      #|
      ("sneps:demo;defaults;birds.sneps"
       "Birds - An example for default rules (all demos dealing with~
