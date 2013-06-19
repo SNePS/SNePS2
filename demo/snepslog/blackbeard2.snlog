@@ -1,0 +1,62 @@
+;;; Assisted Nonprioritized Belief Revision with Manual tie-breaking
+;;;    showing Minimal Change of KB.
+;;; From Section 4.2.2 of
+;;; Ari I. Fogel, On the Use of Epistemic Ordering Functions as Decision
+;;; Criteria for Automated and Assisted Belief Revision in SNePS, MS Thesis,
+;;; Department of Computer Science and Engineering, University at Buffalo,
+;;; Buffalo, NY, June 1, 2011. 
+
+;;; Use mode 1
+set-mode-1
+
+;;; Show supports
+expert
+
+;;; Use the default belief revision mode of "manual".
+;;; This is the default for modes 1 and 2,
+;;;    and still allows the user to choose "auto" mode
+;;;       for each contradiction that occurs.
+br-mode
+
+;;; Use an entrenchment ordering where every proposition is minimally-entrenched.
+;;;                  (epistemic ties are possible)
+;;;
+set-order null-order
+
+;;; Consult the user when an entrenchment tie occurs.
+br-tie-mode manual
+
+;;; All pirates are uneducated
+all(x)(Pirate(x) => ~Educated(x)).
+
+;;; All criminals are uneducated
+all(x)(Criminal(x) => ~Educated(x)).
+
+;;; Blackbeard was a pirate and a criminal.
+and{Pirate(Blackbeard), Criminal(Blackbeard)}!
+
+;;; The knowledge base thus far:
+list-asserted-wffs
+
+;;; Blackbeard was educated (a contradiction)
+Educated(Blackbeard).
+
+;;; Choose automatic belief revision for this problem.
+a
+
+;;; Among these, I least like the proposition that all criminals are not educated.
+1
+
+;;; Among these, I least like the proposition that Blackbeard was educated.
+3
+
+;;; The knowledge base now.
+;;; Note that, even though wft2 was chosen as the least entrenched
+;;;    among wft2, wft5, and wft6, it is still in the KB.
+;;;   That is because wft6 was chosen as the least entrenched
+;;;    among wft1, wft5, and wft6, and so had to be removed to get rid of the
+;;;       second no-good.
+;;; Instead of removing both wft2 and wft6, it was sufficient to remove wft6.
+;;; The final entrenchment order:
+;;;     wft2 < wft6 < {wft1, wft5, and all other wfts}
+list-asserted-wffs
