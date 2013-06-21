@@ -3,7 +3,7 @@
 ;; Copyright (C) 1993--2011
 ;; Research Foundation of State University of New York
 
-;; Version: $Id: mental-acts.lisp,v 1.1 2011/05/24 17:59:38 mwk3 Exp $
+;; Version: $Id: mental-acts.lisp,v 1.2 2013/06/21 15:50:30 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -90,12 +90,16 @@
 	  ;; Make sure no tracing occurs in #! contexts:
           #'sneps:with-snepsul-standard-eval))
 
-    ;; Make sure nothing is most entrenched while disbelieving
-    (setf *most-entrenched-props* nil)
-
-;    ;; Disbelieve negations:
-    (do.ns (proposition propositions)
-	   (disbelieve-negation proposition))
+;;; This next section is commented out, because, following Ari Fogel's MS
+;;; thesis, the believe act causes any contradiction to be handled by prioritized
+;;; belief revision, which is effected by just giving the new propositions to be
+;;; believed maximal epistemic entrenchment, and then proceeding as normal.
+;;;                              -- scs 6/21/13    
+;;;    ;; Make sure nothing is most entrenched while disbelieving
+;;;    (setf *most-entrenched-props* nil)
+;;;    ;; Disbelieve negations:
+;;;    (do.ns (proposition propositions)
+;;;	   (disbelieve-negation proposition))
 
     ;; Make the new propositions we are believing maximally entrenched
     (setf *most-entrenched-props* propositions)
