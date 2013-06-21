@@ -1,0 +1,46 @@
+;;; Fully Automatic Nonprioritized Belief Revision
+;;; From Section 4.2.3 of
+;;; Ari I. Fogel, On the Use of Epistemic Ordering Functions as Decision
+;;; Criteria for Automated and Assisted Belief Revision in SNePS, MS Thesis,
+;;; Department of Computer Science and Engineering, University at Buffalo,
+;;; Buffalo, NY, June 1, 2011. 
+
+;;; Use mode 1
+set-mode-1
+
+;;; Show supports
+expert
+
+;;; Always use automatic belief revision
+br-mode auto
+
+;;; Use an entrenchment ordering where every proposition is minimally-entrenched.
+;;;                  (epistemic entrenchment ties are possible)
+;;;
+set-order null-order
+
+;;; Automatically use the lexicographic ordering of wffNames
+;;;    to break epistemic entrenchment ties.
+br-tie-mode auto
+
+;;; All pirates are uneducated
+all(x)(Pirate(x) => ~Educated(x)).
+
+;;; All criminals are uneducated
+all(x)(Criminal(x) => ~Educated(x)).
+
+;;; Blackbeard was a pirate and a criminal.
+and{Pirate(Blackbeard), Criminal(Blackbeard)}!
+
+;;; The knowledge base thus far:
+list-asserted-wffs
+
+;;; Blackbeard was educated (a contradiction, handled automatically)
+Educated(Blackbeard).
+
+;;; The knowledge base now.
+;;; The two no-goods are {wft1, wft5, wft6} and {wft2, wft5, wft6}.
+;;; wft1 is the lexicographic lowest of the first group,
+;;;    and wft2 is the lexicographic lowest of the second group,
+;;; so they were removed.
+list-asserted-wffs
