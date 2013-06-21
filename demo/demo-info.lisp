@@ -59,6 +59,10 @@
      ("sneps:demo;snepslog;blackbeard2.snlog"
       "Assisted Nonprioritized Belief Revision with Manual tie-breaking showing
 Minimal Change of KB.")
+     ("sneps:demo;snepslog;blackbeard3.snlog"
+      "Fully Automatic Nonprioritized Belief Revision.")
+     ("sneps:demo;snepslog;duck.snlog"
+      "Prioritized Belief Revision with Manual Tie-Breaking.")
      #|
      ("sneps:demo;defaults;birds.sneps"
       "Birds - An example for default rules (all demos dealing with~
