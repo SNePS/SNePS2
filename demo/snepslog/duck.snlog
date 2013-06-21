@@ -1,0 +1,55 @@
+;;; Prioritized Belief Revision with Manual Tie-Breaking
+;;; From Section 4.2.4 of
+;;; Ari I. Fogel, On the Use of Epistemic Ordering Functions as Decision
+;;; Criteria for Automated and Assisted Belief Revision in SNePS, MS Thesis,
+;;; Department of Computer Science and Engineering, University at Buffalo,
+;;; Buffalo, NY, June 1, 2011. 
+
+;;; Use mode 3
+set-mode-3
+
+;;; Show supports
+expert
+
+;;; Note that we will use the default belief revision mode of "auto",
+;;; which is the default for mode 3.
+br-mode
+
+;;; Use an entrenchment ordering
+;;;    where every proposition is equally entrenched.
+set-order null-order
+
+;;; Consult the user when an entrenchment tie needs to be broken.
+br-tie-mode manual
+
+;;; Attach the believe action to the believe term.
+^(attach-primaction believe believe)
+
+define-frame Walk(verb prep obj) "it walks [prep] a [obj]"
+define-frame Talk(verb prep obj) "it talks [prep] a [obj]"
+define-frame x(verb prep obj) "it xes [prep] a [obj]"
+define-frame Isa(verb obj) "It is a [obj]"
+
+;;; If it xes like a y, it is a y."
+all(x,y)(x(like,y) => Isa(y)).
+
+;;; It walks like a duck.
+Walk(like, duck)!
+
+;;; It talks like a duck.
+Talk(like, duck)!
+
+;;; The knowledge base so far:
+list-asserted-wffs
+
+;;; Believe that it is not a duck, regardless of what you currently believe.
+perform believe(~Isa(duck))
+
+;;; So, it doesn't walk like a duck.
+2
+
+;;; So, it doesn't talk like a duck.
+2
+
+;;; The revised knowledge base:
+list-asserted-wffs
