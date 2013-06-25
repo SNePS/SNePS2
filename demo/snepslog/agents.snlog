@@ -1,0 +1,87 @@
+;;; Automatic Belief Revision Based on Fluents vs. Non-fluents.
+;;; From Section 4.3.3 of
+;;; Ari I. Fogel, On the Use of Epistemic Ordering Functions as Decision
+;;; Criteria for Automated and Assisted Belief Revision in SNePS, MS Thesis,
+;;; Department of Computer Science and Engineering, University at Buffalo,
+;;; Buffalo, NY, June 1, 2011. 
+
+;;;
+;;; Set SNePSLOG flags
+;;;
+
+;;; Use mode 3
+set-mode-3
+
+;;; Show supports
+expert
+
+;;; Always use automatic belief revision
+br-mode auto
+
+;; Use an entrenchment ordering in which non-fluents are more entrenched than fluents.
+set-order fluent
+
+;;; Automatically and arbitrarily break entrenchment ties.
+br-tie-mode auto
+
+;;;
+;;; Define frames
+;;;
+
+;;; Define the Direction frame
+define-frame Direction(nil d) "[d] is a direction."
+
+;;; Define the Facing frame.
+define-frame Facing(nil dir) "I am facing direction [dir]"
+
+;;; Define the turn frame.
+define-frame turn(action newdir) "turn to [newdir]"
+
+;;;
+;;; Some settings that must be done in Lisp
+;;;
+^^
+
+;;; The Facing predicate is a fluent.
+(setf *fluents* '(Facing))
+
+;;; Define the turn attached function
+(define-attachedfunction turn ((newdir))
+  (format outunit "~&I'm turning to the ~A~%" newdir))
+
+;;; Attach the turn and believe actions.
+(attach-primaction turn turn believe believe)
+^^
+
+;;;
+;;; Domain Knowledge
+;;;
+
+;;; The directions are north, south, east, and west.
+Direction({north,south,east,west}).
+
+;;; At any given time, the agent is facing either north, south, east, or west.
+nexists(_,1,_)(d)(Direction(d): Facing(d)).
+
+;;; The effect of turning to direction d is to be facing d.
+all(d)(Direction(d) => Effect(turn(d), Facing(d))).
+
+;;;
+;;; Initial situation
+;;;
+
+;;; Now, the agent is facing west.
+perform believe(Facing(west))
+
+;;; The knowledge base now:
+list-asserted-wffs
+
+;;;
+;;; The agent performs
+;;;
+
+;;; The agent turns to the south.
+perform turn(south)
+
+;;; The resulting knowledge base:
+list-asserted-wffs
