@@ -63,6 +63,12 @@ Minimal Change of KB.")
       "Fully Automatic Nonprioritized Belief Revision.")
      ("sneps:demo;snepslog;duck.snlog"
       "Prioritized Belief Revision with Manual Tie-Breaking.")
+     ("sneps:demo;snepslog;meetings.snlog"
+      "Automatic Belief Revision Based on Explicit Object-Language Ordering.")
+     ("sneps:demo;snepslog;sourcedMeetings.snlog"
+      "Automatic Belief Revision Based on Explicit Object-Language Source-Ordering.")
+     ("sneps:demo;snepslog;agents.snlog"
+      "Automatic Belief Revision Based on Fluents vs. Non-fluents.")
      #|
      ("sneps:demo;defaults;birds.sneps"
       "Birds - An example for default rules (all demos dealing with~
