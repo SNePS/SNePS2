@@ -1,0 +1,77 @@
+;;; Automatic Belief Revision
+;;;    Based on Explicit Sources and Object-Language Source-Ordering.
+;;; From Sections 4.3.1 and 4.3.2 of
+;;; Ari I. Fogel, On the Use of Epistemic Ordering Functions as Decision
+;;; Criteria for Automated and Assisted Belief Revision in SNePS, MS Thesis,
+;;; Department of Computer Science and Engineering, University at Buffalo,
+;;; Buffalo, NY, June 1, 2011.
+;;; Based on
+;;; Frances L. Johnson and Stuart C. Shapiro, Says Who?---Incorporating Source
+;;;    Credibility Issues into Belief Revision, Technical Report 99-08,
+;;;    Department of Computer Science and Engineering, University at Buffalo,
+;;;    Buffalo, NY, July 31, 1999.
+
+;;; Use mode 1
+set-mode-1
+
+;;; Show supports
+expert
+
+;;; Always use automatic belief revision
+br-mode auto
+
+;;; Use an explicit object-language source-credibility order
+;;;    based on IsBetterSource(s1, s2)
+set-order source
+
+;;; Consult the user when an entrenchment tie needs to be broken.
+br-tie-mode manual
+
+;;; There are four kinds of meetings: official meetings, classes, work meetngs,
+;;; and social meetings.  Any meeting will be of exactly one of these types.
+all(m)(meeting(m) => xor{official(m), class(m), work(m), social(m)}).
+
+;;; Any meeting will be either in the morning or the afternoon, but not both.
+all(m)(meeting(m) => xor{in(m,morning), in(m,afternoon)}).
+
+;;; If one person attends two different meetings, then one of the meetings has
+;;; to be in the morning, and the other in the afternoon.
+all(m1,m2,p)({attends(m1,p), attends(m2,p)} &=>
+		     (in(m1,morning) <=> in(m2,afternoon))).
+
+;;; Philip, Peter, and John will attend work meetings.
+all(m)(work(m) => {attends(m, Philip), attends(m, Peter), attends(m, John)}).
+
+;;; w is a work meeting
+and{meeting(w), work(w)}.
+
+;;; Peter prefers meetings in the morning.
+all(m)(meeting(m) => in(m,morning)). ; wff8
+HasSource(wff8, Peter).
+
+;;; John prefers meetings in the afternoon.
+all(m)(meeting(m) => in(m,afternoon)). ; wff10
+HasSource(wff10, John).
+
+;;; Philip prefers meetings in the morning.
+HasSource(wff8, Philip).
+
+;;; Peter's preference outweighs John's preference.
+IsBetterSource(Peter, John).
+
+;;; John's preference outweighs Philip's preference
+IsBetterSource(John, Philip).
+
+;;; IsBetterSource is transitive.
+all(x,y,z)({IsBetterSource(x,y), IsBetterSource(y,z)} &=> IsBetterSource(x,z)).
+
+;;; Note that unsourced assertions outweigh sourced assertions.
+
+;;; The knowledge base so far:
+list-asserted-wffs
+
+;;; When is the meeting?
+in(w,?when)?
+
+;;; The revised knowledge base:
+list-asserted-wffs
