@@ -1,0 +1,78 @@
+;;; Automatic Belief Revision
+;;;    Based on an Explicit Object-Language Ordering Predicate.
+;;; From Section 4.3.1 of
+;;; Ari I. Fogel, On the Use of Epistemic Ordering Functions as Decision
+;;; Criteria for Automated and Assisted Belief Revision in SNePS, MS Thesis,
+;;; Department of Computer Science and Engineering, University at Buffalo,
+;;; Buffalo, NY, June 1, 2011. 
+;;; Based on
+;;; Maria R. Cravo and João P. Martins, "SNePSwD: A Newcomer to the
+;;;    SNePS Family", Journal of Experimental and Theoretical Artificial
+;;;    Intelligence 5, 1993, 135-148.
+
+;;; Use mode 1
+set-mode-1
+
+;;; Show supports
+expert
+
+;;; Always use automatic belief revision
+br-mode auto
+
+;;; Use an explicit object-language epistemic entrenchment order
+;;;    based on IsLessEntrenched(p1, p2)
+set-order explicit
+
+;;; Consult the user when an entrenchment tie needs to be broken.
+br-tie-mode manual
+
+;;; The epistemic entrenchment ordering is transitive.
+all(x,y,z)({IsLessEntrenched(x,y), IsLessEntrenched(y,z)} &=> IsLessEntrenched(x,z)).
+
+;;; There are four kinds of meetings: official meetings, classes, work meetngs,
+;;; and social meetings.  Any meeting will be of exactly one of these types.
+all(m)(meeting(m) => xor{official(m), class(m), work(m), social(m)}).
+
+;;; Any meeting will be either in the morning or the afternoon, but not both.
+all(m)(meeting(m) => xor{in(m,morning), in(m,afternoon)}).
+
+;;; If one person attends two different meetings, then one of the meetings has
+;;; to be in the morning, and the other in the afternoon.
+all(m1,m2,p)({attends(m1,p), attends(m2,p)} &=>
+		     (in(m1,morning) <=> in(m2,afternoon))).
+
+;;; Philip, Peter, and John will attend work meetings.
+all(m)(work(m) => {attends(m, Philip), attends(m, Peter), attends(m, John)}).
+
+;;; w is a work meeting
+and{meeting(w), work(w)}.
+
+;;; Peter prefers meetings in the morning.
+all(m)(attends(m,Peter) => in(m,morning)).
+
+;;; John prefers meetings in the afternoon.
+all(m)(attends(m,John) => in(m,afternoon)).
+
+;;; Philip prefers meetings in the morning.
+all(m)(attends(m,Philip) => in(m,morning)).
+
+;;; The knowledge base so far:
+list-asserted-wffs
+
+;;; Philip's preference is less important than John's.
+IsLessEntrenched(wff11, wff10).
+
+;;; John's preference is less important than Peter's.
+IsLessEntrenched(wff10, wff9).
+
+;;; Peter's preference is less important than any other information.
+IsLessEntrenched(wff9,{wff1, wff2, wff3, wff4, wff5, wff8 }).
+
+;;; The knowledge base so far:
+list-asserted-wffs
+
+;;; When is the meeting?
+in(w,?when)?
+
+;;; The revised knowledge base:
+list-asserted-wffs
