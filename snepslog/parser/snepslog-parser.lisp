@@ -4,7 +4,7 @@
 ;; Copyright (C) 2006--2011
 ;; Research Foundation of State University of New York
 
-;; Version: $Id: snepslog-parser.lisp,v 1.5 2013/06/17 15:26:26 shapiro Exp $
+;; Version: $Id: snepslog-parser.lisp,v 1.6 2013/06/25 20:39:09 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -562,6 +562,10 @@
 			   )))))
         ((haveCommand? "set-order" t)
           (let ((order-function-symbol (SNePSLOGsymbol)))
+	    (format outunit
+		    "(~S p q) will mean that p is less or equally ~
+                     epistemically entrenched as q."
+		    order-function-symbol)
             (returnForms `(set-order ,order-function-symbol))))))
     (when (haveCommand? "show" t)
       `(sneps:show ,(or (snepslog::pTermSet) (sneps:* 'sneps:nodes))))))
