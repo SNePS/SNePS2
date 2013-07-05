@@ -4380,7 +4380,8 @@ In SNePSLOG Mode 3.
 ...
 
 : ;;; Define the case frame for a 4-act sequence
-define-frame snsequence4 (action object1 object2 object3 object4)
+define-frame snsequence4 (action object1 object2 
+                                 snepsul::object3 snepsul::object4)
 snsequence4(x1, x2, x3, x4) will be represented by
      {<action, snsequence4>, <object1, x1>, <object2, x2>,
                                             <object3, x3>, <object4, x4>}
@@ -4393,8 +4394,8 @@ t
 define-frame say (action object)
 say(x1) will be represented by {<action, say>, <object, x1>}
 
-: ^(define-primaction sayAction (object)
-     (print (sneps:choose.ns object)))
+: ^(define-primaction sayAction ((object))
+     (print object))
 sayAction
 
 : ;;; Attach it
