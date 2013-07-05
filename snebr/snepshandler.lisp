@@ -3,7 +3,7 @@
 ;; Copyright (C) 1984--2011 Research Foundation of 
 ;;                          State University of New York
 
-;; Version: $Id: snepshandler.lisp,v 1.2 2013/06/17 15:20:34 shapiro Exp $
+;; Version: $Id: snepshandler.lisp,v 1.3 2013/07/05 15:29:31 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -251,8 +251,11 @@
 	       (contr-otlst (sneps:ctcs-to-ots (sneps:node-asupport contrnd)))
 	       (newsup (ctcs-to-cts (sneps:node-asupport newnode)))
 	       (new-otlst (sneps:ctcs-to-ots (sneps:node-asupport newnode))))
+	   (multi:clear-all-queues)
+	   (sneps:clear-infer)
 	   (change-context newsup contrsup new-otlst contr-otlst 
-			   (value.sv sneps:crntct) sneps:crntct)))
+			   (value.sv sneps:crntct) sneps:crntct)
+	   (sneps:topsneval (value.sv 'sneps:command))))
   ((eqans option 'c)
    (setf (sneps::%context-okinconsistent (value.sv sneps:crntct)) t))))
 
@@ -1502,15 +1505,14 @@
   (declare (special sneps:outunit sneps:inunit))
   (let (ans)
     (loop (ct-prompt)
-	  (setq ans (read sneps:inunit))
-	  (if (or (eq ans 'snepsul:Y)
-		  (eq ans 'snepsul:yes)
-		  (eq ans 'snepsul:ok)
-		  (eq ans 'snepsul:sure)
-		  (eq ans 'snepsul:n)
-		  (eq ans 'snepsul:no))
-	      (RETURN ans))		
-	  (format sneps:outunit "Please type n or y"))))
+      (case (setf ans (read sneps:inunit))
+	((snepsul:Y snepsul:yes snepsul:ok snepsul:sure
+	  snepsul:n snepsul:no)
+	 (return ans))
+	((snepslog::Y snepslog::yes snepslog::ok snepslog::sure
+	  snepslog::n snepslog::no)
+	 (return ans)))	
+      (format sneps:outunit "Please type n or y"))))
 
 ;
 ; =============================================================================
