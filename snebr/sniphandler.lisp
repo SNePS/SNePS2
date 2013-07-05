@@ -3,7 +3,7 @@
 ;; Copyright (C) 1984--2011
 ;; Research Foundation of State University of New York
 
-;; Version: $Id: sniphandler.lisp,v 1.1 2011/05/24 17:59:37 mwk3 Exp $
+;; Version: $Id: sniphandler.lisp,v 1.2 2013/07/05 15:31:22 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -149,7 +149,7 @@
 	      (throw 'snip:Stop-Handled-by-Contradiction-Handler nil)))
 	  (t (multi:clear-all-queues)
 	     (sneps:clear-infer)
-	     (cond ((or (eq ans 'snepsul:R)(eql ans 3))
+	     (cond ((or (eq ans 'snepsul:R)(eq ans 'snepslog::R)(eql ans 3))
 		    (change-context newnd-supps contrnd-supps 
 				    newnd-otlst contrnd-otlst 
 				    context snip:crntctname)
@@ -217,17 +217,12 @@
   (declare (special sneps:outunit sneps:inunit))
   (let (ans)
     (loop (ct-prompt)
-	  (setq ans (read sneps:inunit))
-	  (if (or (eq ans 'snepsul:A)
-		  (eq ans 'snepsul:C)
-		  (eq ans 'snepsul:R)
-		  (eq ans 'snepsul:D)
-		  (eql ans 1)
-		  (eql ans 2)
-		  (eql ans 3)
-		  (eql ans 4))
-	      (return ans))
-	  (format sneps:outunit "Please type a, c, r or d"))))
+      (case (setf ans (read sneps:inunit))
+	((1 2 3 4 snepsul:A snepsul:C snepsul:R snepsul:D)
+	 (return ans))
+	((snepslog::A snepslog::C snepslog::R snepslog::D)
+	 (return ans)))
+      (format sneps:outunit "Please type a, c, r or d"))))
 
 ;
 ; =============================================================================
