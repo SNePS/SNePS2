@@ -3,7 +3,7 @@
 ;; Copyright (C) 1984--2011 Research Foundation of 
 ;;                          State University of New York
 
-;; Version: $Id: hyp.lisp,v 1.1 2011/05/24 17:59:37 mwk3 Exp $
+;; Version: $Id: hyp.lisp,v 1.2 2013/07/10 17:34:32 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -455,6 +455,7 @@
 ; 
 ;      implementation:  If one of the nodes in `hypset' is not an assertion   
 ;                       an error message is generated.
+;                       Deleted this check. scs 7/5/2013
 ; 
 ;      side-effects  :  The side-effects of building contexts. It prints a
 ;                       message.
@@ -463,7 +464,7 @@
 ;                                         written : hc/njm 05/10/89
 ;                                         modified: njm    05/11/89
 ;                                                   hc     07/18/93
-;                                                   scs    /05/28/07
+;                                                   scs    05/28/07
 ;
 (defsnepscom remove-from-context ((hypset &optional cname))
   "Removes the assertions in HYPSET from the context named CNAME."
@@ -473,13 +474,20 @@
 		     (value.sv 'defaultct)
 		   cname)))
     (if (is.ct (value.sv ct-name))
-	(if (issubset.ns hyps (context-hyps (value.sv ct-name)))
+	(if t
+	    ;; Deleted this check.
+	    ;; What does it hurt if we remove something that's not there?
+	    ;;                 scs 07/05/13
+	    ;;(issubset.ns hyps (context-hyps (value.sv ct-name)))
 	    (let ((newct (fullbuildcontext
 			  (compl.ns (context-hyps (value.sv ct-name)) hyps)
 			  (new.cts))))
 	      (unless (snebr:ck-inconsistency newct)
 		(progn (name.ct newct ct-name)
-		       (describe-context-1 ct-name))))
+		       ;; Commented this out, because it got in the way
+		       ;;   when calling perform believe -- scs 07/05/13
+		       ;;(describe-context-1 ct-name)
+		       )))
 	  (sneps-error
 	   (format nil "the following nodes do not belong to the context: ~A"
 		   (compl.ns hyps (context-hyps (value.sv ct-name))))
