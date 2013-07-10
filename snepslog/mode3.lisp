@@ -3,7 +3,7 @@
 ;; Copyright (C) 1984--2011 Research Foundation of 
 ;;                          State University of New York
 
-;; Version: $Id: mode3.lisp,v 1.1 2011/05/24 17:59:37 mwk3 Exp $
+;; Version: $Id: mode3.lisp,v 1.2 2013/07/10 17:36:06 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -349,16 +349,19 @@ redeclaration." pred) (return-from define-frame))
   (format outunit "}~%"))
 
 (defun showargs (len)
-  (format outunit "(x1")
-  (dotimes (i (1- len))
-    (format outunit ", x~D"  (+ i 2)))
+  (format outunit "(")
+  (loop for i from 1 to len
+      do (format outunit "x~D" i)
+      when (< i len)
+      do (format outunit ","))
   (format outunit ")"))
 
 (defun showframe (pred arcs)
-  (if (first arcs)
-      (format outunit "<~A, ~A>, <~A, x1>" (first arcs) pred (second arcs))
-    (format outunit "<~A, x1>" (second arcs)))
-  (let ((i 2))
-    (dolist (arc (cddr arcs))
-      (format outunit ", <~A, x~D>" arc i)
-      (incf i))))
+  (cond ((first arcs)
+	 (format outunit "<~A, ~A>" (first arcs) pred)
+	 (when (second arcs)
+	     (format outunit ", <~A, x~D>" (second arcs) 1)))
+	(t (format outunit "<~A, x~D>" (second arcs) 1)))
+  (loop for arc in (rest (rest arcs))
+      for i from 2
+      do (format outunit ", <~A, x~D>" arc i)))
