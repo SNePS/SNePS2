@@ -3,7 +3,7 @@
 ;; Copyright (C) 1984--2011 Research Foundation of 
 ;;                          State University of New York
 
-;; Version: $Id: snepshandler.lisp,v 1.3 2013/07/05 15:29:31 shapiro Exp $
+;; Version: $Id: snepshandler.lisp,v 1.4 2013/07/10 17:33:34 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -243,24 +243,25 @@
 			       (value.sv sneps:crntct))))
 		  sneps:crntct))
 	((eqans option 'a)
-    (let ((contrsup (ctcs-to-cts (sneps:node-asupport contrnd)))
-          (newsup (ctcs-to-cts (sneps:node-asupport newnode))))
-      (autobr newsup contrsup (value.sv sneps:crntct) nil)))
+	 (let ((contrsup (ctcs-to-cts (sneps:node-asupport contrnd)))
+	       (newsup (ctcs-to-cts (sneps:node-asupport newnode))))
+	   (autobr newsup contrsup (value.sv sneps:crntct) nil)
+	   (sneps:clear-infer)
+	   (sneps:topsneval (value.sv 'sneps:command))
+	   ))
 	((eqans option 'r)
 	 (let ((contrsup (ctcs-to-cts (sneps:node-asupport contrnd)))
 	       (contr-otlst (sneps:ctcs-to-ots (sneps:node-asupport contrnd)))
 	       (newsup (ctcs-to-cts (sneps:node-asupport newnode)))
 	       (new-otlst (sneps:ctcs-to-ots (sneps:node-asupport newnode))))
-	   (multi:clear-all-queues)
 	   (sneps:clear-infer)
 	   (change-context newsup contrsup new-otlst contr-otlst 
 			   (value.sv sneps:crntct) sneps:crntct)
 	   (sneps:topsneval (value.sv 'sneps:command))))
-  ((eqans option 'c)
-   (setf (sneps::%context-okinconsistent (value.sv sneps:crntct)) t))))
+	((eqans option 'c)
+	 (setf (sneps::%context-okinconsistent (value.sv sneps:crntct)) t))))
 
 
-;
 ; =============================================================================
 ;
 ; read-sneps-option 
