@@ -41,13 +41,13 @@ sub searchmod {
 	  print TEMPFILE $line;
 	  print TEMPFILE "\n";
 	  print TEMPFILE ";; \$BEGIN LICENSE\$\n\n";
-	  while(!($line =~ /;; 201 Bell Hall, Buffalo, NY 14260, USA/)){
+	  while(!($line =~ /;; \$END LICENSE\$/)){
 	    $line = <IN>;
 	  }
 	  
 	  open LICENSE, "<" . $license_file;
 	  while($line = <LICENSE>){
-	    print TEMPFILE ";; " . $line;
+	    print TEMPFILE ";;; " . $line;
 	  }
 	  print TEMPFILE "\n\n;; \$END LICENSE\$\n\n";
 	  
