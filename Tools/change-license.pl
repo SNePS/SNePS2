@@ -3,7 +3,7 @@
 # Based off: http://use.perl.org/~schwern/journal/15301
 # Use this Perl script to crawl the Sneps directory structure changing the 
 # copyright year
-# usage: perl change-copyright.pl <sneps-directory> <license-file>
+# usage: perl change-license.pl <sneps-directory> <license-file>
 
 
 

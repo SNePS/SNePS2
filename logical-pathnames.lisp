@@ -1,6 +1,6 @@
 ;; -*- Mode: Lisp; Syntax: Common-Lisp; Package: LOGICAL-PATHNAME; Base: 10 -*-
 
-;; Version: $Id: logical-pathnames.lisp,v 1.1 2011/05/24 17:59:35 mwk3 Exp $
+;; Version: $Id: logical-pathnames.lisp,v 1.2 2013/08/28 19:07:21 shapiro Exp $
 
 ;; $BEGIN LICENSE$
 
@@ -23,7 +23,7 @@
 ;; sity at Buffalo.
 ;; 
 ;; Portions created by the Initial Developer are Copyright (C)
-;; 2011 Research Foundation of State University of New York, on
+;; 2013 Research Foundation of State University of New York, on
 ;; behalf of University at Buffalo. All Rights Reserved.
 ;; 
 ;;  
