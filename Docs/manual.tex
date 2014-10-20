@@ -458,6 +458,11 @@ SNePS 2.7.1 also includes some additional improvements.
     \begin{enumerate}
     \item SNePS can now be compiled by Armed Bear Common Lisp (ABCL), which
        produces Java bytecode.
+     \item Nodes whose identifiers are not readable by Lisp as symbols
+       (e.g. numbers and identifiers with spaces in them) are now printed with
+       escape brackets.
+     \item When typing nodes, a user may use the escape character and escape
+       brackets.
     \end{enumerate}
 
   \item[SNePSLOG]\mbox{}
@@ -467,7 +472,7 @@ SNePS 2.7.1 also includes some additional improvements.
   \texttt{and}, \texttt{or}, \texttt{nand}, \texttt{nor}, \texttt{xor},
   \texttt{iff}, \texttt{andor}, \texttt{thresh}, or \texttt{nexists} it would be
   misparsed, or an error would result.  For example, \texttt{instanceOf(north,
-    direction)} would be parsed as \url{instanceOf(~th, direction)}.  That
+    direction)} would be parsed as\\ \texttt{instanceOf($\sim$th, direction)}.  That
   has now been fixed.  However, now none of these connectives may immediately be
   followed by a blank, but must immediately be followed either by
   ``\texttt{\{}'' or "\texttt{(}'', whichever is appropriate.
@@ -475,16 +480,43 @@ SNePS 2.7.1 also includes some additional improvements.
 \item \texttt{tell} has been given optional format arguments.  So instead
      of evaluating
      \begin{quote}
-     \texttt{(tell (format nil "\url{~A(~A).}" 'Dog 'Fido))}
+     \texttt{(tell (format nil "\texttt{$\sim$A($\sim$A).}" 'Dog 'Fido))}
      \end{quote}
      you may now do
      \begin{quote}
-     \texttt{(tell "\url{~A(~A).}" 'Dog 'Fido)}
+     \texttt{(tell "\texttt{$\sim$A($\sim$A).}" 'Dog 'Fido)}
      \end{quote}
 
    \item The character ``!'' is now optional at the end of a wffname.  If the
      ``!''  is not the terminal character of the wffNameCommand (that is, is not
      the final character of the SNePSLOG command), it will be ignored.
+
+   \item The macro \texttt{(foreachsub \textit{variables subs} \&body
+       \textit{forms})} has been added to the tell/ask interface.  For each
+     substitution in \cv{subs}, \texttt{foreachsub} evaluates the forms in
+     \cv{forms} with the variables in \cv{variables} taking on the
+     values specified by that substitution.  This is particularly useful for
+     processing the values returned by \texttt{(askwh ...)}  or by \texttt{(tell
+       "askwh...")}.
+   \item Individual constants whose identifiers are not readable by Lisp as
+     symbols (e.g. numbers and strings with spaces in them) are now printed with
+     escape brackets.
+   \item The SNePSLOG parser can read individual constants containing the escape
+     character and escape brackets.
+   \item The \texttt{show} command now displays molecular nodes using their wff
+     names.
+   \item The attempt to assert a negated, universally quantified \texttt{andor}
+     or \texttt{thresh}, such as\\
+     \verb|~|\texttt{(all(x)(B(a,x) <=> x))} previously
+     caused an error.  This has been fixed.
+    \end{enumerate}
+
+  \item[SNIP]\mbox{}
+    \begin{enumerate}
+    \item Before if \texttt{p(a)} were an hypothesis of the current context, and
+      \texttt{p(a)|-r(a)}, then \texttt{p(a)=>r(a)} would not be inferred
+      because SNIP didn't think that \texttt{p(a)} was introduced in the
+      hypothetical context.  That has now been fixed.
     \end{enumerate}
   \end{description}
 SNePS 2.8 also includes some additional improvements.
@@ -528,8 +560,8 @@ The \texttt{JUNG/JIMI}\indexct{JUNG}\indexct{JIMI} version of
 For installations that do not have that compiler, an executable file
 is available for downloading from
 \url{http://www.cse.buffalo.edu/sneps/Downloads/}. That executable
-provides all the features of SNePS~2.7.  Every other feature of
-SNePS~2.7 is written in ANSI Common Lisp.
+provides all the features of SNePS~2.8.  Every other feature of
+SNePS~2.8 is written in ANSI Common Lisp.
 
 \section{Commands and Environments}\label{environsect}
 
@@ -6490,7 +6522,7 @@ basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
 License for the specific language governing rights and limitations
 under the License.\\
 
-\noindent The Original Code is SNePS 2.7.\\
+\noindent The Original Code is SNePS 2.8.\\
 
 \noindent The Initial Developer of the Original Code is Research Foundation of State University of New York, on behalf of University at Buffalo.\\
 
