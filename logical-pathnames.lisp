@@ -1,6 +1,6 @@
 ;; -*- Mode: Lisp; Syntax: Common-Lisp; Package: LOGICAL-PATHNAME; Base: 10 -*-
 
-;; Version: $Id: logical-pathnames.lisp,v 1.2 2013/08/28 19:07:21 shapiro Exp $
+;; Version: $Id: logical-pathnames.lisp,v 1.3 2014/10/20 20:34:28 shapiro Exp $
 
 ;; $BEGIN LICENSE$
 
@@ -16,7 +16,7 @@
 ;; or implied. See the License for the specific language gov
 ;; erning rights and limitations under the License.
 ;; 
-;; The Original Code is SNePS 2.7.
+;; The Original Code is SNePS 2.8.
 ;; 
 ;; The Initial Developer of the Original Code is Research Foun
 ;; dation of State University of New York, on behalf of Univer
