@@ -518,6 +518,21 @@ SNePS 2.7.1 also includes some additional improvements.
       because SNIP didn't think that \texttt{p(a)} was introduced in the
       hypothetical context.  That has now been fixed.
     \end{enumerate}
+
+  \item[SNeBR]\mbox{}
+    \begin{enumerate}
+    \item SNeBR has been greatly improved.  Previously, SNeBR performed manual
+      nonprioritized belief revision in most cases, and automatic prioritized
+      belief revision when a new belief was added by the \texttt{believe} act,
+      but then only with direct contradictions between hypotheses.  Now, the
+      user can independently specify prioritized \emph{vs.}\ nonprioritized and
+      manual (now called ``assisted'') \emph{vs.}\ automatic belief revision, and
+      derived contradictions triggered by \texttt{believe} are recognized and
+      handled.  The user can also specify what epistemic entrenchment ordering
+      function the system is to use during automatic belief revision.  Several
+      such ordering functions are supplied, and the user can define others.  For
+      the details, see Chapter~\ref{snebrchap} of this Manual.
+    \end{enumerate}
   \end{description}
 SNePS 2.8 also includes some additional improvements.
 \end{description}
