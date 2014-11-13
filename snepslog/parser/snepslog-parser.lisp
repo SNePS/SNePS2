@@ -4,7 +4,7 @@
 ;; Copyright (C) 2006--2013
 ;; Research Foundation of State University of New York
 
-;; Version: $Id: snepslog-parser.lisp,v 1.7 2013/08/28 19:07:26 shapiro Exp $
+;; Version: $Id: snepslog-parser.lisp,v 1.8 2014/11/13 18:59:39 shapiro Exp $
 
 ;; This file is part of SNePS.
 
@@ -554,15 +554,32 @@
 			(haveCommand? ".")
 			`(set-default-context ,context-name))
 		       (t (parseError
-			   "The command set-default-context requires a context name as an argument at: ~S"
+			   "The command set-default-context ~
+                               requires a context name as an argument at: ~S"
 			   *Input*
 			   )))))
         ((haveCommand? "set-order" t)
           (let ((order-function-symbol (SNePSLOGsymbol)))
-	    (format outunit
-		    "(~S p q) will mean that p is less or equally ~
-                     epistemically entrenched as q."
-		    order-function-symbol)
+            (case order-function-symbol
+              (null-order
+               (format outunit
+                       "All propositions will be equally epistemically entrenched."))
+              (fluent
+               (format outunit
+                       "Fluents will be ~
+                           less epistemically entrenched than non-fluents."))
+              (source
+               (format outunit
+                       "IsBetterSource(s1,s2) will mean ~
+                           that s1 is more credible than s2."))
+              (explicit
+               (format outunit
+                       "IsLessEntrenched(p1,p2) will mean ~
+                           that p1 is strictly less entrenched than p2."))
+              (t (format outunit
+                         "(~S p q) will mean that p is less or equally ~
+                              epistemically entrenched as q."
+                         order-function-symbol)))
             (returnForms `(set-order ,order-function-symbol))))))
     (when (haveCommand? "show" t)
       `(sneps:show ,(or (snepslog::pTermSet) (sneps:* 'sneps:nodes))))))
