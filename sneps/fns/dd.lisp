@@ -779,7 +779,7 @@ this instance of sneps"
     ;; generate output file (gif or ps)
     ;; display it (with xv or gv)
     ;; remove it if it is a temporary file
-      #-allegro
+      #-(or allegro sbcl)
       (ext:run-shell-command 
        (format nil "dot -T~A ~A > ~A; ~A ~A; ~A &" 
 	       output-format dot-file-name output-file-name
@@ -789,6 +789,22 @@ this instance of sneps"
 		 (if temp-file-generated
 		     (format nil "/bin/rm -f ~A.*" file-name)
 		   "")))
+      #+sbcl
+      (progn
+        (sb-ext:run-program "/usr/bin/twopi"
+          (list "-Tgif" (format nil "~A" dot-file-name)
+                "-Nfontsize=11" "-Efontsize=11" "-Ew=1.0" 
+                "-Gnodesep=7.0" "-Granksep=1.0" "-Eweight=0.1"
+                "-Goverlap=false" "-Gepsilon=0.0"
+                "-Gmaxiter=100000")
+          :output (format nil "~A" output-file-name))
+        (sb-ext:run-program "/usr/bin/gpicview"
+          (list (format nil "~A" output-file-name)))
+        (if temp-file-generated
+          (sb-ext:run-program "/bin/rm"
+            (list "-f" (format nil "~A" dot-file-name)
+                  (format nil "~A" output-file-name)))
+          ""))
       #+allegro
       (excl:shell
        (format nil "dot -T~A ~A > ~A; ~A ~A; ~A &" 

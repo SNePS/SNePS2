@@ -41,15 +41,20 @@
 
 ;; For ANSI Lisps that don't provide LISP and USER packages
 ;; add them as nicknames to the built-in COMMON-LISP packages:
-(if (and (not (find-package :cl))
+#+sbcl(sb-ext:unlock-package "COMMON-LISP")
+#+sbcl(sb-ext:unlock-package "COMMON-LISP-USER")
+
+(if (and (or (not (find-package :cl))
+             (not (find-package :lisp)))
          (find-package :common-lisp))
     (eval `(defpackage :common-lisp
-             (:nicknames ,@(package-nicknames :common-lisp) :cl))))
+             (:nicknames ,@(package-nicknames :common-lisp) :cl :lisp))))
 
-(if (and (not (find-package :cl-user))
+(if (and (or (not (find-package :cl-user))
+             (not (find-package :user)))
          (find-package :common-lisp-user))
     (eval `(defpackage :common-lisp-user
-             (:nicknames ,@(package-nicknames :common-lisp-user) :cl-user))))
+             (:nicknames ,@(package-nicknames :common-lisp-user) :cl-user :user))))
 
 
 ;;; Required files
