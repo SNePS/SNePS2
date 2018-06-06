@@ -232,7 +232,7 @@
   "The first on the LIST-OF-ARGS is the arc to PRED (NIL if ignored).
    The rest on LIST-OF-ARGS are the arcs for the arguments, in order. 
    Modified to include optional description string code. -mwk3"
-  (declare (special *propargs* *argsprop* *silent-mode-3*))
+  (declare (special *silent-mode-3*))
   (check-type pred symbol)
   (let ((ordered-arcs (sort (copy-seq (if (first list-of-args)
 					 list-of-args
@@ -285,7 +285,6 @@ redeclaration." pred) (return-from define-frame))
   "Receives an action, a relation, and the arguments of the relation.
    Returns the SNePSUL command that perform the action on the relation,
    following the protocol of mode 3."
-  (declare (special *PROPARGS*))
   (cons action
 	(mapcan #'(lambda (arc arg)
 		    (when arc (list arc arg)))
